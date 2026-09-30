@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "categorias": {
+    "ropa":   { "nombre": "Ropa",   "icono": "ropa" },
+    "cocina": { "nombre": "Cocina", "icono": "cocina" },
+    "bano":   { "nombre": "Baño",   "icono": "bano" },
+    "suelos": { "nombre": "Suelos", "icono": "suelos" },
+    "bebe":   { "nombre": "Bebé",   "icono": "bebe" },
+    "casa":   { "nombre": "Casa",   "icono": "casa" }
+  },
+  "coladas": [
+    {
+      "id": "col-lun", "dia": 1, "semana": null,
+      "titulo": "Deportiva A",
+      "ropa": ["Ropa técnica del sábado, domingo y lunes"],
+      "programa": "30° + Sanytol, sin suavizante",
+      "temperatura": "30°",
+      "centrifugado": "600-800",
+      "aditivos": "Sanytol: 80 ml (2 tapones) en la cubeta del suavizante, con tu detergente de siempre",
+      "minutos": 12,
+      "notas": [
+        "Sin suavizante: tapona la fibra técnica y es lo que hace que huela a los diez minutos.",
+        "Prendas del revés y con las cremalleras cerradas.",
+        "Tiéndela a la sombra y con aire. Nada de secadora caliente ni radiador: el calor mata el elastano.",
+        "Prenda que ya huele: 20 ml de Sanytol en 3,5 l de agua, 30 minutos de remojo y luego a la lavadora.",
+        "Sanytol no se usa en lana, seda ni cuero.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-mar", "dia": 2, "semana": null,
+      "titulo": "Ropa del bebé",
+      "ropa": ["Ropa del bebé"],
+      "programa": "30-40°, detergente sin perfume, doble aclarado",
+      "temperatura": "30-40°",
+      "centrifugado": "",
+      "aditivos": "Detergente sin perfume",
+      "minutos": 12,
+      "notas": [
+        "Doble aclarado.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-mie", "dia": 3, "semana": null,
+      "titulo": "Color y oscura",
+      "ropa": ["Ropa de color y oscura de los adultos"],
+      "programa": "30°",
+      "temperatura": "30°",
+      "centrifugado": "",
+      "aditivos": "",
+      "minutos": 12,
+      "notas": [
+        "Tu ropa pesa un 15-20 % más por prenda: al llenar el tambor cuenta kilos, no prendas.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-jue", "dia": 4, "semana": null,
+      "titulo": "Deportiva B",
+      "ropa": ["Ropa técnica del martes, miércoles y jueves"],
+      "programa": "30° + Sanytol, sin suavizante",
+      "temperatura": "30°",
+      "centrifugado": "600-800",
+      "aditivos": "Sanytol: 80 ml (2 tapones) en la cubeta del suavizante, con tu detergente de siempre",
+      "minutos": 12,
+      "notas": [
+        "Sin suavizante: tapona la fibra técnica y es lo que hace que huela a los diez minutos.",
+        "Prendas del revés y con las cremalleras cerradas.",
+        "Tiéndela a la sombra y con aire. Nada de secadora caliente ni radiador.",
+        "Prenda que ya huele: 20 ml de Sanytol en 3,5 l de agua, 30 minutos de remojo y luego a la lavadora.",
+        "Sanytol no se usa en lana, seda ni cuero.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-vie", "dia": 5, "semana": null,
+      "titulo": "Toallas y paños",
+      "ropa": ["Toallas", "Paños de cocina", "Toallas de gym"],
+      "programa": "60°",
+      "temperatura": "60°",
+      "centrifugado": "",
+      "aditivos": "",
+      "minutos": 12,
+      "notas": [
+        "Si no cabe todo, las toallas de gym se van con la deportiva a 40° y Sanytol.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-sab-a", "dia": 6, "semana": "A",
+      "titulo": "Sábanas y cuna",
+      "ropa": ["Sábanas de la cama (semana A)", "Sábanas de la cuna", "Funda del cambiador"],
+      "programa": "60°",
+      "temperatura": "60°",
+      "centrifugado": "",
+      "aditivos": "",
+      "minutos": 22,
+      "notas": [
+        "Las de la cuna se lavan siempre; la semana B toca blancos en lugar de sábanas.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-sab-b", "dia": 6, "semana": "B",
+      "titulo": "Blancos y cuna",
+      "ropa": ["Ropa blanca (semana B)", "Sábanas de la cuna", "Funda del cambiador"],
+      "programa": "60°",
+      "temperatura": "60°",
+      "centrifugado": "",
+      "aditivos": "",
+      "minutos": 18,
+      "notas": [
+        "Las de la cuna se lavan siempre; la semana A tocan sábanas en lugar de blancos.",
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    },
+    {
+      "id": "col-dom", "dia": 7, "semana": null,
+      "titulo": "Ropa del bebé (2.ª tanda)",
+      "ropa": ["Ropa del bebé, segunda tanda"],
+      "programa": "30-40°",
+      "temperatura": "30-40°",
+      "centrifugado": "",
+      "aditivos": "Detergente sin perfume",
+      "minutos": 12,
+      "notas": [
+        "Carga máxima real: 4,5-5 kg."
+      ]
+    }
+  ],
+  "tareas": [
+    { "id": "d-ventanas", "titulo": "Abrir las ventanas 10 minutos en todas las habitaciones", "categoria": "casa", "frecuencia": "diaria", "momento": "manana", "minutos": 2, "notas": "Incluida la habitación del bebé, también en invierno. Aprovecha mientras desayunas." },
+    { "id": "d-camas", "titulo": "Airear y hacer las camas", "categoria": "ropa", "frecuencia": "diaria", "momento": "manana", "minutos": 4, "notas": "Airéalas al levantarte y hazlas al salir de la habitación." },
+    { "id": "d-vaciar-lavavajillas", "titulo": "Vaciar el lavavajillas", "categoria": "cocina", "frecuencia": "diaria", "momento": "manana", "minutos": 2 },
+    { "id": "d-fregadero", "titulo": "Fregadero vacío y encimera despejada tras el desayuno", "categoria": "cocina", "frecuencia": "diaria", "momento": "manana", "minutos": 3 },
+
+    { "id": "d-trona", "titulo": "Limpiar la bandeja de la trona después de cada comida", "categoria": "bebe", "frecuencia": "diaria", "momento": "dia", "minutos": 4, "notas": "Sin dejar que se seque." },
+    { "id": "d-barrido", "titulo": "Barrido rápido bajo la trona", "categoria": "suelos", "frecuencia": "diaria", "momento": "dia", "minutos": 2, "notas": "Con recogedor o aspirador de mano." },
+    { "id": "d-juguetes", "titulo": "Juguetes a la cesta", "categoria": "bebe", "frecuencia": "diaria", "momento": "dia", "minutos": 3, "notas": "Cada vez que cambiáis de actividad, no solo al final del día." },
+    { "id": "d-panales", "titulo": "Vaciar el cubo de pañales", "categoria": "bebe", "frecuencia": "diaria", "momento": "dia", "minutos": 2, "notas": "Diario si hay caca; cada dos días si no." },
+    { "id": "d-chupetes", "titulo": "Lavar chupetes, mordedores y vasos", "categoria": "bebe", "frecuencia": "diaria", "momento": "dia", "minutos": 3, "notas": "Agua caliente y jabón. Lo que cae al suelo se lava en el momento." },
+    { "id": "d-suelo-cuarto", "titulo": "Aspirar el suelo de la habitación del bebé", "categoria": "suelos", "frecuencia": "diaria", "cadaDias": 2, "momento": "dia", "minutos": 5, "requiere": "camaBaja", "notas": "Con la cama baja duerme a ras de suelo, casi a la altura del polvo: ese suelo pasa a ser zona de contacto diaria." },
+
+    { "id": "d-lavavajillas", "titulo": "Cargar y arrancar el lavavajillas", "categoria": "cocina", "frecuencia": "diaria", "momento": "noche", "minutos": 6, "notas": "Nunca a medias, en tarifa valle. Eco 50-55° a diario. Tetinas y biberones, a mano con escobilla." },
+    { "id": "d-cocina-noche", "titulo": "Encimera, placa y fregadero limpios y secos", "categoria": "cocina", "frecuencia": "diaria", "momento": "noche", "minutos": 6 },
+    { "id": "d-salon", "titulo": "Recogida general del salón", "categoria": "casa", "frecuencia": "diaria", "momento": "noche", "minutos": 6, "notas": "Superficie despejada = mañana tranquila." },
+    { "id": "d-lavabo", "titulo": "Repaso rápido del lavabo con la bayeta", "categoria": "bano", "frecuencia": "diaria", "momento": "noche", "minutos": 2 },
+    { "id": "d-doblar", "titulo": "Doblar y guardar la ropa tendida", "categoria": "ropa", "frecuencia": "diaria", "momento": "noche", "minutos": 7, "notas": "El mismo día. Nada de «la silla»." },
+    { "id": "d-preparar", "titulo": "Dejar preparado lo del día siguiente", "categoria": "casa", "frecuencia": "diaria", "momento": "noche", "minutos": 5, "notas": "Bolsa del bebé, ropa y tuppers." },
+
+    { "id": "w-bano", "titulo": "Baño a fondo: WC, lavabo, espejo y grifería", "categoria": "bano", "frecuencia": "semanal", "dias": [1], "momento": "fija", "minutos": 30 },
+    { "id": "w-altura", "titulo": "Paño húmedo a lo que está a su altura", "categoria": "bebe", "frecuencia": "semanal", "dias": [1, 4], "momento": "fija", "minutos": 6, "notas": "Pomos, cajones bajos, patas de mesa y barrotes de la cuna. Los barrotes los muerde." },
+    { "id": "w-aspirar", "titulo": "Aspirar todo el piso", "categoria": "suelos", "frecuencia": "semanal", "dias": [2], "momento": "fija", "minutos": 20 },
+    { "id": "w-gateo", "titulo": "Fregar las zonas de gateo", "categoria": "suelos", "frecuencia": "semanal", "dias": [2], "momento": "fija", "minutos": 12, "notas": "Agua y jabón neutro, sin dejar residuo. Nada de lejía ni amoniaco donde gatea." },
+    { "id": "w-polvo", "titulo": "Polvo, mandos y pantallas", "categoria": "casa", "frecuencia": "semanal", "dias": [3], "momento": "fija", "minutos": 15 },
+    { "id": "w-microondas", "titulo": "Limpiar el microondas", "categoria": "cocina", "frecuencia": "semanal", "dias": [3], "momento": "fija", "minutos": 6 },
+    { "id": "w-lavavajillas-65", "titulo": "Lavavajillas esta noche a 65-70°", "categoria": "cocina", "frecuencia": "semanal", "dias": [3], "momento": "noche", "minutos": 1, "notas": "Una vez por semana, para vasos y platos del bebé." },
+    { "id": "w-nevera", "titulo": "Nevera y caducidades antes de la compra", "categoria": "cocina", "frecuencia": "semanal", "dias": [4], "momento": "fija", "minutos": 12 },
+    { "id": "w-fregar", "titulo": "Fregar cocina y baño", "categoria": "suelos", "frecuencia": "semanal", "dias": [4], "momento": "fija", "minutos": 20 },
+    { "id": "w-toallas", "titulo": "Cambiar todas las toallas", "categoria": "bano", "frecuencia": "semanal", "dias": [5], "momento": "fija", "minutos": 6 },
+    { "id": "w-cubos", "titulo": "Fregar los cubos de basura", "categoria": "casa", "frecuencia": "semanal", "dias": [5], "momento": "fija", "minutos": 10 },
+    { "id": "w-fregado", "titulo": "Fregado completo del piso", "categoria": "suelos", "frecuencia": "semanal", "dias": [6], "momento": "fija", "minutos": 35, "notas": "Las zonas de gateo, con jabón neutro." },
+    { "id": "w-trona", "titulo": "Desmontar y limpiar la trona", "categoria": "bebe", "frecuencia": "semanal", "dias": [6], "momento": "fija", "minutos": 12, "notas": "Arnés, ranuras y patas desmontadas. Es donde más se acumula." },
+    { "id": "w-juguetes", "titulo": "Lavar los juguetes de boca", "categoria": "bebe", "frecuencia": "semanal", "dias": [6], "momento": "fija", "minutos": 8, "notas": "Los de plástico, en la cesta superior del lavavajillas o con agua y jabón." },
+    { "id": "w-saco", "titulo": "Saco de dormir del bebé a la colada", "categoria": "bebe", "frecuencia": "semanal", "dias": [7], "semana": "A", "momento": "fija", "minutos": 3, "notas": "Cada 2 semanas. Va con la colada del domingo." },
+    { "id": "w-compra", "titulo": "Compra semanal", "categoria": "cocina", "frecuencia": "semanal", "dias": [7], "momento": "fija", "minutos": 50 },
+    { "id": "w-batch", "titulo": "Batch cooking y purés", "categoria": "cocina", "frecuencia": "semanal", "dias": [7], "momento": "fija", "minutos": 45 },
+    { "id": "w-repaso", "titulo": "10 minutos de repaso de la semana", "categoria": "casa", "frecuencia": "semanal", "dias": [7], "momento": "fija", "minutos": 10 },
+
+    { "id": "m-lavadora", "titulo": "Limpiar la lavadora: cajetín, goma de la puerta y ciclo en vacío a 90°", "categoria": "ropa", "frecuencia": "mensual", "minutos": 20, "plan": { "mes": 1, "semana": 4, "dia": 5 } },
+    { "id": "m-filtro-lavavajillas", "titulo": "Filtro del lavavajillas y ciclo de limpieza", "categoria": "cocina", "frecuencia": "mensual", "minutos": 15, "notas": "Mejor cada dos semanas.", "plan": { "mes": 1, "semana": 1, "dia": 5 } },
+    { "id": "m-campana", "titulo": "Filtros de la campana extractora", "categoria": "cocina", "frecuencia": "mensual", "minutos": 15, "notas": "Con desengrasante o lavavajillas.", "plan": { "mes": 1, "semana": 2, "dia": 5 } },
+    { "id": "m-colchones", "titulo": "Aspirar todos los colchones y lavar los protectores", "categoria": "casa", "frecuencia": "mensual", "minutos": 30, "notas": "Incluido el de la cuna.", "plan": { "mes": 1, "semana": 1, "dia": 6 } },
+    { "id": "m-peluches", "titulo": "Peluches a la lavadora", "categoria": "bebe", "frecuencia": "mensual", "minutos": 10, "plan": { "mes": 1, "semana": 4, "dia": 2 } },
+    { "id": "m-altas", "titulo": "Superficies altas: lámparas, altos de armarios, marcos de puertas y rodapiés", "categoria": "casa", "frecuencia": "mensual", "minutos": 30, "plan": { "mes": 1, "semana": 2, "dia": 6 } },
+    { "id": "m-desagues", "titulo": "Desagües con agua muy caliente, bicarbonato y vinagre", "categoria": "bano", "frecuencia": "mensual", "minutos": 10, "notas": "O con limpiador enzimático.", "plan": { "mes": 1, "semana": 1, "dia": 3 } },
+    { "id": "m-nevera", "titulo": "Nevera a fondo con las baldas fuera", "categoria": "cocina", "frecuencia": "mensual", "minutos": 30, "plan": { "mes": 1, "semana": 3, "dia": 6 } },
+    { "id": "m-ropa-bebe", "titulo": "Revisar qué ropa se le ha quedado pequeña al bebé", "categoria": "bebe", "frecuencia": "mensual", "minutos": 15, "notas": "A esta edad, cada 4-8 semanas.", "plan": { "mes": 1, "semana": 3, "dia": 5 } },
+    { "id": "m-alfombra", "titulo": "Alfombra de juego: lavado o limpieza", "categoria": "bebe", "frecuencia": "mensual", "minutos": 20, "notas": "Según las indicaciones del fabricante.", "plan": { "mes": 1, "semana": 4, "dia": 3 } },
+    { "id": "m-aire", "titulo": "Limpiar los filtros del aire acondicionado", "categoria": "casa", "frecuencia": "mensual", "meses": [5, 6, 7, 8, 9], "minutos": 10, "notas": "Al empezar la temporada y luego cada 4-6 semanas de uso.", "plan": { "mes": 1, "semana": 2, "dia": 3 } },
+
+    { "id": "q-cristales", "titulo": "Cristales, marcos de ventana y persianas", "categoria": "casa", "frecuencia": "trimestral", "mes": 2, "minutos": 60, "plan": { "mes": 2, "semana": 4, "dia": 6 } },
+    { "id": "q-colchones", "titulo": "Girar o voltear los colchones", "categoria": "casa", "frecuencia": "trimestral", "mes": 1, "minutos": 15, "plan": { "mes": 1, "semana": 2, "dia": 2 } },
+    { "id": "q-horno", "titulo": "Limpiar el horno por dentro", "categoria": "cocina", "frecuencia": "trimestral", "mes": 3, "minutos": 30, "plan": { "mes": 3, "semana": 4, "dia": 6 } },
+    { "id": "q-descalcificar", "titulo": "Descalcificar cafetera y hervidor", "categoria": "cocina", "frecuencia": "trimestral", "mes": 2, "minutos": 15, "plan": { "mes": 2, "semana": 3, "dia": 3 } },
+    { "id": "q-detras", "titulo": "Limpiar detrás y debajo de la nevera y la lavadora", "categoria": "suelos", "frecuencia": "trimestral", "mes": 3, "minutos": 25, "plan": { "mes": 3, "semana": 3, "dia": 3 } },
+    { "id": "q-seguridad", "titulo": "Repaso de seguridad con el bebé gateando", "categoria": "bebe", "frecuencia": "trimestral", "mes": 1, "minutos": 20, "notas": "Protectores de enchufes, esquinas, muebles anclados a la pared, cables recogidos y barreras de escalera o cocina.", "plan": { "mes": 1, "semana": 3, "dia": 3 } },
+    { "id": "q-caducidades", "titulo": "Caducidades de despensa y botiquín", "categoria": "cocina", "frecuencia": "trimestral", "mes": 3, "minutos": 20, "plan": { "mes": 3, "semana": 2, "dia": 2 } },
+
+    { "id": "h-sofa", "titulo": "Sofá y alfombras a fondo", "categoria": "suelos", "frecuencia": "semestral", "mes": 1, "minutos": 45, "plan": { "mes": 1, "semana": 4, "dia": 6 } },
+    { "id": "h-almohadas", "titulo": "Lavar las almohadas", "categoria": "ropa", "frecuencia": "semestral", "mes": 2, "minutos": 15, "notas": "2-3 veces al año.", "plan": { "mes": 2, "semana": 2, "dia": 2 } },
+    { "id": "h-cortinas", "titulo": "Lavar cortinas y visillos", "categoria": "ropa", "frecuencia": "semestral", "mes": 3, "minutos": 30, "plan": { "mes": 3, "semana": 1, "dia": 2 } },
+    { "id": "h-armario", "titulo": "Cambio de armario por temporada: adultos y bebé", "categoria": "ropa", "frecuencia": "semestral", "mes": 4, "minutos": 60, "plan": { "mes": 4, "semana": 4, "dia": 6 } },
+    { "id": "h-nordico", "titulo": "Lavar el nórdico o edredón", "categoria": "ropa", "frecuencia": "semestral", "mes": 5, "minutos": 20, "plan": { "mes": 5, "semana": 2, "dia": 2 } },
+    { "id": "h-carrito", "titulo": "Carrito y silla de coche: desmontar y lavar", "categoria": "bebe", "frecuencia": "semestral", "mes": 6, "minutos": 45, "plan": { "mes": 6, "semana": 1, "dia": 2 } },
+
+    { "id": "a-caldera", "titulo": "Revisión de la caldera", "categoria": "casa", "frecuencia": "anual", "mes": 10, "minutos": 15, "notas": "Pide cita con el técnico y déjala apuntada.", "plan": { "mes": 10, "semana": 1, "dia": 2 } }
+  ]
+}

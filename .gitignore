@@ -1,0 +1,7 @@
+# Documento de trabajo personal: no se publica
+rutina-hogar.md
+
+# Herramientas locales
+.claude/
+node_modules/
+*.log
