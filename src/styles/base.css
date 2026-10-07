@@ -262,7 +262,7 @@ main.vista {
 .tit-lista { margin: 26px 8px 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label-2); }
 .campo { position: relative; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 16px; }
 .campo:not(:last-child)::after { content: ''; position: absolute; left: 16px; right: 0; bottom: 0; border-bottom: 0.5px solid var(--sep); }
-.campo > label, .campo > .et { flex: 1; min-width: 0; font-size: 17px; }
+.campo > label:not(.interruptor), .campo > .et { flex: 1; min-width: 0; font-size: 17px; }
 .campo .et small { display: block; font-size: 13px; color: var(--label-2); margin-top: 1px; }
 .campo.col { flex-direction: column; align-items: stretch; gap: 8px; padding-top: 12px; padding-bottom: 12px; }
 .campo.col > .et { font-size: 14px; color: var(--label-2); flex: none; }

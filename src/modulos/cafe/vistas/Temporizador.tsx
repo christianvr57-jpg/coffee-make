@@ -10,6 +10,7 @@ import { borrador } from '../borrador';
 import { metodo, esEspresso } from '../datos/metodos';
 import { ajustesCafe } from '../repositorio';
 import { avanzar, iniciar, marcar, nuevoTemporizador, pausar, reanudar, terminar, tic, vistaFase, type EstadoTemporizador } from '../temporizador';
+import { planDePreparacion, vertidoEnFase } from '../recetas';
 
 const guardarEstado = (e: EstadoTemporizador) => {
   if (borrador.value) borrador.value = { ...borrador.value, temporizador: e };
@@ -27,9 +28,9 @@ export function Temporizador() {
       return;
     }
     const bb = borrador.value;
-    if (!bb.temporizador || bb.temporizador.terminado) {
-      const m = metodo(bb.prep.metodo);
-      guardarEstado(nuevoTemporizador(m.fases(bb.prep.dosis || m.dosis, bb.prep.agua || Math.round((bb.prep.dosis || m.dosis) * m.ratio))));
+    // Sin empezar se rehace siempre, por si cambiaste cantidades o receta en Preparar.
+    if (!bb.temporizador || bb.temporizador.terminado || bb.temporizador.inicio === null) {
+      guardarEstado(nuevoTemporizador(planDePreparacion(bb.prep, bb.receta)));
     } else if (bb.temporizador.inicio !== null && bb.temporizador.pausadoEn === null && ajustesCafe.value.pantallaEncendida) {
       mantenerPantalla(true);
     }
@@ -109,6 +110,10 @@ export function Temporizador() {
     return { ...f, inicio, estado: i < e.faseIdx ? 'hecha' : i === e.faseIdx ? 'actual' : 'siguiente' };
   });
   const primeraGota = e.marcas.find((m) => m.nombre === 'Primera gota');
+  const vertido = vertidoEnFase(e.fases, e.faseIdx);
+  const antes = `Antes de empezar: ${fmt(p.dosis)} g de café molido${p.temperatura ? `, agua a ${p.temperatura} °C` : ''}${
+    met.familia === 'percolacion' || met.familia === 'hibrido' ? ', filtro enjuagado' : ''
+  } y báscula a cero.`;
 
   return (
     <div class="temporizador">
@@ -117,8 +122,11 @@ export function Temporizador() {
           <Icono n="cerrar" t={20} />
         </button>
         <div class="temp-titulo">
-          <b>{met.nombre}</b>
-          <span>{p.cafeNombre || 'Café sin registrar'}</span>
+          <b>{b.receta ? b.receta.nombre : met.nombre}</b>
+          <span>
+            {b.receta ? `${met.nombre} · ` : ''}
+            {p.cafeNombre || 'Café sin registrar'}
+          </span>
         </div>
         <span class="temp-receta">
           {fmt(p.dosis)} g · {esp ? `${fmt(p.rendimiento)} g` : `${fmt(p.agua)} g`}
@@ -134,7 +142,11 @@ export function Temporizador() {
             <b>
               {fmt(p.dosis)} g → {fmt(p.rendimiento)} g
             </b>
-            <small>Tiempo orientativo para un normale: 25-32 s desde que pulsas</small>
+            <small>
+              {b.receta?.tiempoObjetivo
+                ? `Tiempo de la receta: ${b.receta.tiempoObjetivo[0]}-${b.receta.tiempoObjetivo[1]} s desde que pulsas`
+                : 'Tiempo orientativo para un normale: 25-32 s desde que pulsas'}
+            </small>
           </div>
           {primeraGota && <p class="temp-marca">Primera gota a los {fmt(primeraGota.t, 0)} s</p>}
         </section>
@@ -148,9 +160,11 @@ export function Temporizador() {
               <div class="temp-agua">
                 <span>Vierte hasta</span>
                 <b>{v.fase.aguaHasta} g</b>
+                {vertido !== undefined && vertido !== v.fase.aguaHasta && <small>+{vertido} g</small>}
               </div>
             )}
             <p class="temp-instruccion">{v.fase.instruccion}</p>
+            {!empezado && e.faseIdx === 0 && <p class="temp-antes">{antes}</p>}
             {v.progreso !== null && (
               <div class="temp-barra">
                 <div style={{ width: `${(v.progreso || 0) * 100}%` }} />
@@ -159,7 +173,7 @@ export function Temporizador() {
             {empezado && v.restante !== null && (
               <div class={`temp-restante${v.restante < 0 ? ' pasado' : ''}`}>
                 {v.restante >= 0
-                  ? `${v.ultima ? 'Previsto: termina en' : v.siguiente ? `${v.siguiente.nombre} en` : 'Quedan'} ${segundosATexto(v.restante)}`
+                  ? `${v.ultima ? 'Previsto: termina en' : v.siguiente ? `${v.siguiente.nombre}${v.siguiente.aguaHasta !== undefined ? ` (hasta ${v.siguiente.aguaHasta} g)` : ''} en` : 'Quedan'} ${segundosATexto(v.restante)}`
                   : `+${segundosATexto(-v.restante)} sobre lo previsto`}
               </div>
             )}

@@ -7,7 +7,7 @@ import { Icono } from '../../../ui/Icono';
 import { estadoReposo, ratio, textoRatio, congelado } from '../calculos';
 import { metodo } from '../datos/metodos';
 import { textoPuntuacion } from '../datos/catalogos';
-import type { Cafe, Equipo, MetodoId, Preparacion } from '../modelo';
+import type { Cafe, Equipo, MetodoId, Preparacion, Receta } from '../modelo';
 
 export function IconoMetodo({ id, tam = 36 }: { id: MetodoId; tam?: number }) {
   return (
@@ -92,6 +92,15 @@ export function resumenPrep(p: Preparacion, equipo: Equipo[] = []): string {
   ]
     .filter(Boolean)
     .join(' · ');
+}
+
+/** "15 g · 1:16,7 · 3:00" (o "18 → 36 g · 25-30 s" en espresso) */
+export function resumenReceta(r: Receta): string {
+  const esp = r.metodo === 'espresso';
+  const obj = r.tiempoObjetivo;
+  const plan = r.fases.reduce((s, f) => s + (f.duracion || 0), 0);
+  const tiempo = esp ? (obj ? `${obj[0]}-${obj[1]} s` : '') : plan ? segundosATexto(plan) : obj ? segundosATexto(Math.round((obj[0] + obj[1]) / 2 / 5) * 5) : '';
+  return [esp ? `${fmt(r.dosis)} → ${fmt(r.rendimiento)} g` : `${fmt(r.dosis)} g`, textoRatio(ratio(r)), tiempo].filter(Boolean).join(' · ');
 }
 
 /** URL temporal para mostrar una foto guardada. */

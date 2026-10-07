@@ -204,3 +204,34 @@
 .sg-explicacion { font-size: 14.5px; line-height: 1.45; color: var(--label-2); padding: 10px 12px; border-radius: 12px; background: var(--fill); }
 .acciones-fila .boton-secundario { flex: 1; }
 .acciones-fila .boton-principal { flex: 1; }
+
+/* ---------- Recetas ---------- */
+.chips.desplazables { flex: 1; min-width: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 2px; margin: -2px; }
+.chips.desplazables::-webkit-scrollbar { display: none; }
+.chips.desplazables .chip { flex: none; min-height: 38px; padding: 0 13px; font-size: 14.5px; }
+.fila-receta { margin-top: 12px; }
+.marca-elegida { color: var(--accent); flex: none; }
+.resumen-receta { margin: 8px 4px 0; font-size: 16px; line-height: 1.45; color: var(--label-2); }
+.pasos-receta { list-style: none; margin: 0; padding: 0; }
+.pasos-receta li { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 10px; padding: 12px 16px; }
+.pasos-receta li:not(:last-child)::after { content: ''; position: absolute; left: 70px; right: 0; bottom: 0; border-bottom: 0.5px solid var(--sep); }
+.pr-tiempo { font-size: 15px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; padding-top: 1px; }
+.pr-txt { display: grid; gap: 3px; min-width: 0; }
+.pr-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.pr-cab b { font-size: 16px; }
+.pr-agua { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pr-txt p { font-size: 15px; line-height: 1.4; color: var(--label); }
+.pr-txt small { font-size: 12.5px; color: var(--label-2); }
+.consejos { margin: 0; padding: 14px 16px 14px 34px; gap: 8px; }
+.consejos li { font-size: 15.5px; line-height: 1.45; }
+.pie.primero { margin-top: 0; margin-bottom: 8px; }
+.lista.separada-arriba { margin-top: 14px; }
+.editor-paso { margin-bottom: 12px; }
+.ep-cab { display: flex; align-items: center; gap: 8px; padding: 10px 12px 4px 16px; }
+.ep-cab b { flex: 1; font-size: 15px; color: var(--accent); }
+.ep-cab .btn-icono { width: 36px; height: 36px; }
+.ep-cab .btn-icono:disabled { opacity: 0.3; }
+.ep-cab .btn-icono.peligro { color: var(--peligro, #ff3b30); }
+.gira-arriba { transform: rotate(180deg); }
+.temp-agua small { font-size: 17px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+.temp-antes { font-size: 14.5px; line-height: 1.4; color: var(--label-2); padding: 10px 12px; border-radius: 12px; background: var(--fill); }

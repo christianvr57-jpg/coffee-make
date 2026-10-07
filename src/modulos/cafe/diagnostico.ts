@@ -42,7 +42,8 @@ function cambioMolienda(p: Partial<Preparacion>, molino: Equipo | undefined, dir
   return { accion: `Muele ${texto(dir, paso)}: de ${fmt(p.molienda)} a ${fmt(nuevo)}.`, cambio: { molienda: nuevo } };
 }
 
-export function diagnosticar(p: Partial<Preparacion> & Pick<Preparacion, 'metodo'>, ctx: { cafe?: Cafe; molino?: Equipo } = {}): Diagnostico {
+/** `objetivo`: tiempo total esperado de la receta seguida; si no hay, el orientativo del método. */
+export function diagnosticar(p: Partial<Preparacion> & Pick<Preparacion, 'metodo'>, ctx: { cafe?: Cafe; molino?: Equipo; objetivo?: [number, number] } = {}): Diagnostico {
   const met = metodo(p.metodo);
   const esp = p.metodo === 'espresso';
   const fam = met.familia;
@@ -50,7 +51,7 @@ export function diagnosticar(p: Partial<Preparacion> & Pick<Preparacion, 'metodo
   const sug: Sugerencia[] = [];
   const r = ratio(p as Preparacion);
   const t = p.tiempoTotal;
-  const [tMin, tMax] = met.tiempoObjetivo || [0, Infinity];
+  const [tMin, tMax] = ctx.objetivo || met.tiempoObjetivo || [0, Infinity];
   const rapido = t !== undefined && t < tMin;
   const lento = t !== undefined && t > tMax;
   const tueste = ctx.cafe?.tueste;

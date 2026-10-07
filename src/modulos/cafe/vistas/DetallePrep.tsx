@@ -12,7 +12,9 @@ import { diferencias, extraccion, ratio, textoRatio, diagnosticoControl } from '
 import { SINTOMAS, textoPuntuacion } from '../datos/catalogos';
 import { metodo, esEspresso } from '../datos/metodos';
 import type { Preparacion } from '../modelo';
-import { listarAguas, listarEquipo } from '../repositorio';
+import { listarAguas, listarEquipo, obtenerReceta } from '../repositorio';
+import { planDePreparacion, recetaDesdePreparacion } from '../recetas';
+import { editarReceta } from './Recetas';
 import { ControlChart } from './ControlChart';
 import { IconoMetodo, Nota, textoMolienda } from './comunes';
 import { repetirPreparacion } from './Preparar';
@@ -25,6 +27,7 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
   const hijas = useVivo(async () => (p ? (await db.cafe_preparaciones.where('padreId').equals(p.id).toArray()).filter((x) => !x.borrado) : []), [p?.id]) || [];
   const equipo = useVivo(listarEquipo, []) || [];
   const aguas = useVivo(listarAguas, []) || [];
+  const receta = useVivo(() => obtenerReceta(p?.recetaId), [p?.recetaId]);
 
   if (p === undefined) return <BarraDetalle padre="/cafe" textoAtras="Café" />;
   if (!p || p.borrado) {
@@ -62,6 +65,17 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
   const editar = () => {
     borrador.value = { prep: { ...p, sintomas: p.sintomas || [] }, editando: p.id };
     ir('/cafe/preparar/resultado');
+  };
+  const guardarComoReceta = () => {
+    const nueva = recetaDesdePreparacion(p, planDePreparacion(p, receta), receta ? receta.nombre : met.nombre);
+    if (receta) {
+      // Conserva los textos de la receta de la que partías.
+      nueva.molienda = receta.molienda;
+      nueva.consejos = [...receta.consejos];
+      nueva.baseId = receta.id;
+      nueva.autor = receta.autor;
+    } else nueva.molienda = met.descripcionMolienda;
+    editarReceta(nueva, null);
   };
   const eliminar = async () => {
     if (!(await confirmar({ titulo: '¿Eliminar esta preparación?', ok: 'Eliminar', peligro: true }))) return;
@@ -146,6 +160,29 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
           </div>
         )}
 
+        {p.recetaId && (
+          <div class="lista separada-arriba">
+            {receta ? (
+              <a class="item" href={`#/cafe/recetas/${receta.id}`}>
+                <span class="insignia insignia-cafe" style={{ '--tam': '36px' }}>
+                  <Icono n="receta" t={20} />
+                </span>
+                <div class="item-txt">
+                  <div class="item-meta">Receta</div>
+                  <div class="item-tit">{receta.nombre}</div>
+                </div>
+                <Icono n="chevron" t={16} clase="chev" />
+              </a>
+            ) : (
+              <div class="item">
+                <div class="item-txt">
+                  <div class="item-meta">Hecha con una receta que ya has borrado</div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <div class="tit-lista">Parámetros</div>
         <dl class="rejilla-datos">
           {datos.filter(([, v]) => v).map(([k, v]) => (
@@ -206,6 +243,11 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
         )}
 
         <div class="lista separada">
+          {met.temporizador && (
+            <button type="button" class="boton-fila" onClick={guardarComoReceta}>
+              <Icono n="receta" t={22} /> Guardar como receta
+            </button>
+          )}
           <button type="button" class="boton-fila peligro" onClick={eliminar}>
             <Icono n="papelera" t={22} /> Eliminar preparación
           </button>

@@ -3,7 +3,7 @@
 // llevan marcas de tiempo y borrado lógico para poder sincronizar en el futuro.
 import Dexie, { type EntityTable } from 'dexie';
 import { ulid } from './ids';
-import type { Agua, Cafe, Equipo, Foto, Preparacion } from '../modulos/cafe/modelo';
+import type { Agua, Cafe, Equipo, Foto, Preparacion, Receta } from '../modulos/cafe/modelo';
 
 /** Campos comunes de cualquier registro sincronizable. */
 export interface Registro {
@@ -52,6 +52,7 @@ export class BaseDatos extends Dexie {
   cafe_aguas!: EntityTable<Agua, 'id'>;
   cafe_cafes!: EntityTable<Cafe, 'id'>;
   cafe_preparaciones!: EntityTable<Preparacion, 'id'>;
+  cafe_recetas!: EntityTable<Receta, 'id'>;
   fotos!: EntityTable<Foto, 'id'>;
 
   constructor() {
@@ -67,16 +68,18 @@ export class BaseDatos extends Dexie {
       cafe_preparaciones: '&id, fecha, cafeId, metodo, padreId',
       fotos: '&id',
     });
+    // v2 (café fase 3): recetas propias.
+    this.version(2).stores({ cafe_recetas: '&id, metodo' });
   }
 }
 
 export const db = new BaseDatos();
 
 /** Tablas que forman la copia de seguridad (todas menos la cola de cambios). */
-export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'fotos'] as const;
+export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'fotos'] as const;
 export type TablaDatos = (typeof TABLAS_DATOS)[number];
 
-type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones';
+type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas';
 
 /** Crea o actualiza un registro poniendo marcas de tiempo y anotándolo en la cola de cambios. */
 export async function guardar<T extends Registro>(tabla: TablaRegistros, datos: Partial<T> & Record<string, unknown>): Promise<T> {

@@ -5,6 +5,7 @@ import { db } from '../../../core/db';
 import { Icono } from '../../../ui/Icono';
 import { diagnosticar, type Sugerencia } from '../diagnostico';
 import type { Preparacion } from '../modelo';
+import { obtenerReceta } from '../repositorio';
 
 const ICONO: Record<Sugerencia['tipo'], string> = { ajuste: 'equipo', tecnica: 'v60', aviso: 'aviso', bien: 'check' };
 
@@ -37,7 +38,8 @@ function FilaSugerencia({ s, onProbar }: { s: Sugerencia; onProbar?: (c: Partial
 export function TarjetaDiagnostico({ prep, onProbar }: { prep: Partial<Preparacion> & Pick<Preparacion, 'metodo'>; onProbar?: (c: Partial<Preparacion>) => void }) {
   const cafe = useVivo(async () => (prep.cafeId ? db.cafe_cafes.get(prep.cafeId) : undefined), [prep.cafeId]);
   const molino = useVivo(async () => (prep.molinoId ? db.cafe_equipo.get(prep.molinoId) : undefined), [prep.molinoId]);
-  const d = diagnosticar(prep, { cafe, molino });
+  const receta = useVivo(() => obtenerReceta(prep.recetaId), [prep.recetaId]);
+  const d = diagnosticar(prep, { cafe, molino, objetivo: receta?.metodo === prep.metodo ? receta.tiempoObjetivo : undefined });
   return (
     <section class="diagnostico">
       <div class="dg-lectura">

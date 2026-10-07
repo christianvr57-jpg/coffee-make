@@ -7,13 +7,13 @@ import { BarraDetalle } from '../../../ui/Cabecera';
 import { Hoja, abrirHoja } from '../../../ui/capas';
 import { Ajuste, Campo, Lista, Selector, fmt } from '../../../ui/form';
 import { Icono } from '../../../ui/Icono';
-import { borrador, actualizarPrep, type Borrador } from '../borrador';
+import { borrador, actualizarPrep, type Borrador, type RecetaElegida } from '../borrador';
 import { ratio, textoRatio, usoParaReposo, diasReposo } from '../calculos';
 import { METODOS, metodo, esEspresso } from '../datos/metodos';
 import { textoPuntuacion } from '../datos/catalogos';
-import type { Cafe, Equipo, MetodoId, Preparacion } from '../modelo';
-import { ID_C40, ID_G3006, ID_G5, listarAguas, listarCafes, listarEquipo, listarPreparaciones, ultimaReferencia } from '../repositorio';
-import { ChipReposo, descripcionCafe, textoMolienda } from './comunes';
+import type { Cafe, Equipo, MetodoId, Preparacion, Receta } from '../modelo';
+import { ID_C40, ID_G3006, ID_G5, listarAguas, listarCafes, listarEquipo, listarPreparaciones, listarRecetas, obtenerReceta, ultimaReferencia } from '../repositorio';
+import { ChipReposo, IconoMetodo, descripcionCafe, resumenReceta, textoMolienda } from './comunes';
 
 const RATIOS_FILTRO = [15, 16, 16.7, 17];
 const RATIOS_ESPRESSO: [number, string][] = [[1.5, 'Ristretto'], [2, 'Normale'], [2.5, '1:2,5'], [3, 'Lungo']];
@@ -63,17 +63,111 @@ export async function nuevaPreparacion(cafeId?: string, m?: MetodoId): Promise<v
 /** Repite una preparación; con `cambio`, aplica ya la sugerencia del diagnóstico. */
 export async function repetirPreparacion(p: Preparacion, cambio?: Partial<Preparacion>): Promise<void> {
   const desde = `${laDel(p.fecha)}${p.puntuacion ? ` (${fmt(p.puntuacion)}/10)` : ''}`;
+  const r = await obtenerReceta(p.recetaId);
   borrador.value = {
     prep: {
       metodo: p.metodo, cafeId: p.cafeId, cafeNombre: p.cafeNombre, dosis: p.dosis, agua: p.agua, rendimiento: p.rendimiento, molinoId: p.molinoId,
       molienda: p.molienda, temperatura: p.temperatura, aguaId: p.aguaId, filtro: p.filtro, cafeteraId: p.cafeteraId, preinfusion: p.preinfusion,
-      bebida: p.bebida, padreId: p.id, sintomas: [], ...(cambio || {}),
+      bebida: p.bebida, padreId: p.id, recetaId: r ? r.id : undefined, sintomas: [], ...(cambio || {}),
     },
     origen: cambio
       ? `Repitiendo ${desde} con el ajuste sugerido ya aplicado. Deja el resto igual.`
       : `Repitiendo ${desde}. Cambia solo una variable para saber qué efecto tiene.`,
+    receta: r ? recetaElegida(r) : undefined,
   };
   ir('/cafe/preparar');
+}
+
+export const recetaElegida = (r: Receta): RecetaElegida => ({ id: r.id, nombre: r.nombre, autor: r.autor, metodo: r.metodo, agua: r.agua, fases: r.fases, tiempoObjetivo: r.tiempoObjetivo });
+const autorCorto = (r: Receta) => r.autor?.split(' · ')[0];
+
+/**
+ * Aplica una receta a un borrador. Si ya la hiciste con este café, parte de tu última vez
+ * (molienda incluida); si no, de las cantidades del autor y una molienda de partida.
+ */
+export async function aplicarReceta(b: Borrador, r: Receta): Promise<Borrador> {
+  const esp = esEspresso(r.metodo);
+  const preps = await listarPreparaciones();
+  const cafeId = b.prep.cafeId;
+  const mismoCafe = cafeId ? preps.find((x) => x.recetaId === r.id && x.cafeId === cafeId) : undefined;
+  const base = { metodo: r.metodo, cafeId, cafeNombre: b.prep.cafeNombre, recetaId: r.id, sintomas: [] as Preparacion['sintomas'] };
+  const receta = recetaElegida(r);
+  if (mismoCafe) {
+    const x = mismoCafe;
+    return {
+      prep: {
+        ...base, dosis: x.dosis, agua: esp ? undefined : x.agua, rendimiento: esp ? x.rendimiento : undefined, molinoId: x.molinoId, molienda: x.molienda,
+        temperatura: x.temperatura, aguaId: x.aguaId, filtro: x.filtro, cafeteraId: x.cafeteraId, preinfusion: x.preinfusion, padreId: x.id,
+      },
+      origen: `Receta «${r.nombre}». Partiendo de tu última vez con ella y este café (${laDel(x.fecha)}${x.puntuacion ? `, ${fmt(x.puntuacion)}/10` : ''}).`,
+      receta,
+    };
+  }
+  const otroCafe = preps.find((x) => x.recetaId === r.id);
+  let molinoId = b.prep.molinoId;
+  let molienda = b.prep.molienda;
+  let nota = '';
+  if (otroCafe?.molienda !== undefined) {
+    molinoId = otroCafe.molinoId;
+    molienda = otroCafe.molienda;
+    nota = ` Molienda de tu última vez con esta receta (${laDel(otroCafe.fecha)}), que fue con otro café: revísala si cambia el tueste.`;
+  } else if (r.molinoId && r.ajusteMolino !== undefined) {
+    molinoId = r.molinoId;
+    molienda = r.ajusteMolino;
+  } else if (r.clicsC40 && !esp) {
+    molinoId = ID_C40;
+    molienda = Math.round((r.clicsC40[0] + r.clicsC40[1]) / 2);
+    nota = ` Molienda ${r.molienda?.toLowerCase() || ''}: en tu C40 empieza por ${molienda} clics (estimación de la app, no del autor).`;
+  }
+  return {
+    prep: {
+      ...base, dosis: r.dosis, agua: esp ? undefined : r.agua, rendimiento: esp ? r.rendimiento : undefined, molinoId, molienda,
+      temperatura: r.temperatura ?? b.prep.temperatura, aguaId: b.prep.aguaId, filtro: r.filtro ?? b.prep.filtro, cafeteraId: b.prep.cafeteraId, preinfusion: b.prep.preinfusion,
+    },
+    origen: `Receta «${r.nombre}»${autorCorto(r) ? ` de ${autorCorto(r)}` : ''}, pensada para ${fmt(r.dosis)} g.${nota}`,
+    receta,
+  };
+}
+
+/** Empieza una preparación con una receta (desde su ficha). */
+export async function prepararConReceta(r: Receta): Promise<void> {
+  const preps = await listarPreparaciones();
+  const cafes = (await listarCafes()).filter((c) => !c.terminado);
+  const ultima = preps[0];
+  const cafe = ultima?.cafeId && cafes.some((c) => c.id === ultima.cafeId) ? ultima.cafeId : cafes[0]?.id;
+  borrador.value = await aplicarReceta(await construirBorrador(cafe, r.metodo, cafes), r);
+  ir('/cafe/preparar');
+}
+
+function ElegirReceta({ cerrar, m, actual, elegir }: { cerrar: () => void; m: MetodoId; actual?: string; elegir: (r: Receta | null) => void }) {
+  const recetas = (useVivo(listarRecetas, []) || []).filter((r) => r.metodo === m);
+  return (
+    <Hoja titulo={`Recetas de ${metodo(m).nombre}`} cerrar={cerrar}>
+      <div class="lista">
+        <button type="button" class="item" onClick={() => (elegir(null), cerrar())}>
+          <IconoMetodo id={m} />
+          <div class="item-txt">
+            <div class="item-tit">Sin receta</div>
+            <div class="item-meta">Pasos básicos del método</div>
+          </div>
+          {!actual && <Icono n="check" t={18} clase="marca-elegida" />}
+        </button>
+        {recetas.map((r) => (
+          <button type="button" class="item" onClick={() => (elegir(r), cerrar())}>
+            <span class="insignia insignia-cafe" style={{ '--tam': '36px' }}>
+              <Icono n="receta" t={20} />
+            </span>
+            <div class="item-txt">
+              <div class="item-tit">{r.nombre}</div>
+              <div class="item-meta">{[autorCorto(r) || (r.referencia ? '' : 'Tuya'), resumenReceta(r)].filter(Boolean).join(' · ')}</div>
+            </div>
+            {actual === r.id && <Icono n="check" t={18} clase="marca-elegida" />}
+          </button>
+        ))}
+      </div>
+      {recetas.length === 0 && <p class="pie">Aún no hay recetas para este método. Puedes crear la tuya desde la pestaña Recetas.</p>}
+    </Hoja>
+  );
 }
 
 function ElegirCafe({ cerrar, cafes, uso, elegir }: { cerrar: () => void; cafes: Cafe[]; uso: 'filtro' | 'espresso'; elegir: (id?: string) => void }) {
@@ -139,11 +233,18 @@ export function Preparar() {
     .sort((a, b2) => (b2.puntuacion || 0) - (a.puntuacion || 0))[0];
 
   const cambiarCafe = async (id?: string) => {
-    const nb = await construirBorrador(id, p.metodo, cafes);
+    let nb = await construirBorrador(id, p.metodo, cafes);
+    // Mantiene la receta elegida al cambiar de café.
+    const r = await obtenerReceta(b.receta?.id);
+    if (r && r.metodo === p.metodo) nb = await aplicarReceta(nb, r);
     borrador.value = nb;
   };
   const cambiarMetodo = async (m: MetodoId) => {
     borrador.value = await construirBorrador(p.cafeId, m, cafes);
+  };
+  const cambiarReceta = async (r: Receta | null) => {
+    const nb = await construirBorrador(p.cafeId, r ? r.metodo : p.metodo, cafes);
+    borrador.value = r ? await aplicarReceta(nb, r) : nb;
   };
   const fijarRatio = (x: number) => {
     if (!p.dosis) return;
@@ -206,6 +307,25 @@ export function Preparar() {
           ))}
         </div>
 
+        {met.temporizador && (
+          <div class="lista fila-receta">
+            <button
+              type="button"
+              class="item"
+              onClick={() => abrirHoja((cerrar) => <ElegirReceta cerrar={cerrar} m={p.metodo} actual={b.receta?.id} elegir={cambiarReceta} />)}
+            >
+              <span class="insignia insignia-cafe" style={{ '--tam': '36px' }}>
+                <Icono n="receta" t={20} />
+              </span>
+              <div class="item-txt">
+                <div class="item-tit">{b.receta ? b.receta.nombre : 'Sin receta'}</div>
+                <div class="item-meta">{b.receta ? `Pasos de la receta${b.receta.autor ? ` · ${b.receta.autor.split(' · ')[0]}` : ''}` : 'Pasos básicos del método · toca para elegir una receta'}</div>
+              </div>
+              <Icono n="chevron" t={16} clase="chev" />
+            </button>
+          </div>
+        )}
+
         {b.origen && (
           <p class="aviso-suave">
             <Icono n="info" t={18} />
@@ -223,7 +343,7 @@ export function Preparar() {
           </p>
         )}
 
-        <Lista titulo="Receta">
+        <Lista titulo="Cantidades" pie={b.receta && b.receta.agua && p.agua && Math.abs(p.agua / b.receta.agua - 1) > 0.02 ? `Los vertidos de la receta se escalan a ${fmt(p.agua)} g. Los tiempos no cambian: con mucha más o menos cantidad, el drenaje tardará distinto.` : undefined}>
           <Campo et="Dosis de café">
             <Ajuste valor={p.dosis} cambiar={fijarDosis} paso={0.5} min={1} unidad="g" etiqueta="dosis" />
           </Campo>

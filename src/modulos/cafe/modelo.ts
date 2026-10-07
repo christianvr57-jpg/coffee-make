@@ -133,6 +133,43 @@ export interface Cata {
   defectos: string[];
 }
 
+/**
+ * Receta: método + cantidades + pasos guiados. Las de referencia viven en el código
+ * (datos/recetas.ts) con su fuente; las tuyas, en la tabla cafe_recetas.
+ * Los pesos de los pasos son acumulados ("vierte hasta X g") para la dosis de la receta
+ * y se escalan en proporción si cambias la cantidad de agua.
+ */
+export interface Receta extends Registro {
+  nombre: string;
+  metodo: MetodoId;
+  autor?: string;
+  /** Una línea: qué la distingue o cuándo usarla. */
+  resumen?: string;
+  fuente?: { titulo: string; url: string };
+  dosis: number;
+  agua?: number;
+  /** Espresso: salida en taza. */
+  rendimiento?: number;
+  temperatura?: number;
+  /** Molienda tal como la describe el autor. */
+  molienda?: string;
+  /** Punto de partida orientativo en el Comandante C40 (estimación de la app, no del autor). */
+  clicsC40?: [number, number];
+  /** En tus recetas: molino y ajuste exactos. */
+  molinoId?: string;
+  ajusteMolino?: number;
+  filtro?: string;
+  fases: import('./datos/metodos').FasePlan[];
+  /** Tiempo total esperado (s); el diagnóstico lo usa para saber si fue rápido o lento. */
+  tiempoObjetivo?: [number, number];
+  consejos: string[];
+  notas?: string;
+  /** Receta de la biblioteca de la app (solo lectura; se puede duplicar). */
+  referencia?: boolean;
+  /** Receta de la que se duplicó. */
+  baseId?: string;
+}
+
 /** Fotos comprimidas (paquetes de café, etc.). */
 export interface Foto {
   id: string;

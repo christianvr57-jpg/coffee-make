@@ -5,7 +5,9 @@ Segundo cerebro personal en forma de app web instalable (PWA): un núcleo común
 Módulos actuales:
 
 - **Hogar**: rutina de la casa (coladas, tareas diarias, semanales y periódicas repartidas por el mes).
-- **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable".
+- **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable", cata con rueda de sabores y diagnóstico de extracción, y recetas (de referencia con su fuente y propias) que guían el temporizador paso a paso.
+
+Las recetas de referencia están en `src/modulos/cafe/datos/recetas.ts`, cada una con el enlace a su fuente. Las cantidades, tiempos y temperaturas son los del autor; los clics del Comandante C40 son una estimación de la app y se muestran como tal.
 
 ## Estructura
 
@@ -16,7 +18,8 @@ src/
   vistas/        Inicio, Más, Buscar, Ajustes
   modulos/
     hogar/       calendario.ts (lógica), reparto.ts, rutina.json (datos), vistas/
-    cafe/        modelo.ts, calculos.ts, temporizador.ts, datos/ (métodos y catálogos), vistas/
+    cafe/        modelo.ts, calculos.ts, diagnostico.ts, recetas.ts, temporizador.ts,
+                 datos/ (métodos, catálogos, rueda de sabores, recetas de referencia), vistas/
 tests/           pruebas de la lógica (Vitest)
 tools/           reparto de tareas periódicas e iconos
 ```

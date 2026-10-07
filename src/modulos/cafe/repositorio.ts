@@ -3,8 +3,9 @@ import { signal } from '@preact/signals';
 import { db, guardar, leerAjuste, escribirAjuste, vivos } from '../../core/db';
 import { addDays, iso } from '../../core/fechas';
 import { ulid } from '../../core/ids';
-import type { Agua, Cafe, Equipo, MetodoId, Preparacion } from './modelo';
+import type { Agua, Cafe, Equipo, MetodoId, Preparacion, Receta } from './modelo';
 import { diasReposo } from './calculos';
+import { RECETAS_REFERENCIA } from './datos/recetas';
 
 // ---------- Ajustes del módulo ----------------------------------------------------------------------
 export interface AjustesCafe {
@@ -22,6 +23,20 @@ export const listarCafes = async () => vivos(await db.cafe_cafes.toArray()).sort
 export const listarPreparaciones = async () => vivos(await db.cafe_preparaciones.orderBy('fecha').reverse().toArray());
 export const listarEquipo = async () => vivos(await db.cafe_equipo.toArray());
 export const listarAguas = async () => vivos(await db.cafe_aguas.toArray());
+
+/** Tus recetas (más recientes primero) seguidas de las de referencia. */
+export async function listarRecetas(): Promise<Receta[]> {
+  const mias = vivos(await db.cafe_recetas.toArray()).sort((a, b) => b.actualizado - a.actualizado);
+  return [...mias, ...RECETAS_REFERENCIA];
+}
+
+export async function obtenerReceta(id?: string): Promise<Receta | undefined> {
+  if (!id) return undefined;
+  const ref = RECETAS_REFERENCIA.find((r) => r.id === id);
+  if (ref) return ref;
+  const r = await db.cafe_recetas.get(id);
+  return r && !r.borrado ? r : undefined;
+}
 
 /** Última preparación con ese café y método; si no hay, la última con ese método. */
 export async function ultimaReferencia(cafeId: string | undefined, m: MetodoId): Promise<Preparacion | undefined> {
@@ -89,7 +104,7 @@ function datosDemo(): { cafes: Partial<Cafe>[]; preps: Partial<Preparacion>[] } 
   };
   const base = { demo: true, sintomas: [] as Preparacion['sintomas'], aguaId: 'agua-debil' };
   const v60 = (n: number, diasAtras: number, clics: number, punt: number, extra: Partial<Preparacion> = {}): Partial<Preparacion> => ({
-    ...base, id: `demo-prep-v60-${n}`, fecha: ts(diasAtras, 8), cafeId: guji.id, cafeNombre: guji.nombre, metodo: 'v60', molinoId: ID_C40,
+    ...base, id: `demo-prep-v60-${n}`, fecha: ts(diasAtras, 8), cafeId: guji.id, cafeNombre: guji.nombre, metodo: 'v60', recetaId: 'ref-hoffmann-v60-1taza', molinoId: ID_C40,
     molienda: clics, dosis: 15, agua: 250, temperatura: 93, filtro: 'Papel Hario blanco', puntuacion: punt, ...extra,
   });
   const esp = (n: number, diasAtras: number, g5: number, salida: number, t: number, punt: number, extra: Partial<Preparacion> = {}): Partial<Preparacion> => ({

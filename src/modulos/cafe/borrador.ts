@@ -1,7 +1,7 @@
 // Preparación en curso (configuración + temporizador). Se guarda en localStorage para que
 // un cierre accidental de la app en mitad de la receta no pierda nada.
 import { signal, effect } from '@preact/signals';
-import type { Preparacion } from './modelo';
+import type { Preparacion, Receta } from './modelo';
 import type { EstadoTemporizador } from './temporizador';
 
 export interface Borrador {
@@ -11,7 +11,11 @@ export interface Borrador {
   temporizador?: EstadoTemporizador;
   /** Id de preparación existente si se está editando. */
   editando?: string;
+  /** Copia de la receta elegida: el temporizador no depende de que siga existiendo. */
+  receta?: RecetaElegida;
 }
+
+export type RecetaElegida = Pick<Receta, 'id' | 'nombre' | 'autor' | 'metodo' | 'agua' | 'fases' | 'tiempoObjetivo'>;
 
 const CLAVE = 'coffee-make:borrador';
 
