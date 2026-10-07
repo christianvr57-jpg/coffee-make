@@ -129,3 +129,15 @@ input.fecha { min-height: 40px; border: 0; border-radius: 10px; background: var(
 .item-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .bloque-texto { padding: 14px 16px; display: grid; gap: 12px; }
 .bloque-texto p { font-size: 15.5px; line-height: 1.45; }
+
+/* ---------- Gráficos (ui/Graficos.tsx) ---------- */
+.grafico { width: 100%; height: auto; display: block; }
+.gr-rejilla { stroke: var(--sep); stroke-width: 1; }
+.gr-eje { fill: var(--label-2); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+.gr-titulo-eje { fill: var(--label-2); font-size: 11px; font-weight: 600; }
+.gr-valor { fill: var(--label-2); font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gr-barra { fill: var(--accent); opacity: 0.85; }
+.gr-linea { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.gr-punto { fill: color-mix(in srgb, var(--accent) 40%, transparent); }
+.gr-punto.mejor { fill: var(--ok); }
+.gr-punto.reciente { stroke: var(--label); stroke-width: 1.6; }

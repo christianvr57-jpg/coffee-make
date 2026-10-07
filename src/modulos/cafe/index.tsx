@@ -19,6 +19,11 @@ import { Resultado } from './vistas/Resultado';
 import { Temporizador } from './vistas/Temporizador';
 import { CataVista } from './vistas/Cata';
 import { FichaReceta, Recetas } from './vistas/Recetas';
+import { Analisis } from './vistas/Analisis';
+import { Comparar } from './vistas/Comparar';
+import { FichaProcesoVista, FichaVariedadVista, Guia, GuiaAgua, GuiaExtraccion, GuiaProcesos, GuiaVariedades } from './vistas/Guia';
+import { PROCESOS_GUIA, VARIEDADES_GUIA } from './datos/guia';
+import { aprendizajes } from './aprendizaje';
 import { nombreSabor } from './datos/rueda';
 import { DEFECTOS } from './datos/cata';
 import { Nota, resumenPrep } from './vistas/comunes';
@@ -28,6 +33,7 @@ function WidgetCafe() {
   const cafes = useVivo(listarCafes, []) || [];
   const equipo = useVivo(listarEquipo, []) || [];
   const ultima = preps[0];
+  const aprendido = aprendizajes(preps).find((a) => Math.abs(a.media) >= 0.25);
   const enPunto = cafes.filter((c) => !c.terminado && !congelado(c) && (['filtro', 'espresso'] as const).some((u) => estadoReposo(c, u).estado === 'optimo'));
   return (
     <div class="widget tema-cafe">
@@ -52,6 +58,7 @@ function WidgetCafe() {
         </a>
       )}
       {enPunto.length > 0 && <p class="widget-pie">En su punto: {enPunto.map((c) => c.nombre).join(', ')}</p>}
+      {aprendido && <p class="widget-pie">Aprendido: {aprendido.texto}</p>}
     </div>
   );
 }
@@ -127,13 +134,23 @@ export const moduloCafe: ModuloApp = {
     { id: 'diario', nombre: 'Diario', ruta: '/cafe' },
     { id: 'recetas', nombre: 'Recetas', ruta: '/cafe/recetas' },
     { id: 'cafes', nombre: 'Cafés', ruta: '/cafe/cafes' },
-    { id: 'equipo', nombre: 'Equipo', ruta: '/cafe/equipo' },
+    { id: 'analisis', nombre: 'Análisis', ruta: '/cafe/analisis' },
+    { id: 'guia', nombre: 'Guía', ruta: '/cafe/guia' },
   ],
   rutas: [
     { patron: '/cafe', vista: Diario },
     { patron: '/cafe/cafes', vista: Cafes },
     { patron: '/cafe/recetas', vista: Recetas },
     { patron: '/cafe/recetas/:id', vista: FichaReceta },
+    { patron: '/cafe/analisis', vista: Analisis },
+    { patron: '/cafe/comparar', vista: Comparar },
+    { patron: '/cafe/guia', vista: Guia },
+    { patron: '/cafe/guia/extraccion', vista: GuiaExtraccion },
+    { patron: '/cafe/guia/agua', vista: GuiaAgua },
+    { patron: '/cafe/guia/variedades', vista: GuiaVariedades },
+    { patron: '/cafe/guia/variedades/:id', vista: FichaVariedadVista },
+    { patron: '/cafe/guia/procesos', vista: GuiaProcesos },
+    { patron: '/cafe/guia/procesos/:id', vista: FichaProcesoVista },
     { patron: '/cafe/equipo', vista: EquipoVista },
     { patron: '/cafe/cafes/:id', vista: FichaCafe },
     { patron: '/cafe/preparar', vista: Preparar },
@@ -151,6 +168,8 @@ export const moduloCafe: ModuloApp = {
     const n = q.toLowerCase();
     const [cafes, preps, recetas] = await Promise.all([listarCafes(), listarPreparaciones(), listarRecetas()]);
     return [
+      ...VARIEDADES_GUIA.filter((v) => [v.nombre, ...v.alias].join(' ').toLowerCase().includes(n)).map((v) => ({ titulo: v.nombre, detalle: `Guía · variedad · ${v.grupo}`, ruta: `/cafe/guia/variedades/${v.id}`, icono: 'libro' })),
+      ...PROCESOS_GUIA.filter((x) => [x.nombre, ...x.alias].join(' ').toLowerCase().includes(n)).map((x) => ({ titulo: x.nombre, detalle: 'Guía · proceso', ruta: `/cafe/guia/procesos/${x.id}`, icono: 'libro' })),
       ...recetas
         .filter((r) => `${r.nombre} ${r.autor || ''} ${metodo(r.metodo).nombre}`.toLowerCase().includes(n))
         .map((r) => ({ titulo: r.nombre, detalle: `Receta · ${metodo(r.metodo).nombre}${r.autor ? ` · ${r.autor.split(' · ')[0]}` : ''}`, ruta: `/cafe/recetas/${r.id}`, icono: 'receta' })),

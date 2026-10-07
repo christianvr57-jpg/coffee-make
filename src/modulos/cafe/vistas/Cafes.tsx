@@ -19,6 +19,7 @@ import type { Cafe, NivelTueste, UsoCafe } from '../modelo';
 import { listarCafes, listarEquipo, listarPreparaciones } from '../repositorio';
 import { BarraReposo, ChipReposo, IconoMetodo, Nota, descripcionCafe, textoMolienda, useFoto } from './comunes';
 import { nuevaPreparacion } from './Preparar';
+import { fichaProceso, fichaVariedad } from '../datos/guia';
 
 const filtro = signal<'activos' | 'terminados'>('activos');
 
@@ -98,6 +99,10 @@ export function FichaCafe({ params }: { params: Record<string, string> }) {
   const ultimaDosis = preps[0]?.dosis;
   const precioKg = c.precio && c.pesoG ? (c.precio / c.pesoG) * 1000 : undefined;
   const estaCongelado = congelado(c);
+  const fichas = [
+    ...[...new Set(c.variedades.map(fichaVariedad).filter(Boolean))].map((v) => ({ nombre: v!.nombre, tipo: 'Variedad', ruta: `/cafe/guia/variedades/${v!.id}` })),
+    ...[...new Set(c.procesos.map(fichaProceso).filter(Boolean))].map((x) => ({ nombre: x!.nombre, tipo: 'Proceso', ruta: `/cafe/guia/procesos/${x!.id}` })),
+  ];
   // Mejor preparación por método.
   const mejores = Object.values(
     preps.reduce<Record<string, (typeof preps)[number]>>((acc, p) => {
@@ -208,6 +213,23 @@ export function FichaCafe({ params }: { params: Record<string, string> }) {
           ))}
         </dl>
         {c.notas && <p class="pie">{c.notas}</p>}
+
+        {fichas.length > 0 && (
+          <Lista titulo="Aprende sobre este café">
+            {fichas.map((f) => (
+              <a class="item" href={`#${f.ruta}`}>
+                <span class="insignia insignia-cafe" style={{ '--tam': '32px' }}>
+                  <Icono n="libro" t={18} />
+                </span>
+                <div class="item-txt">
+                  <div class="item-tit">{f.nombre}</div>
+                  <div class="item-meta">{f.tipo}</div>
+                </div>
+                <Icono n="chevron" t={16} clase="chev" />
+              </a>
+            ))}
+          </Lista>
+        )}
 
         {mejores.length > 0 && (
           <>

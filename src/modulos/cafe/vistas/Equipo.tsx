@@ -7,6 +7,8 @@ import { Campo, Interruptor, Lista, Numero, Segmentado, Selector, Texto } from '
 import { Icono } from '../../../ui/Icono';
 import type { Agua, Equipo, TipoEquipo } from '../modelo';
 import { listarAguas, listarEquipo } from '../repositorio';
+import { BarraDetalle } from '../../../ui/Cabecera';
+import { estadoAgua } from '../datos/guia';
 
 const TIPOS: [TipoEquipo, string, string][] = [
   ['cafetera', 'Cafeteras', 'espresso'],
@@ -28,6 +30,7 @@ export function EquipoVista() {
   };
   return (
     <>
+      <BarraDetalle padre="/cafe/guia" textoAtras="Guía" titulo="Equipo y aguas" />
       <div class="sub-cabecera">
         <div class="sub">Los ajustes de molienda se guardan por molino: no son comparables entre sí.</div>
         <button type="button" class="btn-mas" aria-label="Añadir equipo" onClick={nuevo}>
@@ -65,6 +68,7 @@ export function EquipoVista() {
             <div class="item-txt">
               <div class="item-tit">{a.nombre}</div>
               <div class="item-meta">{[a.residuoSeco ? `Residuo seco ${a.residuoSeco} mg/L` : '', a.gh ? `GH ${a.gh}` : '', a.kh ? `KH ${a.kh}` : '', a.notas].filter(Boolean).join(' · ')}</div>
+              {a.residuoSeco ? <span class={`chip-estado ${estadoAgua(a.residuoSeco).estado === 'ideal' ? 'optimo' : 'temprano'}`}>{estadoAgua(a.residuoSeco).texto}</span> : null}
             </div>
             <Icono n="chevron" t={16} clase="chev" />
           </button>

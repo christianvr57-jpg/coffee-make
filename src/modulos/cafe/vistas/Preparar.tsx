@@ -14,11 +14,16 @@ import { textoPuntuacion } from '../datos/catalogos';
 import type { Cafe, Equipo, MetodoId, Preparacion, Receta } from '../modelo';
 import { ID_C40, ID_G3006, ID_G5, listarAguas, listarCafes, listarEquipo, listarPreparaciones, listarRecetas, obtenerReceta, ultimaReferencia } from '../repositorio';
 import { ChipReposo, IconoMetodo, descripcionCafe, resumenReceta, textoMolienda } from './comunes';
+import { recomendarInicio } from '../aprendizaje';
 
 const RATIOS_FILTRO = [15, 16, 16.7, 17];
 const RATIOS_ESPRESSO: [number, string][] = [[1.5, 'Ristretto'], [2, 'Normale'], [2.5, '1:2,5'], [3, 'Lungo']];
 
-/** Valores de partida para un café y método: tu última preparación igual, o los del método. */
+/**
+ * Valores de partida para un café y método: tu última preparación con ese café; si no hay,
+ * tu mejor resultado con un café parecido (recomendador); si no, la última con el método o
+ * los valores del método.
+ */
 export async function construirBorrador(cafeId: string | undefined, m: MetodoId, cafes?: Cafe[]): Promise<Borrador> {
   const met = metodo(m);
   const esp = esEspresso(m);
@@ -26,6 +31,14 @@ export async function construirBorrador(cafeId: string | undefined, m: MetodoId,
   const lista = cafes || (await listarCafes());
   const cafe = lista.find((c) => c.id === cafeId);
   const base = { metodo: m, cafeId, cafeNombre: cafe?.nombre, sintomas: [] as Preparacion['sintomas'] };
+  if (cafe && !(ref && ref.cafeId === cafeId)) {
+    const [preps, todos, equipo] = await Promise.all([listarPreparaciones(), listarCafes(), listarEquipo()]);
+    const rec = recomendarInicio(cafe, m, preps, todos, equipo);
+    if (rec) {
+      const r = await obtenerReceta(rec.prep.recetaId);
+      return { prep: { ...base, ...rec.prep, dosis: rec.prep.dosis || met.dosis, recetaId: r?.metodo === m ? r.id : undefined }, origen: rec.texto, receta: r?.metodo === m ? recetaElegida(r) : undefined };
+    }
+  }
   if (ref) {
     const mismoCafe = !!cafeId && ref.cafeId === cafeId;
     return {

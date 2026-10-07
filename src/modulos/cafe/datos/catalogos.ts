@@ -1,5 +1,5 @@
 // Listas de referencia para los desplegables. Se puede escribir cualquier valor nuevo;
-// estas listas solo agilizan y unifican la escritura. Las fichas educativas llegan con la Guía.
+// estas listas solo agilizan y unifican la escritura. Las fichas educativas están en datos/guia.ts.
 import type { NivelTueste, Sintoma, UsoCafe } from '../modelo';
 
 export const PAISES = [

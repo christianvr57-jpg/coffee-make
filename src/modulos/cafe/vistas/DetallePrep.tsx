@@ -15,6 +15,7 @@ import type { Preparacion } from '../modelo';
 import { listarAguas, listarEquipo, obtenerReceta } from '../repositorio';
 import { planDePreparacion, recetaDesdePreparacion } from '../recetas';
 import { editarReceta } from './Recetas';
+import { elegirParaComparar } from './Analisis';
 import { ControlChart } from './ControlChart';
 import { IconoMetodo, Nota, textoMolienda } from './comunes';
 import { repetirPreparacion } from './Preparar';
@@ -243,6 +244,9 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
         )}
 
         <div class="lista separada">
+          <button type="button" class="boton-fila" onClick={() => elegirParaComparar([p.id])}>
+            <Icono n="copiar" t={22} /> Comparar con otra preparación
+          </button>
           {met.temporizador && (
             <button type="button" class="boton-fila" onClick={guardarComoReceta}>
               <Icono n="receta" t={22} /> Guardar como receta

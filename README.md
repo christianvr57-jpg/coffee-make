@@ -5,21 +5,22 @@ Segundo cerebro personal en forma de app web instalable (PWA): un núcleo común
 Módulos actuales:
 
 - **Hogar**: rutina de la casa (coladas, tareas diarias, semanales y periódicas repartidas por el mes).
-- **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable", cata con rueda de sabores y diagnóstico de extracción, y recetas (de referencia con su fuente y propias) que guían el temporizador paso a paso.
+- **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable", cata con rueda de sabores y diagnóstico de extracción, recetas (de referencia con su fuente y propias) que guían el temporizador paso a paso, un recomendador que aprende de tus registros, una guía (extracción, agua, variedades y procesos) y análisis con gráficos, mejores recetas por café y comparador.
 
-Las recetas de referencia están en `src/modulos/cafe/datos/recetas.ts`, cada una con el enlace a su fuente. Las cantidades, tiempos y temperaturas son los del autor; los clics del Comandante C40 son una estimación de la app y se muestran como tal.
+Las recetas de referencia (`src/modulos/cafe/datos/recetas.ts`) y las fichas de la guía (`datos/guia.ts`) llevan cada una el enlace a su fuente. Las cantidades, tiempos y temperaturas son los del autor; los clics del Comandante C40 son una estimación de la app y se muestran como tal.
 
 ## Estructura
 
 ```
 src/
   core/          base de datos (Dexie), enrutado, contrato de módulos, copias, PWA
-  ui/            componentes compartidos (formularios, hojas, diálogos, iconos)
+  ui/            componentes compartidos (formularios, hojas, diálogos, iconos, gráficos SVG)
   vistas/        Inicio, Más, Buscar, Ajustes
   modulos/
     hogar/       calendario.ts (lógica), reparto.ts, rutina.json (datos), vistas/
-    cafe/        modelo.ts, calculos.ts, diagnostico.ts, recetas.ts, temporizador.ts,
-                 datos/ (métodos, catálogos, rueda de sabores, recetas de referencia), vistas/
+    cafe/        modelo.ts, calculos.ts, diagnostico.ts, recetas.ts, aprendizaje.ts (recomendador),
+                 estadisticas.ts, temporizador.ts,
+                 datos/ (métodos, catálogos, rueda de sabores, recetas, guía), vistas/
 tests/           pruebas de la lógica (Vitest)
 tools/           reparto de tareas periódicas e iconos
 ```
