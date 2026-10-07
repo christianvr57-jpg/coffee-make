@@ -101,7 +101,12 @@ function datosDemo(): { cafes: Partial<Cafe>[]; preps: Partial<Preparacion>[] } 
     v60(1, 6, 26, 6, { tiempoTotal: 155, sintomas: ['agrio', 'aguado'], notas: 'Corto de tiempo, acidez punzante.' }),
     v60(2, 5, 23, 7.5, { tiempoTotal: 178, sintomas: ['dulce'], padreId: 'demo-prep-v60-1', notas: 'Más dulce, aparece el arándano.' }),
     v60(3, 4, 21, 6.5, { tiempoTotal: 214, sintomas: ['astringente'], padreId: 'demo-prep-v60-2', notas: 'Me pasé: final seco.' }),
-    v60(4, 3, 22, 8.5, { tiempoTotal: 192, sintomas: ['dulce', 'equilibrado'], padreId: 'demo-prep-v60-3', tds: 1.34, rendimiento: 213, notas: 'Jazmín y arándano muy claros. Esta es la buena.' }),
+    v60(4, 3, 22, 8.5, { tiempoTotal: 192, sintomas: ['dulce', 'equilibrado'], padreId: 'demo-prep-v60-3', tds: 1.34, rendimiento: 213, notas: 'Jazmín y arándano muy claros. Esta es la buena.',
+      cata: {
+        fecha: ts(3, 9), acidezTipos: ['citrica', 'tartarica'], textura: 'Sedoso', defectos: [],
+        sabores: ['frutal/bayas/arandano', 'floral/blancas/jazmin', 'cacao/chocolate/chocolate-con-leche', 'dulce/miel'],
+        atributos: { fragancia: { agrado: 5, intensidad: 3 }, aroma: { agrado: 5, intensidad: 3 }, sabor: { agrado: 5, intensidad: 2 }, acidez: { agrado: 4, intensidad: 3 }, dulzor: { agrado: 5, intensidad: 2 }, cuerpo: { agrado: 4, intensidad: 1 }, retrogusto: { agrado: 4, intensidad: 2 }, balance: { agrado: 4 }, limpieza: { agrado: 5 } },
+      } }),
     v60(5, 1, 22, 8, { tiempoTotal: 189, temperatura: 94, sintomas: ['dulce'], padreId: 'demo-prep-v60-4' }),
     { ...base, id: 'demo-prep-ap-1', fecha: ts(7, 17), cafeId: huila.id, cafeNombre: huila.nombre, metodo: 'aeropress', molinoId: ID_C40, molienda: 18, dosis: 15, agua: 240, temperatura: 90, tiempoTotal: 135, filtro: 'Papel AeroPress', puntuacion: 7, sintomas: ['equilibrado'], notas: 'Panela y naranja, cuerpo medio.' },
     { ...base, id: 'demo-prep-ap-2', fecha: ts(2, 17), cafeId: huila.id, cafeNombre: huila.nombre, metodo: 'aeropress', molinoId: ID_C40, molienda: 17, dosis: 15, agua: 240, temperatura: 92, tiempoTotal: 140, filtro: 'Papel AeroPress', puntuacion: 7.5, sintomas: ['dulce'], padreId: 'demo-prep-ap-1' },

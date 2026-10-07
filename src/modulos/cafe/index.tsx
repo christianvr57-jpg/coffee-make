@@ -17,6 +17,9 @@ import { EquipoVista } from './vistas/Equipo';
 import { Preparar, nuevaPreparacion } from './vistas/Preparar';
 import { Resultado } from './vistas/Resultado';
 import { Temporizador } from './vistas/Temporizador';
+import { CataVista } from './vistas/Cata';
+import { nombreSabor } from './datos/rueda';
+import { DEFECTOS } from './datos/cata';
 import { Nota, resumenPrep } from './vistas/comunes';
 
 function WidgetCafe() {
@@ -91,7 +94,7 @@ async function exportarCsv() {
   const [preps, cafes, equipo, aguas] = await Promise.all([listarPreparaciones(), listarCafes(), listarEquipo(), listarAguas()]);
   const nombre = (id?: string) => equipo.find((e) => e.id === id)?.nombre;
   const fp = aCsv(
-    ['Fecha', 'Hora', 'Café', 'Método', 'Dosis (g)', 'Agua (g)', 'Salida/bebida (g)', 'Ratio', 'Molino', 'Molienda', 'Temperatura (°C)', 'Tiempo', 'Primera gota (s)', 'Preinfusión (s)', 'Presión (bar)', 'Agua', 'Filtro', 'Días de reposo', 'TDS (%)', 'Extracción (%)', 'Puntuación', 'Sensaciones', 'Bebida', 'Notas'],
+    ['Fecha', 'Hora', 'Café', 'Método', 'Dosis (g)', 'Agua (g)', 'Salida/bebida (g)', 'Ratio', 'Molino', 'Molienda', 'Temperatura (°C)', 'Tiempo', 'Primera gota (s)', 'Preinfusión (s)', 'Presión (bar)', 'Agua', 'Filtro', 'Días de reposo', 'TDS (%)', 'Extracción (%)', 'Puntuación', 'Sensaciones', 'Sabores', 'Defectos', 'Bebida', 'Notas'],
     preps.map((p) => {
       const d = new Date(p.fecha);
       const ey = extraccion(p);
@@ -99,7 +102,7 @@ async function exportarCsv() {
         iso(d), `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`, p.cafeNombre, metodo(p.metodo).nombre, p.dosis, p.agua, p.rendimiento, textoRatio(ratio(p)),
         nombre(p.molinoId), p.molienda, p.temperatura, p.tiempoTotal ? segundosATexto(p.tiempoTotal) : '', p.primeraGota, p.preinfusion, p.presion,
         aguas.find((a) => a.id === p.aguaId)?.nombre, p.filtro, p.diasReposo, p.tds, ey !== undefined ? Math.round(ey * 10) / 10 : undefined, p.puntuacion,
-        (p.sintomas || []).join(', '), p.bebida ? `${p.bebida.tipo} ${p.bebida.leche || ''} ${p.bebida.ml || ''}`.trim() : '', p.notas,
+        (p.sintomas || []).join(', '), (p.cata?.sabores || []).map(nombreSabor).join(', '), (p.cata?.defectos || []).map((d) => DEFECTOS.find((x) => x.id === d)?.nombre || d).join(', '), p.bebida ? `${p.bebida.tipo} ${p.bebida.leche || ''} ${p.bebida.ml || ''}`.trim() : '', p.notas,
       ];
     }),
   );
@@ -133,6 +136,7 @@ export const moduloCafe: ModuloApp = {
     { patron: '/cafe/preparar/temporizador', vista: Temporizador, pantallaCompleta: true },
     { patron: '/cafe/preparar/resultado', vista: Resultado },
     { patron: '/cafe/p/:id', vista: DetallePrep },
+    { patron: '/cafe/p/:id/cata', vista: CataVista },
   ],
   widgetInicio: WidgetCafe,
   accionesRapidas: [{ nombre: 'Preparar café', icono: 'cafe', ruta: '/cafe/preparar' }],
@@ -147,7 +151,7 @@ export const moduloCafe: ModuloApp = {
         .filter((c) => [c.nombre, c.tostador, c.pais, c.region, c.productor, ...c.variedades, ...c.procesos, ...c.notasTostador].join(' ').toLowerCase().includes(n))
         .map((c) => ({ titulo: c.nombre, detalle: `Café · ${c.tostador}`, ruta: `/cafe/cafes/${c.id}`, icono: 'grano' })),
       ...preps
-        .filter((p) => `${p.cafeNombre} ${metodo(p.metodo).nombre} ${p.notas || ''}`.toLowerCase().includes(n))
+        .filter((p) => `${p.cafeNombre} ${metodo(p.metodo).nombre} ${p.notas || ''} ${(p.cata?.sabores || []).map(nombreSabor).join(' ')}`.toLowerCase().includes(n))
         .slice(0, 20)
         .map((p) => ({ titulo: `${metodo(p.metodo).nombre} · ${p.cafeNombre || 'Sin registrar'}`, detalle: `${fechaRelativa(p.fecha)}${p.puntuacion !== undefined ? ` · ${fmt(p.puntuacion)}/10` : ''}`, ruta: `/cafe/p/${p.id}`, icono: metodo(p.metodo).icono })),
     ];

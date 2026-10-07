@@ -10,6 +10,7 @@ import { metodo } from '../datos/metodos';
 import type { Preparacion } from '../modelo';
 import { borrarDemo, hayDemo, listarCafes, listarEquipo, listarPreparaciones } from '../repositorio';
 import { ChipReposo, IconoMetodo, Nota, resumenPrep } from './comunes';
+import { nombreSabor } from '../datos/rueda';
 import { nuevaPreparacion } from './Preparar';
 
 export function BotonPreparar() {
@@ -112,6 +113,7 @@ export function Diario() {
                   <div class="item-meta">
                     {horaCorta(p.fecha)} · {resumenPrep(p, equipo)}
                   </div>
+                  {p.cata?.sabores.length ? <div class="item-meta sabores-linea">{p.cata.sabores.slice(0, 4).map(nombreSabor).join(' · ')}</div> : null}
                 </div>
                 <Nota p={p.puntuacion} />
               </a>

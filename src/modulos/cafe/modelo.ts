@@ -112,6 +112,25 @@ export interface Preparacion extends Registro {
   notas?: string;
   /** Preparación de la que parte ("repetir cambiando una variable"). */
   padreId?: string;
+  /** Cata completa (opcional). Va dentro de la preparación porque es 1 a 1. */
+  cata?: Cata;
+}
+
+export interface ValorAtributo {
+  /** 1-5: de "me disgusta" a "me encanta". */
+  agrado?: number;
+  /** 1-3: baja, media, alta. */
+  intensidad?: number;
+}
+
+export interface Cata {
+  fecha: number;
+  atributos: Partial<Record<import('./datos/cata').AtributoId, ValorAtributo>>;
+  acidezTipos: string[];
+  textura?: string;
+  /** Ids de la rueda de sabores (familia, grupo o matiz). */
+  sabores: string[];
+  defectos: string[];
 }
 
 /** Fotos comprimidas (paquetes de café, etc.). */

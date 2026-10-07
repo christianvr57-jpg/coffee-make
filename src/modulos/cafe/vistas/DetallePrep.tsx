@@ -1,6 +1,6 @@
 // CAFÉ · Detalle de una preparación.
 import { borrar, db } from '../../../core/db';
-import { fechaRelativa, horaCorta, segundosATexto } from '../../../core/fechas';
+import { fechaRelativa, horaCorta, laDel, segundosATexto } from '../../../core/fechas';
 import { ir } from '../../../core/router';
 import { useVivo } from '../../../core/vivo';
 import { BarraDetalle } from '../../../ui/Cabecera';
@@ -16,6 +16,8 @@ import { listarAguas, listarEquipo } from '../repositorio';
 import { ControlChart } from './ControlChart';
 import { IconoMetodo, Nota, textoMolienda } from './comunes';
 import { repetirPreparacion } from './Preparar';
+import { TarjetaDiagnostico } from './Diagnostico';
+import { ResumenCata } from './ResumenCata';
 
 export function DetallePrep({ params }: { params: Record<string, string> }) {
   const p = useVivo(() => db.cafe_preparaciones.get(params.id).then((x) => x ?? null), [params.id]);
@@ -97,9 +99,13 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
 
         <div class="acciones-fila">
           <button type="button" class="boton-principal" onClick={() => repetirPreparacion(p)}>
-            <Icono n="repetir" t={20} /> Repetir y ajustar
+            <Icono n="repetir" t={20} /> Repetir
+          </button>
+          <button type="button" class="boton-secundario" onClick={() => ir(`/cafe/p/${p.id}/cata`)}>
+            <Icono n="estrella" t={20} /> {p.cata ? 'Editar cata' : 'Catar a fondo'}
           </button>
         </div>
+
 
         {(p.sintomas?.length > 0 || p.notas) && (
           <div class="lista bloque-texto">
@@ -115,13 +121,22 @@ export function DetallePrep({ params }: { params: Record<string, string> }) {
           </div>
         )}
 
+        {p.cata && <ResumenCata cata={p.cata} />}
+
+        {(p.sintomas?.length > 0 || p.tds) && (
+          <>
+            <div class="tit-lista">Diagnóstico</div>
+            <TarjetaDiagnostico prep={p} onProbar={(cambio) => repetirPreparacion(p, cambio)} />
+          </>
+        )}
+
         {cambios.length > 0 && padre && (
           <div class="aviso-suave">
             <Icono n="repetir" t={18} />
             <span>
-              Viene de la del{' '}
+              Viene de{' '}
               <a class="enlace" href={`#/cafe/p/${padre.id}`}>
-                {fechaRelativa(padre.fecha).toLowerCase()} ({padre.puntuacion !== undefined ? `${fmt(padre.puntuacion)}/10` : 'sin nota'})
+                {laDel(padre.fecha)} ({padre.puntuacion !== undefined ? `${fmt(padre.puntuacion)}/10` : 'sin nota'})
               </a>
               . Cambiaste: {cambios.map((c) => c.nombre.toLowerCase()).join(', ')}.
               {padre.puntuacion !== undefined && p.puntuacion !== undefined && (

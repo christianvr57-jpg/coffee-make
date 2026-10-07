@@ -1,6 +1,6 @@
 // CAFÉ · Preparar: elegir café y método y fijar los parámetros antes del temporizador.
 import { useEffect } from 'preact/hooks';
-import { fechaRelativa } from '../../../core/fechas';
+import { fechaRelativa, laDel } from '../../../core/fechas';
 import { consulta, ir } from '../../../core/router';
 import { useVivo } from '../../../core/vivo';
 import { BarraDetalle } from '../../../ui/Cabecera';
@@ -60,14 +60,18 @@ export async function nuevaPreparacion(cafeId?: string, m?: MetodoId): Promise<v
   ir('/cafe/preparar');
 }
 
-export async function repetirPreparacion(p: Preparacion): Promise<void> {
+/** Repite una preparación; con `cambio`, aplica ya la sugerencia del diagnóstico. */
+export async function repetirPreparacion(p: Preparacion, cambio?: Partial<Preparacion>): Promise<void> {
+  const desde = `${laDel(p.fecha)}${p.puntuacion ? ` (${fmt(p.puntuacion)}/10)` : ''}`;
   borrador.value = {
     prep: {
       metodo: p.metodo, cafeId: p.cafeId, cafeNombre: p.cafeNombre, dosis: p.dosis, agua: p.agua, rendimiento: p.rendimiento, molinoId: p.molinoId,
       molienda: p.molienda, temperatura: p.temperatura, aguaId: p.aguaId, filtro: p.filtro, cafeteraId: p.cafeteraId, preinfusion: p.preinfusion,
-      bebida: p.bebida, padreId: p.id, sintomas: [],
+      bebida: p.bebida, padreId: p.id, sintomas: [], ...(cambio || {}),
     },
-    origen: `Repitiendo la preparación de ${fechaRelativa(p.fecha).toLowerCase()}${p.puntuacion ? ` (${fmt(p.puntuacion)}/10)` : ''}. Cambia solo una variable para saber qué efecto tiene.`,
+    origen: cambio
+      ? `Repitiendo ${desde} con el ajuste sugerido ya aplicado. Deja el resto igual.`
+      : `Repitiendo ${desde}. Cambia solo una variable para saber qué efecto tiene.`,
   };
   ir('/cafe/preparar');
 }

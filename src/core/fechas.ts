@@ -57,3 +57,9 @@ export const segundosATexto = (s: number): string => {
   s = Math.abs(Math.round(s));
   return `${neg ? '−' : ''}${Math.floor(s / 60)}:${pad(s % 60)}`;
 };
+
+/** "la de hoy", "la de ayer", "la del viernes", "la del lun 5 oct" (para referirse a una preparación). */
+export function laDel(ts: number | string): string {
+  const r = fechaRelativa(ts).toLowerCase();
+  return r === 'hoy' || r === 'ayer' ? `la de ${r}` : `la del ${r}`;
+}

@@ -31,6 +31,8 @@ export interface Metodo {
   descripcionMolienda: string;
   /** false = no tiene sentido un temporizador en vivo (cold brew). */
   temporizador: boolean;
+  /** Tiempo total orientativo (s) para la plantilla de partida; ayuda al diagnóstico. */
+  tiempoObjetivo?: [number, number];
   fases: (dosis: number, agua: number) => FasePlan[];
 }
 
@@ -231,3 +233,17 @@ export const METODOS: Metodo[] = [
 
 export const metodo = (id: MetodoId): Metodo => METODOS.find((m) => m.id === id) || METODOS[0];
 export const esEspresso = (id: MetodoId) => id === 'espresso';
+
+// Tiempos totales orientativos de las plantillas (el diagnóstico los usa para decidir la dirección
+// de la molienda: más rápido de lo previsto → más fino; más lento → más grueso).
+const TIEMPOS: Partial<Record<MetodoId, [number, number]>> = {
+  v60: [150, 210],
+  kalita: [180, 240],
+  chemex: [225, 300],
+  aeropress: [110, 150],
+  'aeropress-inv': [110, 150],
+  clever: [150, 210],
+  prensa: [270, 330],
+  espresso: [25, 32],
+};
+for (const m of METODOS) m.tiempoObjetivo = TIEMPOS[m.id];

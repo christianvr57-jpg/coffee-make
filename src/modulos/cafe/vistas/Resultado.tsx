@@ -16,6 +16,7 @@ import type { Preparacion, Sintoma } from '../modelo';
 import { listarEquipo, listarCafes, listarAguas, nuevoId } from '../repositorio';
 import { ControlChart } from './ControlChart';
 import { textoMolienda } from './comunes';
+import { TarjetaDiagnostico } from './Diagnostico';
 
 /** Campo de tiempo m:ss editable. */
 function CampoTiempo({ valor, cambiar }: { valor?: number; cambiar: (s: number | undefined) => void }) {
@@ -213,6 +214,14 @@ export function Resultado() {
             <Texto multilinea valor={p.notas || ''} cambiar={(v) => actualizarPrep({ notas: v || undefined })} marcador="Sabores, sensaciones, qué cambiarías…" />
           </Campo>
         </Lista>
+
+        {(p.sintomas?.length > 0 || p.tds) && (
+          <>
+            <div class="tit-lista">Diagnóstico</div>
+            <TarjetaDiagnostico prep={p} />
+          </>
+        )}
+        {!b.editando && <p class="pie">Al guardar podrás hacer una cata completa con la rueda de sabores.</p>}
 
         {esp && (
           <Lista titulo="Bebida">
