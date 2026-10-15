@@ -7,6 +7,7 @@ import { MODULOS } from './core/registro';
 import './styles/base.css';
 import './styles/nucleo.css';
 import './styles/cafe.css';
+import './styles/cocina.css';
 
 async function arrancar() {
   const raiz = document.getElementById('raiz')!;

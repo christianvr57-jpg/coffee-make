@@ -2,8 +2,9 @@
 import type { ModuloApp } from './modulos';
 import { moduloHogar } from '../modulos/hogar';
 import { moduloCafe } from '../modulos/cafe';
+import { moduloCocina } from '../modulos/cocina';
 
-export const MODULOS: ModuloApp[] = [moduloHogar, moduloCafe];
+export const MODULOS: ModuloApp[] = [moduloHogar, moduloCocina, moduloCafe];
 
 /** Módulos fijados en la barra inferior (máximo 3); el resto se abre desde «Más». */
-export const FIJADOS = ['hogar', 'cafe'];
+export const FIJADOS = ['hogar', 'cocina', 'cafe'];

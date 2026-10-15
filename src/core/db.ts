@@ -4,6 +4,7 @@
 import Dexie, { type EntityTable } from 'dexie';
 import { ulid } from './ids';
 import type { Agua, Cafe, Equipo, Foto, Preparacion, Receta } from '../modulos/cafe/modelo';
+import type { ArticuloCompra, CambioPlato } from '../modulos/cocina/tipos';
 
 /** Campos comunes de cualquier registro sincronizable. */
 export interface Registro {
@@ -53,6 +54,8 @@ export class BaseDatos extends Dexie {
   cafe_cafes!: EntityTable<Cafe, 'id'>;
   cafe_preparaciones!: EntityTable<Preparacion, 'id'>;
   cafe_recetas!: EntityTable<Receta, 'id'>;
+  cocina_cambios!: EntityTable<CambioPlato, 'id'>;
+  cocina_compra!: EntityTable<ArticuloCompra, 'id'>;
   fotos!: EntityTable<Foto, 'id'>;
 
   constructor() {
@@ -70,16 +73,18 @@ export class BaseDatos extends Dexie {
     });
     // v2 (café fase 3): recetas propias.
     this.version(2).stores({ cafe_recetas: '&id, metodo' });
+    // v3: módulo Cocina (cambios de plato por fecha y estado de la lista de la compra).
+    this.version(3).stores({ cocina_cambios: '&id, fecha', cocina_compra: '&id, lunes' });
   }
 }
 
 export const db = new BaseDatos();
 
 /** Tablas que forman la copia de seguridad (todas menos la cola de cambios). */
-export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'fotos'] as const;
+export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'cocina_cambios', 'cocina_compra', 'fotos'] as const;
 export type TablaDatos = (typeof TABLAS_DATOS)[number];
 
-type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas';
+type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas' | 'cocina_cambios' | 'cocina_compra';
 
 /** Crea o actualiza un registro poniendo marcas de tiempo y anotándolo en la cola de cambios. */
 export async function guardar<T extends Registro>(tabla: TablaRegistros, datos: Partial<T> & Record<string, unknown>): Promise<T> {

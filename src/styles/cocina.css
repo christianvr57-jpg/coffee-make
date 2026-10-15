@@ -1,0 +1,94 @@
+/* ---------- Módulo Cocina ---------- */
+.tema-cocina .insignia { --c: var(--accent); }
+
+/* Tarjeta de plato */
+.tarjeta-plato { display: flex; align-items: stretch; margin-bottom: 10px; border-radius: var(--radio); background: var(--card); box-shadow: var(--sombra); overflow: hidden; }
+.tp-cuerpo { flex: 1; min-width: 0; display: grid; gap: 4px; padding: 14px 16px; color: inherit; text-decoration: none; }
+.tp-cuerpo:active { background: var(--fill); }
+.tp-momento { font-size: 12.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+.tp-momento em { font-style: normal; color: var(--label-2); text-transform: none; letter-spacing: 0; font-weight: 600; }
+.tp-cuerpo b { font-size: 18px; line-height: 1.25; }
+.tp-acomp { font-size: 14.5px; color: var(--label-2); }
+.tp-cambiar { flex: none; width: 52px; display: grid; place-items: center; color: var(--accent); border-left: 0.5px solid var(--sep); }
+.tp-cambiar:active { background: var(--fill); }
+
+.etiquetas-receta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; color: var(--label-2); }
+.etiquetas-receta > span { display: inline-flex; align-items: center; gap: 3px; }
+.chip-proteina { padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: 12px; background: color-mix(in srgb, var(--cp) 16%, transparent); color: color-mix(in srgb, var(--cp) 75%, var(--label)); }
+.p-legumbre { --cp: #a0662b; }
+.p-pescado-blanco { --cp: #2f7fc1; }
+.p-pescado-azul { --cp: #1f5fa8; }
+.p-huevo { --cp: #c99a06; }
+.p-carne-blanca { --cp: #c2603a; }
+.p-carne-roja { --cp: #b3261e; }
+.p-vegetal { --cp: #2e7d4f; }
+.ficha-etiquetas { margin: 2px 4px 0; }
+
+/* Comidas del niño */
+.nino-dia { padding: 4px 0; }
+.nd-fila { display: grid; grid-template-columns: 78px 1fr; gap: 10px; padding: 10px 16px; color: inherit; text-decoration: none; border-bottom: 0.5px solid var(--sep); }
+.nd-t { font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); padding-top: 2px; }
+.nd-fila b { font-size: 16px; line-height: 1.3; }
+.nd-fila p { font-size: 14px; line-height: 1.4; color: var(--label-2); margin-top: 2px; }
+.nd-pie { font-size: 13px; color: var(--label-2); padding: 10px 16px 8px; line-height: 1.4; }
+
+.consejo-dia p { display: flex; gap: 8px; align-items: flex-start; }
+.consejo-dia .ico { flex: none; margin-top: 3px; color: var(--ok); }
+.lote { margin: 0; padding: 14px 16px 14px 34px; gap: 8px; }
+.lote li { font-size: 15.5px; line-height: 1.45; }
+
+/* Semana */
+.navegador-semana { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; }
+.navegador-semana > div { flex: 1; min-width: 0; text-align: center; display: grid; gap: 2px; }
+.navegador-semana b { font-size: 17px; }
+.navegador-semana span { font-size: 13px; color: var(--label-2); }
+.enlace-boton.centrado { display: block; margin: -4px auto 10px; }
+.dia-cocina { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; text-align: left; border-bottom: 0.5px solid var(--sep); color: inherit; }
+.dia-cocina:last-child { border-bottom: 0; }
+.dia-cocina:active { background: var(--fill); }
+.dia-cocina.hoy { background: color-mix(in srgb, var(--accent) 8%, var(--card)); }
+.dc-fecha { flex: none; width: 40px; display: grid; justify-items: center; }
+.dc-fecha b { font-size: 12px; text-transform: uppercase; color: var(--accent); letter-spacing: 0.04em; }
+.dc-fecha span { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.dc-platos { flex: 1; min-width: 0; display: grid; gap: 3px; font-size: 14.5px; line-height: 1.3; }
+.dc-platos em { font-style: normal; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--label-2); margin-right: 4px; }
+.dc-nino { color: var(--label-2); }
+.equilibrio { padding: 4px 0; }
+.eq-fila { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 15px; }
+.eq-fila .ico { color: var(--ok); flex: none; }
+.eq-fila.mal .ico { color: #d97a00; }
+.eq-nombre { flex: 1; }
+.eq-valor { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.eq-valor small { font-weight: 400; color: var(--label-2); }
+
+/* Compra */
+.progreso-compra { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--radio); background: var(--card); box-shadow: var(--sombra); }
+.progreso-compra b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.progreso-compra span { font-size: 13.5px; color: var(--label-2); }
+.progreso-compra .barra-stock { margin-top: 6px; }
+.anadir-compra { display: flex; gap: 8px; align-items: center; margin: 12px 0 4px; padding: 0 6px 0 14px; border-radius: 12px; background: var(--fill); }
+.anadir-compra input { flex: 1; min-height: 44px; border: 0; background: transparent; font-size: 16px; color: var(--label); }
+.anadir-compra .btn-icono { width: 36px; height: 36px; background: var(--accent); color: #fff; }
+.articulo { display: flex; align-items: center; border-bottom: 0.5px solid var(--sep); }
+.articulo:last-child { border-bottom: 0; }
+.art-toque { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 11px 16px; text-align: left; color: inherit; }
+.art-txt { display: grid; gap: 1px; min-width: 0; }
+.art-txt b { font-size: 16px; font-weight: 500; }
+.art-txt small { font-size: 12.5px; color: var(--label-2); }
+.articulo.hecho .art-txt b { text-decoration: line-through; color: var(--label-3); }
+.art-quitar { width: 44px; height: 44px; display: grid; place-items: center; color: var(--label-3); }
+
+/* Widget de Inicio */
+.widget-menu { display: grid; gap: 8px; width: 100%; text-align: left; }
+.widget-menu > div { display: grid; gap: 1px; }
+.widget-menu b { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.wm-nino { font-size: 14.5px; color: var(--label-2); }
+
+/* Recetas y guía */
+.filtro-proteina { margin: 0 0 12px; }
+.ing-grupo { display: grid; gap: 2px; }
+.ing-grupo span { font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--label-2); }
+.pasos-cocina { margin: 0; padding: 14px 16px 14px 36px; gap: 10px; }
+.pasos-cocina li { font-size: 16px; line-height: 1.45; }
+.nino-receta { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.titulo-seccion { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 22px 4px 0; }
