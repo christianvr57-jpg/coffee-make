@@ -31,6 +31,8 @@ export const APARATOS: Record<Aparato, string> = { horno: 'Horno', freidora: 'Fr
 export interface Ingrediente {
   n: string;
   c: Categoria;
+  /** Gramos en crudo para una ración de adulto de referencia (sin número = al gusto). */
+  g?: number;
 }
 
 export interface Receta {

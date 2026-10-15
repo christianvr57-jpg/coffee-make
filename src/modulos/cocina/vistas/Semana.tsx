@@ -15,7 +15,7 @@ export const desplazamiento = signal(0);
 function DiaDetalle({ fecha, cerrar }: { fecha: string; cerrar: () => void }) {
   const cambios = useCambios();
   if (!cambios) return null;
-  const p = planDia(parse(fecha), ajustesCocina.value.inicio, cambios);
+  const p = planDia(parse(fecha), ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
   return (
     <Hoja titulo={fechaLarga(fecha)} cerrar={cerrar}>
       <div class="tit-lista">Adultos</div>
@@ -60,7 +60,7 @@ export function SemanaCocina() {
   if (!cambios) return null;
   const hoy = diaActual.value;
   const lunes = addDays(lunesDe(parse(hoy)), 7 * desplazamiento.value);
-  const dias = planSemana(lunes, ajustesCocina.value.inicio, cambios);
+  const dias = planSemana(lunes, ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
   const crit = equilibrio(dias);
   const etiqueta = desplazamiento.value === 0 ? 'Esta semana' : desplazamiento.value === 1 ? 'La próxima semana' : desplazamiento.value === -1 ? 'La semana pasada' : `Semana del ${fechaCorta(lunes)}`;
   return (
@@ -72,7 +72,7 @@ export function SemanaCocina() {
         <div>
           <b>{etiqueta}</b>
           <span>
-            {fechaCorta(lunes)} – {fechaCorta(addDays(lunes, 6))} · semana {dias[0].semana + 1} de 4 del menú
+            {fechaCorta(lunes)} – {fechaCorta(addDays(lunes, 6))} · semana {dias[0].semana + 1} de {ajustesCocina.value.ciclo} del menú
           </span>
         </div>
         <button type="button" class="btn-icono" aria-label="Semana siguiente" onClick={() => desplazamiento.value++}>

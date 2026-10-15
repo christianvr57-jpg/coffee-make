@@ -1,6 +1,7 @@
-// Menú de 4 semanas en rotación. Cada semana cumple los criterios de la guía (ver tests/cocina.test.ts):
-// 4 legumbres, 4 pescados (2 azules), 3 carnes como máximo (roja solo semanas 2 y 4), 2 platos de huevo
-// y 1 plato de verdura con lácteo, sin repetir plato en la semana.
+// Menú de 8 semanas en rotación (o solo las 4 primeras, según los ajustes). Cada semana cumple los
+// criterios de la guía (ver tests/cocina.test.ts): 4 legumbres, 4 pescados (2 azules), 3 carnes como
+// máximo (roja solo en las semanas pares), 2 platos de huevo y 1 plato de verdura con lácteo, sin
+// repetir plato en la semana.
 // Entre semana el niño come en el colegio: en casa, merienda y cena (la misma cena adaptada).
 import type { Ingrediente, SemanaPlan, Toma } from '../tipos';
 
@@ -100,13 +101,85 @@ export const SEMANAS: SemanaPlan[] = [
       'Asa una bandeja de pimientos rojos y congélalos para la tortilla del sábado.',
     ],
   },
+  {
+    numero: 5,
+    dias: [
+      d('curry-garbanzos', 'merluza-salsa-verde', 'pera-queso'),
+      d('pollo-ajillo-arroz', 'tortilla-alcachofa', 'platano-yogur'),
+      d('hamburguesas-lentejas', 'sardinas-plancha', 'pan-tomate-leche'),
+      d('salteado-pavo-brocoli', 'berenjenas-rellenas', 'mandarina-yogur'),
+      d('alubias-almejas', 'salmon-costra-hierbas', 'yogur-pera-rallada'),
+      d('pollo-cazuela-verduras', 'pisto-huevo', 'manzana-asada-leche', 'gachas-avena'),
+      d('mujaddara', 'bacalao-vizcaina', 'tortita-aguacate-kiwi', 'tostada-tomate-queso'),
+    ],
+    lote: [
+      'Cuece en la olla rápida garbanzos (lunes), lentejas (miércoles y domingo) y alubias blancas (viernes). Congela en raciones lo que se use a partir del jueves.',
+      'Deja hecha la base del curry del lunes (cebolla, ajo y especias pochadas) en un tarro en la nevera.',
+      'Forma las hamburguesas de lentejas del miércoles y congélalas separadas con papel de horno.',
+      'Limpia y corta las alcachofas del martes y guárdalas en agua con limón (o compra alcachofa congelada).',
+    ],
+  },
+  {
+    numero: 6,
+    dias: [
+      d('garbanzos-horno-boniato', 'pescadilla-pure', 'tortita-aguacate-kiwi'),
+      d('pechugas-rellenas', 'shakshuka', 'pan-queso-fruta'),
+      d('ensalada-lentejas-aguacate', 'caballa-pisto', 'mandarina-yogur'),
+      d('solomillo-cerdo-manzana', 'risotto-setas', 'platano-yogur'),
+      d('chili-sin-carne', 'brochetas-salmon', 'pera-queso'),
+      d('pavo-asado-verduras', 'tortilla-puerro-queso', 'yogur-pera-rallada', 'tostada-aguacate'),
+      d('pasta-garbanzos', 'lubina-plancha-salteado', 'manzana-asada-leche', 'cereales-leche'),
+    ],
+    lote: [
+      'Cuece garbanzos (lunes y domingo), lentejas (miércoles) y alubias rojas (viernes); congela lo del jueves en adelante.',
+      'Prepara el pisto de calabacín de la caballa del miércoles: aguanta bien en la nevera.',
+      'Lava y seca las espinacas de la semana y guárdalas en un táper con papel de cocina.',
+      'Haz el puré de la pescadilla del lunes y deja cortadas las verduras de las brochetas del viernes (estas, mejor el jueves).',
+    ],
+  },
+  {
+    numero: 7,
+    dias: [
+      d('cuscus-garbanzos', 'abadejo-tomate-arroz', 'platano-yogur'),
+      d('pollo-yogur-curcuma', 'tortilla-champinones-esparragos', 'pera-queso'),
+      d('lentejas-calabaza-curcuma', 'jurel-horno-patatas', 'pan-tomate-leche'),
+      d('albondigas-pollo-pure', 'tostas-crema-calabacin', 'manzana-asada-leche'),
+      d('crema-alubias-puerro', 'trucha-plancha-esparragos', 'mandarina-yogur'),
+      d('pollo-pepitoria', 'huevos-horno-espinacas', 'pan-queso-fruta', 'gachas-avena'),
+      d('falafel-horno', 'arroz-calamares-gambas', 'yogur-pera-rallada', 'tostada-tomate-queso'),
+    ],
+    lote: [
+      'Cuece garbanzos (lunes), lentejas (miércoles) y alubias blancas (viernes); congela lo del jueves en adelante.',
+      'Marina el pollo del martes en yogur y especias el lunes por la noche.',
+      'Haz la salsa de verduras de las albóndigas del jueves y la crema de calabacín, y congélalas.',
+      'El sábado por la noche, pon en remojo los garbanzos crudos del falafel del domingo (el falafel se hace con garbanzo remojado, no cocido).',
+    ],
+  },
+  {
+    numero: 8,
+    dias: [
+      d('lentejas-riojana-ligera', 'merluza-gallega', 'mandarina-yogur'),
+      d('escalopines-pavo', 'revuelto-setas-patata', 'tortita-aguacate-kiwi'),
+      d('ensalada-garbanzos-quinoa', 'pastel-salmon-patata', 'pera-queso'),
+      d('ternera-salteada', 'risotto-calabaza', 'pan-tomate-leche'),
+      d('potaje-vigilia', 'boquerones-rebozados-horno', 'platano-yogur'),
+      d('pollo-horno-calabaza', 'tortilla-patata-espinacas', 'manzana-asada-leche', 'cereales-leche'),
+      d('moussaka-lentejas', 'dorada-papillote', 'yogur-pera-rallada', 'tostada-aguacate'),
+    ],
+    lote: [
+      'Cuece lentejas (lunes y domingo) y garbanzos (miércoles y viernes); congela lo del jueves en adelante.',
+      'Haz el puré de patata del pastel de salmón del miércoles el martes por la noche.',
+      'Corta las verduras del salteado de ternera del jueves y guárdalas en la nevera.',
+      'El sábado, asa la berenjena y la patata de la musaka del domingo.',
+    ],
+  },
 ];
 
 /** Lo que se compra igual todas las semanas además de lo que piden las recetas. */
 export const BASICOS_SEMANA: Ingrediente[] = [
-  { n: 'Fruta de temporada variada (postre diario)', c: 'fruta-verdura' },
+  { n: 'Fruta de temporada', c: 'fruta-verdura' },
   { n: 'Cítricos o kiwi (postre de los días de legumbre o carne)', c: 'fruta-verdura' },
-  { n: 'Leche entera (niño)', c: 'lacteo' },
+  { n: 'Leche entera', c: 'lacteo' },
   { n: 'Frutos secos naturales sin sal (adultos)', c: 'despensa' },
   { n: AOVE, c: 'despensa' },
 ];

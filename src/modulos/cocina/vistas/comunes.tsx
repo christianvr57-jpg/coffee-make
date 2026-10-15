@@ -5,6 +5,7 @@ import { ajustesCocina, cambiarPlato, leerCambios } from '../estado';
 import { Hoja, abrirHoja, mostrarToast } from '../../../ui/capas';
 import { Icono } from '../../../ui/Icono';
 import { alternativas, planDia, type PlanDia } from '../plan';
+import { nombrePersona, racionesReceta } from '../raciones';
 import { APARATOS, PROTEINAS, type Momento, type Receta } from '../tipos';
 
 export const fechaLarga = (f: string) => {
@@ -19,7 +20,7 @@ export const useCambios = () => useVivo(leerCambios, []);
 export function usePlanDia(fecha: string): PlanDia | undefined {
   const cambios = useCambios();
   if (!cambios) return undefined;
-  return planDia(parse(fecha), ajustesCocina.value.inicio, cambios);
+  return planDia(parse(fecha), ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
 }
 
 export function Etiquetas({ r }: { r: Receta }) {
@@ -36,9 +37,10 @@ export function Etiquetas({ r }: { r: Receta }) {
 
 /** Tarjeta de un plato de adultos con enlace a la receta y botón para cambiarlo. */
 export function TarjetaPlato({ momento, r, cambiada, fecha, finde }: { momento: Momento; r: Receta; cambiada: boolean; fecha: string; finde: boolean }) {
+  const raciones = ajustesCocina.value.raciones;
   return (
     <div class="tarjeta-plato">
-      <a class="tp-cuerpo" href={`#/cocina/recetas/${r.id}`}>
+      <a class="tp-cuerpo" href={`#/cocina/recetas/${r.id}?m=${momento}`}>
         <span class="tp-momento">
           {momento === 'comida' ? 'Comida' : 'Cena'}
           {cambiada && <em> · cambiado</em>}
@@ -46,6 +48,13 @@ export function TarjetaPlato({ momento, r, cambiada, fecha, finde }: { momento: 
         <b>{r.nombre}</b>
         {r.acompanamiento && <span class="tp-acomp">Con: {r.acompanamiento.toLowerCase()}</span>}
         <Etiquetas r={r} />
+        {raciones.activo && (
+          <span class="tp-kcal">
+            {racionesReceta(r, momento, raciones)
+              .map((x, i) => `${nombrePersona(x.persona, i)} ${Math.round(x.kcal)} kcal`)
+              .join(' · ')}
+          </span>
+        )}
       </a>
       <button type="button" class="tp-cambiar" aria-label={`Cambiar ${momento}`} onClick={() => elegirCambio(fecha, momento, r, finde, cambiada)}>
         <Icono n="repetir" t={18} />
@@ -58,9 +67,9 @@ export function TarjetaPlato({ momento, r, cambiada, fecha, finde }: { momento: 
 export function ComidasNino({ p }: { p: PlanDia }) {
   const filas: { t: string; nombre: string; detalle: string; href?: string }[] = [];
   if (p.desayuno) filas.push({ t: 'Desayuno', nombre: p.desayuno.texto, detalle: p.desayuno.racion });
-  if (p.finde) filas.push({ t: 'Comida', nombre: p.comida.nombre, detalle: `${p.comida.nino.adaptacion} ${p.comida.nino.racion}`, href: `#/cocina/recetas/${p.comida.id}` });
+  if (p.finde) filas.push({ t: 'Comida', nombre: p.comida.nombre, detalle: `${p.comida.nino.adaptacion} ${p.comida.nino.racion}`, href: `#/cocina/recetas/${p.comida.id}?m=comida` });
   filas.push({ t: 'Merienda', nombre: p.merienda.texto, detalle: p.merienda.racion });
-  filas.push({ t: 'Cena', nombre: p.cena.nombre, detalle: `${p.cena.nino.adaptacion} ${p.cena.nino.racion}`, href: `#/cocina/recetas/${p.cena.id}` });
+  filas.push({ t: 'Cena', nombre: p.cena.nombre, detalle: `${p.cena.nino.adaptacion} ${p.cena.nino.racion}`, href: `#/cocina/recetas/${p.cena.id}?m=cena` });
   return (
     <div class="lista nino-dia">
       {filas.map((f) =>

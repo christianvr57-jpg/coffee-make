@@ -4,16 +4,17 @@ import { addDays, DIAS, diasEntre, iso, isoWeekday, lunesDe, parse } from '../..
 import { BASICOS_SEMANA, DESAYUNOS, MERIENDAS, SEMANAS } from './datos/menu';
 import { RECETAS, receta } from './datos/recetas';
 import type { Categoria, Momento, Proteina, Receta, Toma } from './tipos';
+import { RACION_NINO, racionesReceta, type AjustesRaciones } from './raciones';
 
 export const CICLO = SEMANAS.length;
 const mod = (a: number, n: number) => ((a % n) + n) % n;
 
-/** Índice (0-3) de la semana del ciclo para una fecha, sabiendo qué lunes fue la semana 1. */
-export function semanaDelCiclo(fecha: Date, inicio: string): number {
-  return mod(Math.floor(diasEntre(lunesDe(parse(inicio)), lunesDe(fecha)) / 7), CICLO);
+/** Índice de la semana del ciclo (0 = semana 1) para una fecha, sabiendo qué lunes fue la semana 1. */
+export function semanaDelCiclo(fecha: Date, inicio: string, ciclo = CICLO): number {
+  return mod(Math.floor(diasEntre(lunesDe(parse(inicio)), lunesDe(fecha)) / 7), Math.min(ciclo, CICLO));
 }
 
-/** Lunes que hace que `fecha` caiga en la semana `n` (0-3) del ciclo. */
+/** Lunes que hace que `fecha` caiga en la semana `n` (0 = semana 1) del ciclo. */
 export function inicioParaSemana(fecha: Date, n: number): string {
   return iso(addDays(lunesDe(fecha), -7 * n));
 }
@@ -41,8 +42,8 @@ const POSTRE_C = 'Fruta con vitamina C (mandarina, naranja, kiwi o fresas): ayud
 const POSTRE = 'Fruta de temporada.';
 export const postreDe = (r: Receta) => (r.proteina === 'legumbre' || r.proteina === 'carne-roja' || r.proteina === 'carne-blanca' ? POSTRE_C : POSTRE);
 
-export function planDia(fecha: Date, inicio: string, cambios: Cambios = new Map()): PlanDia {
-  const s = semanaDelCiclo(fecha, inicio);
+export function planDia(fecha: Date, inicio: string, cambios: Cambios = new Map(), ciclo = CICLO): PlanDia {
+  const s = semanaDelCiclo(fecha, inicio, ciclo);
   const dia = isoWeekday(fecha);
   const base = SEMANAS[s].dias[dia - 1];
   const f = iso(fecha);
@@ -65,8 +66,8 @@ export function planDia(fecha: Date, inicio: string, cambios: Cambios = new Map(
   };
 }
 
-export function planSemana(lunes: Date, inicio: string, cambios: Cambios = new Map()): PlanDia[] {
-  return Array.from({ length: 7 }, (_, i) => planDia(addDays(lunes, i), inicio, cambios));
+export function planSemana(lunes: Date, inicio: string, cambios: Cambios = new Map(), ciclo = CICLO): PlanDia[] {
+  return Array.from({ length: 7 }, (_, i) => planDia(addDays(lunes, i), inicio, cambios, ciclo));
 }
 
 // ---------- Lista de la compra ----------
@@ -76,21 +77,32 @@ export interface ArticuloLista {
   c: Categoria;
   /** "Lun comida", "Sáb merienda"… */
   usos: string[];
+  /** Gramos totales de la semana (solo con las raciones por kcal activadas). */
+  g?: number;
 }
 
 const DIA_CORTO = ['', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
-export function listaCompra(dias: PlanDia[]): ArticuloLista[] {
+/**
+ * Lista de la compra de unos días. Con `raciones` activas, suma también los gramos de cada
+ * ingrediente según las kcal de cada adulto (y la parte del niño si se pide).
+ */
+export function listaCompra(dias: PlanDia[], raciones?: AjustesRaciones): ArticuloLista[] {
   const m = new Map<string, ArticuloLista>();
-  const add = (n: string, c: Categoria, uso?: string) => {
+  const add = (n: string, c: Categoria, uso?: string, g?: number) => {
     const a = m.get(n) || { nombre: n, c, usos: [] };
     if (uso && !a.usos.includes(uso)) a.usos.push(uso);
+    if (g) a.g = (a.g || 0) + g;
     m.set(n, a);
+  };
+  const plato = (r: Receta, momento: Momento, uso: string, comeNino: boolean) => {
+    const factores = raciones?.activo ? racionesReceta(r, momento, raciones).reduce((s, x) => s + x.factor, 0) + (comeNino && raciones.ninoEnCompra ? RACION_NINO : 0) : 0;
+    for (const x of r.ingredientes) add(x.n, x.c, uso, x.g && factores ? x.g * factores : undefined);
   };
   for (const d of dias) {
     const k = DIA_CORTO[d.dia];
-    for (const x of d.comida.ingredientes) add(x.n, x.c, `${k} comida`);
-    for (const x of d.cena.ingredientes) add(x.n, x.c, `${k} cena`);
+    plato(d.comida, 'comida', `${k} comida`, d.finde);
+    plato(d.cena, 'cena', `${k} cena`, true);
     for (const x of d.merienda.ingredientes) add(x.n, x.c, `${k} merienda`);
     for (const x of d.desayuno?.ingredientes || []) add(x.n, x.c, `${k} desayuno`);
   }

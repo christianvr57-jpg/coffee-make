@@ -12,11 +12,20 @@ import { Icono } from '../../../ui/Icono';
 import { ajustesCocina, anadirArticulo, desmarcarTodo, leerCompra, marcarArticulo, quitarArticulo } from '../estado';
 import { listaCompra, planSemana } from '../plan';
 import { CATEGORIAS, type Categoria } from '../tipos';
+import { G_HUEVO } from '../datos/nutricion';
+import { redondear } from '../raciones';
 import { useCambios } from './comunes';
 
 /** 0 = esta semana, 1 = la próxima. Por defecto, el fin de semana se compra para la siguiente. */
 const cual = signal<0 | 1 | null>(null);
 const ocultarHecho = signal(false);
+
+/** Cantidad semanal legible: kilos a partir de 1000 g; huevos en unidades enteras. */
+function cantidadCompra(nombre: string, g: number): string {
+  if (nombre === 'Huevos') return `${Math.ceil(g / G_HUEVO)} huevos`;
+  if (g >= 1000) return `${String(Math.round(g / 100) / 10).replace('.', ',')} kg`;
+  return `${redondear(g)} g`;
+}
 
 export function CompraCocina() {
   const hoy = parse(diaActual.value);
@@ -29,11 +38,12 @@ export function CompraCocina() {
   const [nuevo, setNuevo] = useState('');
   if (!cambios || !estado) return null;
 
-  const dias = planSemana(lunes, ajustesCocina.value.inicio, cambios);
-  const delMenu = listaCompra(dias);
+  const dias = planSemana(lunes, ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
+  const raciones = ajustesCocina.value.raciones;
+  const delMenu = listaCompra(dias, raciones);
   const marcado = new Map(estado.map((a) => [a.nombre, a]));
   const manuales = estado.filter((a) => a.manual);
-  const todos = [...delMenu.map((a) => ({ ...a, manual: false })), ...manuales.filter((m) => !delMenu.some((a) => a.nombre === m.nombre)).map((m) => ({ nombre: m.nombre, c: m.c, usos: [] as string[], manual: true }))];
+  const todos = [...delMenu.map((a) => ({ ...a, manual: false })), ...manuales.filter((m) => !delMenu.some((a) => a.nombre === m.nombre)).map((m) => ({ nombre: m.nombre, c: m.c, usos: [] as string[], manual: true, g: undefined as number | undefined }))];
   const hechos = todos.filter((a) => marcado.get(a.nombre)?.hecho).length;
 
   const alternar = (nombre: string, c: Categoria, manual: boolean) => marcarArticulo(clave, nombre, c, !marcado.get(nombre)?.hecho, manual);
@@ -49,7 +59,7 @@ export function CompraCocina() {
       `Compra · semana del ${fechaCorta(lunes)}`,
       ...CATEGORIAS.flatMap(([c, n]) => {
         const xs = pendientes.filter((a) => a.c === c);
-        return xs.length ? ['', n.toUpperCase(), ...xs.map((a) => `- ${a.nombre}`)] : [];
+        return xs.length ? ['', n.toUpperCase(), ...xs.map((a) => `- ${a.nombre}${a.g ? ` (${cantidadCompra(a.nombre, a.g)})` : ''}`)] : [];
       }),
     ].join('\n');
     try {
@@ -81,7 +91,7 @@ export function CompraCocina() {
           {hechos} de {todos.length}
         </b>
         <span>
-          Semana del {fechaCorta(lunes)} al {fechaCorta(addDays(lunes, 6))} · menú {dias[0].semana + 1} de 4
+          Semana del {fechaCorta(lunes)} al {fechaCorta(addDays(lunes, 6))} · menú {dias[0].semana + 1} de {ajustesCocina.value.ciclo}
         </span>
         <div class="barra-stock">
           <div style={{ width: `${todos.length ? (hechos / todos.length) * 100 : 0}%` }} />
@@ -109,7 +119,10 @@ export function CompraCocina() {
                     <button type="button" class="art-toque" aria-pressed={hecho} onClick={() => alternar(a.nombre, a.c, a.manual)}>
                       <span class={`casilla${hecho ? ' marcada' : ''}`}>{hecho && <Icono n="check" t={16} />}</span>
                       <span class="art-txt">
-                        <b>{a.nombre}</b>
+                        <b>
+                          {a.nombre}
+                          {a.g ? <em class="art-cantidad"> · {cantidadCompra(a.nombre, a.g)}</em> : null}
+                        </b>
                         {a.usos.length > 0 && <small>{a.usos.length > 4 ? `${a.usos.length} veces esta semana` : a.usos.join(' · ')}</small>}
                         {a.manual && <small>Añadido a mano</small>}
                       </span>
@@ -139,7 +152,12 @@ export function CompraCocina() {
           <Icono n="reiniciar" t={22} /> Desmarcar todo
         </button>
       </div>
-      <p class="pie">Sin cantidades: compra para vuestras raciones. Debajo de cada artículo verás para qué día es. Los básicos (fruta, leche del niño, frutos secos, aceite) se añaden cada semana.</p>
+      <p class="pie">
+        {raciones.activo
+          ? `Cantidades en crudo de toda la semana según las kcal de cada uno${raciones.ninoEnCompra ? ', con la parte del niño' : ''}. Redondea al comprar: el pescado y la carne se venden por piezas.`
+          : 'Sin cantidades: activa los gramos por persona en los ajustes de cocina para verlas.'}{' '}
+        Debajo de cada artículo verás para qué día es. Los básicos (fruta, leche del niño, frutos secos, aceite) se añaden cada semana.
+      </p>
     </>
   );
 }

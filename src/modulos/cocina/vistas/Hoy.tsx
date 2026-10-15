@@ -2,6 +2,7 @@
 import { addDays, parse } from '../../../core/fechas';
 import { diaActual } from '../../../core/hoy';
 import { Icono } from '../../../ui/Icono';
+import { ir } from '../../../core/router';
 import { SEMANAS } from '../datos/menu';
 import { ajustesCocina } from '../estado';
 import { planDia } from '../plan';
@@ -25,15 +26,18 @@ export function HoyCocina() {
   if (!cambios) return null;
   const hoy = parse(diaActual.value);
   const inicio = ajustesCocina.value.inicio;
-  const p = planDia(hoy, inicio, cambios);
-  const m = planDia(addDays(hoy, 1), inicio, cambios);
+  const p = planDia(hoy, inicio, cambios, ajustesCocina.value.ciclo);
+  const m = planDia(addDays(hoy, 1), inicio, cambios, ajustesCocina.value.ciclo);
   return (
     <>
       <div class="sub-cabecera">
         <div>
-          <div class="sobre">Semana {p.semana + 1} de 4 del menú</div>
+          <div class="sobre">Semana {p.semana + 1} de {ajustesCocina.value.ciclo} del menú</div>
           <div class="sub">{fechaLarga(p.fecha)}</div>
         </div>
+        <button type="button" class="btn-mas" aria-label="Ajustes de cocina" onClick={() => ir('/cocina/ajustes')}>
+          <Icono n="ajustes" t={22} />
+        </button>
       </div>
 
       {p.dia === 7 && <Lote semana={m.semana} titulo="Hoy toca preparar la semana (batch cooking)" />}

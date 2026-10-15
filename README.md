@@ -5,7 +5,7 @@ Segundo cerebro personal en forma de app web instalable (PWA): un núcleo común
 Módulos actuales:
 
 - **Hogar**: rutina de la casa (coladas, tareas diarias, semanales y periódicas repartidas por el mes).
-- **Cocina**: menú familiar (2 adultos y un niño de 1 año) en 4 semanas de rotación con dieta mediterránea, 56 recetas con adaptación para el niño, lista de la compra para marcar, batch cooking del domingo y equilibrio semanal comprobado (AESAN y AEP, con fuentes en `src/modulos/cocina/datos/guia.ts`).
+- **Cocina**: menú familiar (2 adultos y un niño de 1 año) en 8 semanas de rotación con dieta mediterránea, 112 recetas con adaptación para el niño, gramos por persona según las kcal diarias de cada adulto (composición de alimentos de USDA FoodData Central, `datos/nutricion.ts`), lista de la compra con cantidades, batch cooking del domingo y equilibrio semanal comprobado (AESAN y AEP, con fuentes en `src/modulos/cocina/datos/guia.ts`).
 - **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable", cata con rueda de sabores y diagnóstico de extracción, recetas (de referencia con su fuente y propias) que guían el temporizador paso a paso, un recomendador que aprende de tus registros, una guía (extracción, agua, variedades y procesos) y análisis con gráficos, mejores recetas por café y comparador.
 
 Las recetas de referencia (`src/modulos/cafe/datos/recetas.ts`) y las fichas de la guía (`datos/guia.ts`) llevan cada una el enlace a su fuente. Las cantidades, tiempos y temperaturas son los del autor; los clics del Comandante C40 son una estimación de la app y se muestran como tal.
@@ -19,7 +19,8 @@ src/
   vistas/        Inicio, Más, Buscar, Ajustes
   modulos/
     hogar/       calendario.ts (lógica), reparto.ts, rutina.json (datos), vistas/
-    cocina/      plan.ts (ciclo, compra, equilibrio), datos/ (recetas, menú, guía), vistas/
+    cocina/      plan.ts (ciclo, compra, equilibrio), raciones.ts (gramos por kcal),
+                 datos/ (recetas, menú, nutrición, guía), vistas/
     cafe/        modelo.ts, calculos.ts, diagnostico.ts, recetas.ts, aprendizaje.ts (recomendador),
                  estadisticas.ts, temporizador.ts,
                  datos/ (métodos, catálogos, rueda de sabores, recetas, guía), vistas/

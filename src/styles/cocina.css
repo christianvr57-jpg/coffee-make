@@ -92,3 +92,15 @@
 .pasos-cocina li { font-size: 16px; line-height: 1.45; }
 .nino-receta { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
 .titulo-seccion { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 22px 4px 0; }
+
+/* Raciones por kcal */
+.tp-kcal { font-size: 13px; font-weight: 600; color: var(--accent); }
+.tabla-cantidades { display: grid; font-size: 14px; }
+.tc-fila { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(var(--cols), minmax(0, 1fr)); gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--sep); align-items: baseline; font-variant-numeric: tabular-nums; }
+.tc-fila > span:not(:first-child) { text-align: right; }
+.tc-cab { font-size: 12px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--label-2); }
+.tc-cab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tc-ing { overflow-wrap: anywhere; }
+.tc-total { font-weight: 700; }
+.tc-pie { font-weight: 600; color: var(--accent); border-bottom: 0; }
+.art-cantidad { font-style: normal; font-weight: 600; color: var(--accent); }

@@ -5,6 +5,8 @@ import { RECETAS, receta } from '../src/modulos/cocina/datos/recetas';
 import { DESAYUNOS, MERIENDAS, SEMANAS } from '../src/modulos/cocina/datos/menu';
 import { PESCADOS_EXCLUIDOS, RIESGO_ATRAGANTAMIENTO } from '../src/modulos/cocina/datos/guia';
 import { alternativas, claveCambio, contarProteinas, equilibrio, inicioParaSemana, listaCompra, planDia, planSemana, semanaDelCiclo } from '../src/modulos/cocina/plan';
+import { NUTRICION } from '../src/modulos/cocina/datos/nutricion';
+import { factorPara, kcalComida, nutrientesReceta, redondear, tablaCantidades, textoCantidad, type AjustesRaciones } from '../src/modulos/cocina/raciones';
 
 const INICIO = '2026-10-12'; // lunes = semana 1
 const lunesSemana = (n: number) => addDays(parse(INICIO), 7 * n);
@@ -35,14 +37,15 @@ describe('recetas', () => {
   it('lo que come el niño no incluye alimentos de riesgo de atragantamiento', () => {
     const tomas = [...MERIENDAS, ...DESAYUNOS].map((t) => `${t.texto} ${t.ingredientes.map((x) => x.n).join(' ')}`).join(' ').toLowerCase();
     for (const p of RIESGO_ATRAGANTAMIENTO) expect(tomas, p).not.toContain(p);
-    for (const r of RECETAS) for (const p of RIESGO_ATRAGANTAMIENTO) expect(r.ingredientes.map((x) => x.n.toLowerCase()).join(' '), `${r.id}: ${p}`).not.toContain(p);
+    // Los frutos secos molidos sí están permitidos (AEP); enteros o en trozos, no.
+    for (const r of RECETAS) for (const p of RIESGO_ATRAGANTAMIENTO) expect(r.ingredientes.filter((x) => !/molid/i.test(x.n)).map((x) => x.n.toLowerCase()).join(' '), `${r.id}: ${p}`).not.toContain(p);
   });
 });
 
-describe('las 4 semanas cumplen los criterios', () => {
-  for (let n = 0; n < 4; n++) {
+describe('las 8 semanas cumplen los criterios', () => {
+  for (let n = 0; n < 8; n++) {
     it(`semana ${n + 1}`, () => {
-      const dias = planSemana(lunesSemana(n), INICIO);
+      const dias = planSemana(lunesSemana(n), INICIO, new Map(), 8);
       const fallos = equilibrio(dias).filter((c) => !c.ok);
       expect(fallos).toEqual([]);
       const c = contarProteinas(dias);
@@ -67,8 +70,11 @@ describe('ciclo y cambios', () => {
   it('semana del ciclo y vuelta a empezar', () => {
     expect(semanaDelCiclo(parse('2026-10-15'), INICIO)).toBe(0);
     expect(semanaDelCiclo(parse('2026-10-19'), INICIO)).toBe(1);
-    expect(semanaDelCiclo(parse('2026-11-09'), INICIO)).toBe(0);
-    expect(semanaDelCiclo(parse('2026-10-05'), INICIO)).toBe(3);
+    expect(semanaDelCiclo(parse('2026-11-09'), INICIO, 4)).toBe(0);
+    expect(semanaDelCiclo(parse('2026-11-09'), INICIO, 8)).toBe(4);
+    expect(semanaDelCiclo(parse('2026-12-07'), INICIO, 8)).toBe(0);
+    expect(semanaDelCiclo(parse('2026-10-05'), INICIO, 4)).toBe(3);
+    expect(semanaDelCiclo(parse('2026-10-05'), INICIO, 8)).toBe(7);
     expect(semanaDelCiclo(parse('2026-10-15'), inicioParaSemana(parse('2026-10-15'), 2))).toBe(2);
   });
   it('un cambio de plato solo afecta a ese día y se nota en la compra', () => {
@@ -83,12 +89,63 @@ describe('ciclo y cambios', () => {
     const lista = listaCompra(planSemana(lunesSemana(0), INICIO));
     const nombres = lista.map((a) => a.nombre);
     expect(new Set(nombres).size).toBe(nombres.length);
-    expect(nombres).toContain('Leche entera (niño)');
+    expect(nombres).toContain('Leche entera');
+    expect(nombres).toContain('Fruta de temporada');
     expect(lista.find((a) => a.nombre === 'Huevos')?.usos).toEqual(['Mar cena', 'Sáb cena']);
   });
   it('alternativas: misma proteína primero y, entre semana, solo recetas rápidas', () => {
     const a = alternativas(receta('merluza-patata-calabacin')!, false);
     expect(a.misma.every((r) => r.proteina === 'pescado-blanco' && r.minutos <= 40)).toBe(true);
     expect(a.otras.some((r) => r.id === 'muslos-pollo-asados')).toBe(false);
+  });
+});
+
+describe('raciones por kcal', () => {
+  const aj: AjustesRaciones = { activo: true, personas: [{ nombre: 'A', kcal: 2400 }, { nombre: 'B', kcal: 1800 }], pctComida: 35, pctCena: 30, ninoEnCompra: true };
+  it('todos los ingredientes con gramos están en la tabla de composición', () => {
+    const faltan = new Set<string>();
+    for (const r of RECETAS) for (const i of r.ingredientes) if (i.g && !NUTRICION[i.n]) faltan.add(i.n);
+    expect([...faltan]).toEqual([]);
+  });
+  it('cada ración de referencia es un plato completo razonable (350-900 kcal)', () => {
+    for (const r of RECETAS) {
+      const k = nutrientesReceta(r).kcal;
+      expect(k, `${r.id}: ${Math.round(k)} kcal`).toBeGreaterThan(350);
+      expect(k, `${r.id}: ${Math.round(k)} kcal`).toBeLessThan(900);
+      expect(nutrientesReceta(r).prot, `${r.id}: proteína`).toBeGreaterThan(15);
+    }
+  });
+  it('escala todos los ingredientes para llegar a las kcal de cada persona', () => {
+    const r = receta('lentejas-estofadas')!;
+    expect(kcalComida(aj.personas[0], 'comida', aj)).toBe(840);
+    const f = factorPara(r, 840);
+    expect(nutrientesReceta(r, f).kcal).toBeCloseTo(840, 0);
+    const t = tablaCantidades(r, 'comida', aj, false);
+    const lentejas = t.find((x) => x.ingrediente.n === 'Lentejas pardinas')!;
+    expect(lentejas.porPersona[0]! / lentejas.porPersona[1]!).toBeCloseTo(2400 / 1800, 5);
+    expect(lentejas.total).toBeCloseTo(lentejas.porPersona[0]! + lentejas.porPersona[1]!, 5);
+    expect(t.find((x) => x.ingrediente.n === 'Laurel')!.total).toBeUndefined();
+  });
+  it('cantidades legibles', () => {
+    expect(redondear(7.4)).toBe(7);
+    expect(redondear(63)).toBe(65);
+    expect(redondear(187)).toBe(190);
+    expect(textoCantidad('Huevos', 100)).toBe('2 huevos');
+    expect(textoCantidad('Huevos', 130)).toBe('2,5 huevos');
+    expect(textoCantidad('Aceite de oliva virgen extra', 13.5)).toBe('14 g (1 cda)');
+    expect(textoCantidad('Lentejas pardinas', 75)).toBe('75 g en seco (≈ 230 g cocidas)');
+    expect(textoCantidad('Patata', 187)).toBe('190 g');
+  });
+  it('la compra suma gramos de la semana (con la parte del niño)', () => {
+    const dias = planSemana(lunesSemana(0), INICIO, new Map(), 8);
+    const sin = listaCompra(dias);
+    const con = listaCompra(dias, aj);
+    expect(sin.find((a) => a.nombre === 'Merluza en lomos')?.g).toBeUndefined();
+    const merluza = con.find((a) => a.nombre === 'Merluza en lomos')!.g!;
+    const lunesCena = receta('merluza-patata-calabacin')!;
+    const factores = aj.personas.reduce((s, p) => s + factorPara(lunesCena, kcalComida(p, 'cena', aj)), 0) + 0.25;
+    expect(merluza).toBeCloseTo(170 * factores, 5);
+    const sinNino = listaCompra(dias, { ...aj, ninoEnCompra: false }).find((a) => a.nombre === 'Merluza en lomos')!.g!;
+    expect(merluza - sinNino).toBeCloseTo(170 * 0.25, 5);
   });
 });

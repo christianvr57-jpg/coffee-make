@@ -1,11 +1,16 @@
 // COCINA · Recetas: biblioteca con buscador y filtro por proteína, y ficha de cada receta.
 import { signal } from '@preact/signals';
+import { useState } from 'preact/hooks';
+import { consulta } from '../../../core/router';
 import { BarraDetalle } from '../../../ui/Cabecera';
-import { Texto } from '../../../ui/form';
+import { Segmentado, Texto } from '../../../ui/form';
 import { Icono } from '../../../ui/Icono';
 import { RECETAS, receta } from '../datos/recetas';
 import { apariciones } from '../plan';
-import { CATEGORIAS, PROTEINAS, type Proteina } from '../tipos';
+import { CATEGORIAS, PROTEINAS, type Momento, type Proteina, type Receta } from '../tipos';
+import { ajustesCocina } from '../estado';
+import { nombrePersona, nutrientesReceta, racionesReceta, redondear, tablaCantidades, textoCantidad } from '../raciones';
+import { NUTRICION } from '../datos/nutricion';
 import { Etiquetas } from './comunes';
 
 const busqueda = signal('');
@@ -44,13 +49,78 @@ export function RecetasCocina() {
         ))}
       </div>
       {lista.length === 0 && <div class="vacio">No hay recetas con esa búsqueda.</div>}
-      <p class="pie">{RECETAS.length} recetas: todas forman parte del menú de 4 semanas.</p>
+      <p class="pie">{RECETAS.length} recetas: todas forman parte del menú de 8 semanas.</p>
+    </>
+  );
+}
+
+/** Tabla de gramos por persona (raciones por kcal activadas). */
+function Cantidades({ r, momento, cambiarMomento }: { r: Receta; momento: Momento; cambiarMomento: (m: Momento) => void }) {
+  const aj = ajustesCocina.value.raciones;
+  const tabla = tablaCantidades(r, momento, aj, aj.ninoEnCompra);
+  const rs = racionesReceta(r, momento, aj);
+  const conGramos = tabla.filter((t) => t.total !== undefined);
+  const alGusto = tabla.filter((t) => t.total === undefined).map((t) => t.ingrediente.n);
+  const legumbres = conGramos.filter((t) => NUTRICION[t.ingrediente.n]?.kcalCocida);
+  /** En la tabla, solo gramos (o huevos); las equivalencias van debajo. */
+  const corto = (n: string, g: number) => (n === 'Huevos' ? textoCantidad(n, g) : `${redondear(g)} g`);
+  return (
+    <>
+      <div class="tit-lista">Cantidades</div>
+      <div class="lista bloque-texto">
+        <Segmentado<Momento> opciones={[['comida', 'Como comida'], ['cena', 'Como cena']]} valor={momento} cambiar={cambiarMomento} />
+        <div class="tabla-cantidades" style={{ '--cols': aj.personas.length + 1 }}>
+          <div class="tc-fila tc-cab">
+            <span>Ingrediente</span>
+            {aj.personas.map((p, i) => (
+              <span>{nombrePersona(p, i)}</span>
+            ))}
+            <span>Total</span>
+          </div>
+          {conGramos.map((t) => (
+            <div class="tc-fila">
+              <span class="tc-ing">{t.ingrediente.n}</span>
+              {t.porPersona.map((g) => (
+                <span>{g ? corto(t.ingrediente.n, g) : ''}</span>
+              ))}
+              <span class="tc-total">{corto(t.ingrediente.n, t.total!)}</span>
+            </div>
+          ))}
+          <div class="tc-fila tc-pie">
+            <span>Energía</span>
+            {rs.map((x) => (
+              <span>{Math.round(x.kcal)} kcal</span>
+            ))}
+            <span />
+          </div>
+          <div class="tc-fila tc-pie">
+            <span>Proteína</span>
+            {rs.map((x) => (
+              <span>{Math.round(x.prot)} g</span>
+            ))}
+            <span />
+          </div>
+        </div>
+        {legumbres.map((t) => (
+          <p class="ayuda">
+            {t.ingrediente.n}: {textoCantidad(t.ingrediente.n, t.total!)} en total. Si usas legumbre ya cocida o de bote, pesa la cantidad en cocido.
+          </p>
+        ))}
+        {alGusto.length > 0 && <p class="ayuda">Al gusto: {alGusto.join(', ').toLowerCase()}.</p>}
+        <p class="ayuda">
+          Peso en crudo y limpio. Cada uno: {momento === 'comida' ? aj.pctComida : aj.pctCena} % de sus kcal del día.
+          {aj.ninoEnCompra ? ' El total incluye ¼ de ración para el niño.' : ''} Sal, al final y solo en la parte de los adultos.
+        </p>
+      </div>
     </>
   );
 }
 
 export function FichaRecetaCocina({ params }: { params: Record<string, string> }) {
   const r = receta(params.id);
+  const aj = ajustesCocina.value;
+  const enMenu = r ? apariciones(r.id) : [];
+  const [momento, setMomento] = useState<Momento>((consulta().get('m') as Momento) || (enMenu[0]?.endsWith('cena') ? 'cena' : 'comida'));
   if (!r) {
     return (
       <>
@@ -70,19 +140,31 @@ export function FichaRecetaCocina({ params }: { params: Record<string, string> }
         </div>
         {r.acompanamiento && <p class="resumen-receta">Acompañamiento: {r.acompanamiento.toLowerCase()}.</p>}
 
-        <div class="tit-lista">Ingredientes</div>
-        <div class="lista bloque-texto">
-          {CATEGORIAS.map(([c, nombre]) => {
-            const xs = r.ingredientes.filter((x) => x.c === c);
-            return xs.length ? (
-              <p class="ing-grupo">
-                <span>{nombre}</span>
-                {xs.map((x) => x.n).join(', ')}
+        {aj.raciones.activo ? (
+          <Cantidades r={r} momento={momento} cambiarMomento={setMomento} />
+        ) : (
+          <>
+            <div class="tit-lista">Ingredientes · ración de referencia (≈ {Math.round(nutrientesReceta(r).kcal)} kcal)</div>
+            <div class="lista bloque-texto">
+              {CATEGORIAS.map(([c, nombre]) => {
+                const xs = r.ingredientes.filter((x) => x.c === c);
+                return xs.length ? (
+                  <p class="ing-grupo">
+                    <span>{nombre}</span>
+                    {xs.map((x) => (x.g ? `${x.n}: ${textoCantidad(x.n, x.g)}` : `${x.n}: al gusto`)).join(' · ')}
+                  </p>
+                ) : null;
+              })}
+              <p class="ayuda">
+                Gramos en crudo para una ración de adulto. Para calcularlos según las kcal de cada uno,{' '}
+                <a class="enlace" href="#/cocina/ajustes">
+                  actívalo en los ajustes de cocina
+                </a>
+                . Sal, al final y solo en la parte de los adultos.
               </p>
-            ) : null;
-          })}
-          <p class="ayuda">Sin cantidades: ajústalas a vuestro apetito. Sal, al final y solo en la parte de los adultos.</p>
-        </div>
+            </div>
+          </>
+        )}
 
         <div class="tit-lista">Pasos</div>
         <ol class="lista bloque-texto pasos-cocina">

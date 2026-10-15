@@ -60,7 +60,7 @@ export const CRITERIOS_SEMANA: Apartado[] = [
     puntos: [
       'Legumbres 4 veces (la AESAN recomienda al menos 4 raciones a la semana).',
       'Pescado 4 veces, 2 de ellas azul (la AESAN, 3 o más, priorizando el azul).',
-      'Carne 3 veces como máximo, sobre todo pollo, pavo y conejo; ternera solo una vez cada dos semanas.',
+      'Carne 3 veces como máximo, sobre todo pollo, pavo y conejo; carne roja (ternera o cerdo) solo una vez cada dos semanas.',
       '2 cenas de huevo: en torno a 3-4 huevos por adulto a la semana (la AESAN, hasta 4).',
       'Verdura en la comida y en la cena todos los días, y fruta de postre.',
       'Aceite de oliva virgen extra como grasa; nada frito en abundancia, ni embutidos, ni bollería.',
@@ -71,7 +71,7 @@ export const CRITERIOS_SEMANA: Apartado[] = [
     puntos: [
       'Fruta: 2-3 piezas al día (de postre y entre horas). Verduras y hortalizas: al menos 3 raciones al día.',
       'Un puñado de frutos secos naturales sin sal la mayoría de los días (al menos 3 veces por semana).',
-      'Las cantidades no vienen fijadas: ajústalas a vuestro apetito; si queréis más proteína, sube la ración del plato principal.',
+      'Cada receta trae los gramos de una ración de referencia. En los ajustes de Cocina puedes poner las kcal diarias de cada adulto y la app calcula los gramos de cada uno (y la compra de la semana).',
     ],
   },
   {

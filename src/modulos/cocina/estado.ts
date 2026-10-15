@@ -3,14 +3,30 @@ import { signal } from '@preact/signals';
 import { borrar, db, escribirAjuste, guardar, leerAjuste, vivos } from '../../core/db';
 import { iso, lunesDe } from '../../core/fechas';
 import type { ArticuloCompra, Categoria, Momento } from './tipos';
+import type { AjustesRaciones } from './raciones';
 import { claveCambio, type Cambios } from './plan';
 
 export interface AjustesCocina {
   /** Lunes en que empezó la semana 1 del ciclo. */
   inicio: string;
+  /** Semanas de la rotación: 4 (las primeras) u 8. */
+  ciclo: 4 | 8;
+  raciones: AjustesRaciones;
 }
 
-export const ajustesCocina = signal<AjustesCocina>({ inicio: iso(lunesDe(new Date())) });
+/** Los nombres y las kcal solo se guardan en el dispositivo (nunca en el código). */
+export const RACIONES_INICIALES: AjustesRaciones = {
+  activo: false,
+  personas: [
+    { nombre: 'Adulto 1', kcal: 2000 },
+    { nombre: 'Adulto 2', kcal: 2000 },
+  ],
+  pctComida: 35,
+  pctCena: 30,
+  ninoEnCompra: true,
+};
+
+export const ajustesCocina = signal<AjustesCocina>({ inicio: iso(lunesDe(new Date())), ciclo: 8, raciones: RACIONES_INICIALES });
 
 export async function cambiarAjustesCocina(p: Partial<AjustesCocina>) {
   ajustesCocina.value = { ...ajustesCocina.value, ...p };
