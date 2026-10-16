@@ -1,6 +1,6 @@
 // Estado del módulo Cocina: ajustes (qué lunes empezó el ciclo), cambios de plato y lista de la compra.
 import { signal } from '@preact/signals';
-import { borrar, db, escribirAjuste, guardar, leerAjuste, vivos } from '../../core/db';
+import { borrar, db, escribirAjuste, escribirAjusteInicial, guardar, leerAjuste, vivos } from '../../core/db';
 import { iso, lunesDe } from '../../core/fechas';
 import type { ArticuloCompra, Categoria, Momento } from './tipos';
 import type { AjustesRaciones } from './raciones';
@@ -37,7 +37,7 @@ export async function iniciarCocina(): Promise<void> {
   const guardado = await db.ajustes.get('cocina');
   if (guardado) ajustesCocina.value = await leerAjuste('cocina', ajustesCocina.value);
   // La primera vez, la semana 1 empieza esta semana.
-  else await escribirAjuste('cocina', ajustesCocina.value);
+  else await escribirAjusteInicial('cocina', ajustesCocina.value);
 }
 
 // ---------- Cambios de plato ----------
@@ -54,7 +54,7 @@ export async function cambiarPlato(fecha: string, momento: Momento, recetaId: st
 }
 
 export async function restablecerCambios(): Promise<void> {
-  await db.cocina_cambios.clear();
+  for (const c of vivos(await db.cocina_cambios.toArray())) await borrar('cocina_cambios', c.id);
 }
 
 // ---------- Lista de la compra ----------

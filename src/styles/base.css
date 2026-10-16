@@ -266,7 +266,7 @@ main.vista {
 .campo .et small { display: block; font-size: 13px; color: var(--label-2); margin-top: 1px; }
 .campo.col { flex-direction: column; align-items: stretch; gap: 8px; padding-top: 12px; padding-bottom: 12px; }
 .campo.col > .et { font-size: 14px; color: var(--label-2); flex: none; }
-.campo input[type='text'], .campo textarea, .campo select {
+.campo input[type='text'], .campo input[type='password'], .campo textarea, .campo select {
   width: 100%; min-height: 44px; border: 0; background: transparent; outline: none; font-size: 17px; padding: 0;
 }
 .campo textarea { min-height: 84px; resize: none; line-height: 1.35; padding: 4px 0; }

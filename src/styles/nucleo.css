@@ -147,3 +147,29 @@ input.fecha { min-height: 40px; border: 0; border-radius: 10px; background: var(
 .gr-punto.reciente { stroke: var(--label); stroke-width: 1.6; }
 /* Texto corto en una fila con etiqueta (p. ej. el tiempo de la marca en Zonas): a la derecha, sin pisar la etiqueta. */
 .campo:not(.col) > input[type='text'] { width: 40%; flex: none; text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* ---------- Sincronización en la nube ---------- */
+.nube-intro { margin: 4px 4px 0; }
+.nube-intro code, .pie code, .pasos-nube code { font-size: 0.92em; padding: 0 4px; border-radius: 4px; background: var(--fill); overflow-wrap: anywhere; }
+.pasos-nube { list-style: none; margin: 0; }
+.paso-nube { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; font-size: 15px; line-height: 1.45; }
+.paso-nube .run-num { margin-top: 1px; }
+.opcion-larga { min-height: 64px; padding: 10px 16px; gap: 12px; }
+.opcion-larga span { display: grid; gap: 2px; text-align: left; }
+.opcion-larga b { font-size: 16px; font-weight: 600; color: var(--label); }
+.opcion-larga small { font-size: 13px; font-weight: 400; color: var(--label-2); line-height: 1.35; }
+.opcion-larga[aria-pressed='true'] b { color: var(--accent); }
+.opcion-larga .ico { color: var(--accent); flex: none; }
+.nube-off p { display: flex; gap: 10px; align-items: flex-start; }
+.nube-off .ico { color: var(--accent); flex: none; margin-top: 1px; }
+.estado-nube .ico { color: var(--ok); }
+.estado-nube.error .ico { color: #d97a00; }
+.estado-nube .et { font-weight: 600; }
+.estado-nube .et small { font-weight: 400; line-height: 1.35; }
+.nube-avanzado { margin-top: 18px; }
+.nube-avanzado summary { cursor: pointer; padding: 6px 8px; font-size: 14px; color: var(--label-2); }
+.nube-avanzado .lista { margin-top: 6px; }
+.indicador-nube { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; font-size: 12.5px; color: var(--label-2); text-decoration: none; }
+.indicador-nube .ico { color: var(--ok); flex: none; }
+.indicador-nube.error .ico { color: #d97a00; }
+.indicador-nube.girando .ico { color: var(--accent); animation: latido 1.2s ease infinite; }

@@ -36,9 +36,17 @@ tools/           reparto de tareas periódicas e iconos
 2. Si necesita tablas, añádelas en `src/core/db.ts` con una nueva `version()` de Dexie (las migraciones son automáticas).
 3. Regístralo en `src/core/registro.ts`.
 
-### Preparado para sincronizar
+### Sincronización en la nube
 
-Cada registro tiene identificador ULID (se genera sin servidor), `creado`, `actualizado` y borrado lógico (`borrado`). Cada escritura deja constancia en la tabla `cambios`. Para sincronizar en el futuro basta con un adaptador que suba esa cola y descargue los cambios remotos (última escritura gana por registro).
+Cada registro tiene identificador ULID (se genera sin servidor), `creado`, `actualizado` y borrado lógico (`borrado`), y cada escritura deja constancia en la tabla `cambios`. Con eso, la app sincroniza todos los dispositivos a través de un archivo JSON (`coffee-make.json`) en un **repositorio privado de GitHub** (`christianvr57-jpg/coffee-make-datos`):
+
+- `src/core/fusion.ts`: fusión registro a registro (gana la versión más reciente; los borrados viajan como marcas; lo que solo está en un lado se conserva). En la primera sincronización de un dispositivo se elige si manda la nube o el dispositivo.
+- `src/core/github.ts`: lectura y escritura con la API de contenidos. Cada escritura lleva el `sha` leído; si otro dispositivo escribió antes, GitHub la rechaza (409) y se vuelve a leer y fusionar. Las lecturas son condicionales (ETag → 304).
+- `src/core/nube.ts`: cuándo se sincroniza (al abrir, al volver a la app, a los 2,5 s de cada cambio y cada 30 s con la app a la vista), qué se escribe aquí y recarga de los módulos cuando llegan datos.
+- Los valores por defecto y los datos de serie (equipo, aguas, ejemplos) se guardan con fecha «antigua» (`sembrar`, `escribirAjusteInicial`) para que un dispositivo nuevo nunca pise los datos reales.
+- Quedan fuera las fotos y los ajustes propios de cada dispositivo (`copia`, `hogar:migrado`, `cafe:semillas`).
+
+Cada dispositivo se conecta en **Ajustes → Sincronización en la nube** con una clave *fine-grained* de GitHub limitada a ese repositorio (permiso *Contents: Read and write*). La clave vive solo en el navegador (`localStorage`), nunca en el código ni en las copias. `npm run probar-nube` (con `NUBE_TOKEN`) prueba la sincronización real entre dos dispositivos simulados en un archivo aparte.
 
 ### Datos
 
@@ -85,4 +93,4 @@ La misma URL se adapta a pantallas de 1000 px o más (`src/core/pantalla.ts`, es
 - **Hogar**: la semana en tarjetas por día y las tareas en columnas.
 - Las hojas se abren como ventanas centradas. Atajos: `Ctrl/⌘ K` o `/` para buscar, `←` `→` para cambiar de semana y `Esc` para cerrar.
 
-Cada navegador guarda sus propios datos. Para ver en el ordenador lo del iPhone: en el iPhone, **Ajustes → Exportar copia**; en el ordenador, arrastra ese `.json` a la ventana (o **Ajustes → Importar copia**). En Chrome o Edge se puede instalar como app con el icono de instalar de la barra de direcciones.
+Con la sincronización activada en los dos, lo que cambias en uno aparece en el otro en segundos. Sin ella, cada navegador guarda sus propios datos y se pueden pasar con una copia: arrastra el `.json` exportado a la ventana (o **Ajustes → Importar copia**). En Chrome o Edge se puede instalar como app con el icono de instalar de la barra de direcciones.

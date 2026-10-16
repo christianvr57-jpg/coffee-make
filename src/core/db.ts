@@ -1,6 +1,6 @@
 // Base de datos local (IndexedDB a través de Dexie). Una sola base para toda la app;
 // cada módulo tiene sus tablas con prefijo. Todas las tablas de datos del usuario
-// llevan marcas de tiempo y borrado lógico para poder sincronizar en el futuro.
+// llevan marcas de tiempo y borrado lógico para poder sincronizar (core/nube.ts).
 import Dexie, { type EntityTable } from 'dexie';
 import { ulid } from './ids';
 import type { Agua, Cafe, Equipo, Foto, Preparacion, Receta } from '../modulos/cafe/modelo';
@@ -90,6 +90,10 @@ export type TablaDatos = (typeof TABLAS_DATOS)[number];
 
 type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas' | 'cocina_cambios' | 'cocina_compra' | 'running_registros';
 
+/** Avisos de «hay cambios locales» (los usa la sincronización para subirlos al poco). */
+export const alCambiarDatos = new Set<() => void>();
+const avisar = () => alCambiarDatos.forEach((f) => f());
+
 /** Crea o actualiza un registro poniendo marcas de tiempo y anotándolo en la cola de cambios. */
 export async function guardar<T extends Registro>(tabla: TablaRegistros, datos: Partial<T> & Record<string, unknown>): Promise<T> {
   const ahora = Date.now();
@@ -98,6 +102,7 @@ export async function guardar<T extends Registro>(tabla: TablaRegistros, datos: 
     await db.table(tabla).put(reg);
     await db.cambios.add({ tabla, registroId: reg.id, ts: ahora });
   });
+  avisar();
   return reg;
 }
 
@@ -108,6 +113,16 @@ export async function borrar(tabla: TablaRegistros, id: string): Promise<void> {
     await db.table(tabla).update(id, { borrado: ahora, actualizado: ahora });
     await db.cambios.add({ tabla, registroId: id, ts: ahora });
   });
+  avisar();
+}
+
+/**
+ * Datos iniciales (equipo y aguas de serie, datos de ejemplo): se guardan con fecha «antigua» para que,
+ * al sincronizar un dispositivo nuevo, nunca pisen lo que ya tengas en la nube.
+ */
+export async function sembrar<T extends Registro>(tabla: TablaRegistros, datos: Partial<T>[]): Promise<void> {
+  const ahora = Date.now();
+  await db.table(tabla).bulkPut(datos.map((d) => ({ ...d, creado: d.creado || ahora, actualizado: 1, borrado: null })));
 }
 
 export const vivos = <T extends Registro>(lista: T[]): T[] => lista.filter((r) => !r.borrado);
@@ -118,7 +133,16 @@ export async function leerAjuste<T>(clave: string, porDefecto: T): Promise<T> {
   return a ? ({ ...(porDefecto as object), ...(a.valor as object) } as T) : porDefecto;
 }
 export async function escribirAjuste(clave: string, valor: unknown): Promise<void> {
-  await db.ajustes.put({ clave, valor, actualizado: Date.now() });
+  const ahora = Date.now();
+  await db.transaction('rw', db.ajustes, db.cambios, async () => {
+    await db.ajustes.put({ clave, valor, actualizado: ahora });
+    await db.cambios.add({ tabla: 'ajustes', registroId: clave, ts: ahora });
+  });
+  avisar();
+}
+/** Valor por defecto de un ajuste (fecha «antigua»: cualquier valor real de otro dispositivo gana). */
+export async function escribirAjusteInicial(clave: string, valor: unknown): Promise<void> {
+  await db.ajustes.put({ clave, valor, actualizado: 1 });
 }
 
 /** Pide al navegador que no borre los datos si falta espacio. */

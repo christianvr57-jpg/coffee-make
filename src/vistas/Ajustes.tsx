@@ -9,6 +9,8 @@ import { BarraDetalle } from '../ui/Cabecera';
 import { Hoja, abrirHoja, avisar, confirmar, mostrarToast } from '../ui/capas';
 import { FilaBoton, Lista, Texto } from '../ui/form';
 import { Icono } from '../ui/Icono';
+import { estadoNube } from '../core/nube';
+import { SeccionNube } from './Nube';
 import { useState } from 'preact/hooks';
 
 export async function aplicarImportacion(texto: string) {
@@ -75,7 +77,10 @@ export function Ajustes() {
     }
   };
   const borrar = async () => {
-    if (!(await confirmar({ titulo: '¿Borrar todos los datos?', texto: 'Progreso del hogar, menú y compra, cafés, running y ajustes. No se puede deshacer: haz antes una copia.', ok: 'Borrar todo', peligro: true }))) return;
+    const texto = estadoNube.value.activa
+      ? 'Se borran de este dispositivo, pero con la sincronización activada volverán de la nube. Para empezar de cero, desconecta antes este dispositivo.'
+      : 'Progreso del hogar, menú y compra, cafés, running y ajustes. No se puede deshacer: haz antes una copia.';
+    if (!(await confirmar({ titulo: '¿Borrar todos los datos?', texto, ok: 'Borrar todo', peligro: true }))) return;
     await borrarTodo();
     location.reload();
   };
@@ -110,7 +115,9 @@ export function Ajustes() {
           </Lista>
         )}
 
-        {escritorio.value && (
+        <SeccionNube />
+
+        {escritorio.value && !estadoNube.value.activa && (
           <div class="aviso-instalar">
             <Icono n="info" t={22} />
             <div>

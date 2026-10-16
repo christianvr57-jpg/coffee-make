@@ -4,6 +4,7 @@ import { seccionDe, type ModuloApp, type Seccion } from '../core/modulos';
 import { MODULOS } from '../core/registro';
 import { ir } from '../core/router';
 import { Icono } from './Icono';
+import { IndicadorNube } from '../vistas/Nube';
 
 export const esMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
@@ -58,6 +59,7 @@ export function Lateral({ path, modulo }: { path: string; modulo?: ModuloApp }) 
           </span>
           Ajustes y datos
         </a>
+        <IndicadorNube />
         <p class="lat-version">Versión {__VERSION__}</p>
       </div>
     </aside>

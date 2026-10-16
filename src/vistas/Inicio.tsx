@@ -7,6 +7,7 @@ import { DIAS, DIAS_CORTOS, MESES, addDays, fechaCorta, iso, isoWeekday, lunesDe
 import { diasDesdeUltimaCopia } from '../core/copia';
 import { escritorio } from '../core/pantalla';
 import { hayActualizacion, aplicarActualizacion } from '../core/pwa';
+import { estadoNube } from '../core/nube';
 import { ir } from '../core/router';
 import { MODULOS } from '../core/registro';
 import { Icono } from '../ui/Icono';
@@ -103,6 +104,15 @@ export function Inicio() {
           <Icono n="reiniciar" t={18} />
           <span>
             Hay una versión nueva de la app. <b>{esc ? 'Pulsa para actualizar.' : 'Toca para actualizar.'}</b>
+          </span>
+        </button>
+      )}
+
+      {estadoNube.value.activa && estadoNube.value.error && !estadoNube.value.sincronizando && (
+        <button type="button" class="aviso-suave atencion accion" onClick={() => ir('/ajustes')}>
+          <Icono n="nube" t={18} />
+          <span>
+            {estadoNube.value.error} <b>Ver</b>
           </span>
         </button>
       )}

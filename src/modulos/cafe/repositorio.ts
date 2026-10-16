@@ -1,6 +1,6 @@
 // Acceso a datos del módulo Café: consultas, equipo inicial y datos de ejemplo.
 import { signal } from '@preact/signals';
-import { db, guardar, leerAjuste, escribirAjuste, vivos } from '../../core/db';
+import { borrar, db, guardar, leerAjuste, escribirAjuste, escribirAjusteInicial, sembrar, vivos } from '../../core/db';
 import { addDays, iso } from '../../core/fechas';
 import { ulid } from '../../core/ids';
 import type { Agua, Cafe, Equipo, MetodoId, Preparacion, Receta } from './modelo';
@@ -148,14 +148,13 @@ export async function cargarDemo(): Promise<void> {
   const { cafes, preps } = datosDemo();
   for (const c of cafes) await guardar<Cafe>('cafe_cafes', { ...c, borrado: null });
   for (const p of preps) await guardar<Preparacion>('cafe_preparaciones', { ...p, borrado: null });
+  await escribirAjuste('cafe:demo', { borrado: false });
 }
 
-/** Borra (de verdad) los datos de ejemplo: nunca se han sincronizado, no necesitan marca de borrado. */
+/** Borra los datos de ejemplo (con marca de borrado, para que desaparezcan también de los demás dispositivos). */
 export async function borrarDemo(): Promise<void> {
-  await db.transaction('rw', db.cafe_cafes, db.cafe_preparaciones, async () => {
-    await db.cafe_cafes.filter((c) => !!c.demo).delete();
-    await db.cafe_preparaciones.filter((p) => !!p.demo).delete();
-  });
+  for (const c of await db.cafe_cafes.filter((x) => !!x.demo && !x.borrado).toArray()) await borrar('cafe_cafes', c.id);
+  for (const p of await db.cafe_preparaciones.filter((x) => !!x.demo && !x.borrado).toArray()) await borrar('cafe_preparaciones', p.id);
   await escribirAjuste('cafe:demo', { borrado: true });
 }
 
@@ -163,11 +162,17 @@ export async function iniciarCafe(): Promise<void> {
   ajustesCafe.value = await leerAjuste<AjustesCafe>('cafe', ajustesCafe.value);
   const sembrado = await db.ajustes.get('cafe:semillas');
   if (!sembrado) {
-    for (const e of equipoInicial()) await guardar<Equipo>('cafe_equipo', e);
-    for (const a of aguasIniciales()) await guardar<Agua>('cafe_aguas', a);
-    await cargarDemo();
-    await escribirAjuste('cafe:semillas', { fecha: Date.now() });
+    // Con fecha «antigua»: en un dispositivo nuevo, lo que venga de la nube manda.
+    await sembrar<Equipo>('cafe_equipo', equipoInicial());
+    await sembrar<Agua>('cafe_aguas', aguasIniciales());
+    const { cafes, preps } = datosDemo();
+    await sembrar<Cafe>('cafe_cafes', cafes);
+    await sembrar<Preparacion>('cafe_preparaciones', preps);
+    await escribirAjusteInicial('cafe:semillas', { fecha: Date.now() });
   }
+  // Si borraste los datos de ejemplo en otro dispositivo, se quitan también aquí.
+  const demo = (await db.ajustes.get('cafe:demo'))?.valor as { borrado?: boolean } | undefined;
+  if (demo?.borrado && (await hayDemo())) await borrarDemo();
 }
 
 export const nuevoId = () => ulid();

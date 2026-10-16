@@ -1,7 +1,7 @@
 // Estado del módulo Hogar: la rutina base (rutina.json) + los cambios del usuario y el progreso,
 // cargados en memoria (señales) y guardados en IndexedDB.
 import { computed, signal } from '@preact/signals';
-import { db, guardar, leerAjuste, escribirAjuste, type CambioHogar, type HechaHogar } from '../../core/db';
+import { borrar, db, guardar, leerAjuste, escribirAjuste, escribirAjusteInicial, type CambioHogar, type HechaHogar } from '../../core/db';
 import { iso, lunesDe, hoyISO } from '../../core/fechas';
 import { ulid } from '../../core/ids';
 import rutinaBase from './rutina.json';
@@ -43,9 +43,9 @@ export async function iniciarHogar(): Promise<void> {
   ]);
   ajustesHogar.value = aj;
   hechas.value = new Map(hs.filter((h) => !h.borrado).map((h) => [h.id, h.fecha]));
-  cambios.value = cs;
+  cambios.value = cs.filter((c) => !c.borrado);
   // Primera vez: guarda los ajustes iniciales (fecha de inicio y semana A).
-  if (!(await db.ajustes.get('hogar'))) await escribirAjuste('hogar', aj);
+  if (!(await db.ajustes.get('hogar'))) await escribirAjusteInicial('hogar', aj);
 }
 
 export async function cambiarAjustesHogar(parcial: Partial<AjustesHogar>): Promise<void> {
@@ -99,7 +99,8 @@ export async function eliminarElemento(tipo: 'tarea' | 'colada', id: string): Pr
 }
 
 export async function restablecerTareas(): Promise<void> {
-  await db.hogar_tareas.clear();
+  // Borrado lógico, para que el restablecimiento llegue también a los demás dispositivos.
+  for (const c of await db.hogar_tareas.toArray()) if (!c.borrado) await borrar('hogar_tareas', c.id);
   cambios.value = [];
 }
 

@@ -52,14 +52,15 @@ export async function cargarPlan(texto: string): Promise<PlanEntrenador> {
   if (typeof r === 'string') throw new Error(r);
   // La guía general ya está en la app: no se guarda la del JSON si viene incluida.
   const { guia: _g, ...limpio } = r as PlanEntrenador & { guia?: unknown };
-  await db.ajustes.put({ clave: 'running:plan', valor: limpio, actualizado: Date.now() });
+  await escribirAjuste('running:plan', limpio);
   plan.value = limpio;
   planPropio.value = true;
   return limpio;
 }
 
 export async function borrarPlan(): Promise<void> {
-  await db.ajustes.delete('running:plan');
+  // Se guarda vacío (no se borra) para que «volver al plan de la app» llegue a los demás dispositivos.
+  await escribirAjuste('running:plan', null);
   plan.value = PLAN_APP;
   planPropio.value = false;
 }
