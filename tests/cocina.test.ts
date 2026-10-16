@@ -149,3 +149,64 @@ describe('raciones por kcal', () => {
     expect(merluza - sinNino).toBeCloseTo(170 * 0.25, 5);
   });
 });
+
+describe('gustos: sustituir un plato para siempre', () => {
+  it('se aplica en todas las semanas, marca el hueco y los cambios de un día mandan', async () => {
+    const { fijarSustituciones, efectiva } = await import('../src/modulos/cocina/plan');
+    const base = SEMANAS[0].dias[0].comida;
+    const otra = RECETAS.find((r) => r.id !== base && r.proteina === receta(base)!.proteina)!.id;
+    fijarSustituciones({ [base]: otra });
+    try {
+      const p = planDia(lunesSemana(0), INICIO);
+      expect(p.comida.id).toBe(otra);
+      expect(p.comidaSustituida).toBe(true);
+      expect(p.comidaCambiada).toBe(false);
+      expect(p.base.comida).toBe(base);
+      expect(efectiva(base)).toBe(otra);
+      // En la siguiente vuelta del ciclo, también.
+      expect(planDia(lunesSemana(8), INICIO).comida.id).toBe(otra);
+      // Un cambio de ese día concreto gana a la sustitución.
+      const tercera = RECETAS.find((r) => r.id !== base && r.id !== otra)!.id;
+      const q = planDia(lunesSemana(0), INICIO, new Map([[claveCambio(INICIO, 'comida'), tercera]]));
+      expect(q.comida.id).toBe(tercera);
+      expect(q.comidaCambiada).toBe(true);
+      expect(q.comidaSustituida).toBe(false);
+    } finally {
+      fijarSustituciones({});
+    }
+    expect(planDia(lunesSemana(0), INICIO).comida.id).toBe(base);
+  });
+
+  it('las alternativas ponen primero las que os gustan y al final las que no', () => {
+    const actual = receta(SEMANAS[0].dias[5].comida)!;
+    const { misma } = alternativas(actual, true);
+    const fav = misma[misma.length - 1].id;
+    const odio = misma[0].id;
+    const ordenadas = alternativas(actual, true, { [fav]: 1, [odio]: -1 }).misma;
+    expect(ordenadas[0].id).toBe(fav);
+    expect(ordenadas[ordenadas.length - 1].id).toBe(odio);
+  });
+});
+
+describe('modo cocinar', () => {
+  it('encuentra los tiempos de cada paso para el temporizador', async () => {
+    const { tiemposDePaso } = await import('../src/modulos/cocina/cocinar');
+    expect(tiemposDePaso('Sofríe a fuego medio (8 min).')).toEqual([{ etiqueta: '8 min', segundos: 480 }]);
+    expect(tiemposDePaso('Hornea 12-15 min a 200 °C')).toEqual([{ etiqueta: '12-15 min', segundos: 720 }]);
+    expect(tiemposDePaso('Olla rápida 1 h y luego 10 minutos de reposo').map((t) => t.segundos)).toEqual([3600, 600]);
+    expect(tiemposDePaso('Sirve con perejil.')).toEqual([]);
+    // Todas las recetas: ningún tiempo absurdo.
+    for (const r of RECETAS) for (const p of r.pasos) for (const t of tiemposDePaso(p)) expect(t.segundos, `${r.id}: ${p}`).toBeLessThanOrEqual(2 * 3600);
+  });
+  it('cantidades para sacar: dos raciones de referencia y la del niño, o las calculadas por kcal', async () => {
+    const { ingredientesParaCocinar } = await import('../src/modulos/cocina/cocinar');
+    const r = receta('lentejas-estofadas')!;
+    const ref = ingredientesParaCocinar(r, 'comida', { activo: false, personas: [], pctComida: 35, pctCena: 30, ninoEnCompra: true });
+    expect(ref).toHaveLength(r.ingredientes.length);
+    expect(ref.find((i) => i.nombre === 'Laurel')?.cantidad).toBe('al gusto');
+    const aj: AjustesRaciones = { activo: true, personas: [{ nombre: 'A', kcal: 2500 }, { nombre: 'B', kcal: 1800 }], pctComida: 35, pctCena: 30, ninoEnCompra: false };
+    const kc = ingredientesParaCocinar(r, 'comida', aj);
+    const total = tablaCantidades(r, 'comida', aj, false).find((t) => t.ingrediente.n === 'Zanahoria')!.total!;
+    expect(kc.find((i) => i.nombre === 'Zanahoria')?.cantidad).toBe(textoCantidad('Zanahoria', total));
+  });
+});

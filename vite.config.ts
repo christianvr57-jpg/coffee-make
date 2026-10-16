@@ -16,7 +16,7 @@ export default defineConfig({
       manifest: {
         name: 'Coffee Make',
         short_name: 'Coffee Make',
-        description: 'Tu segundo cerebro: hogar, café y lo que venga, sin conexión.',
+        description: 'Tu segundo cerebro: hogar, cocina, running y lo que venga, sin conexión.',
         lang: 'es',
         start_url: './',
         scope: './',

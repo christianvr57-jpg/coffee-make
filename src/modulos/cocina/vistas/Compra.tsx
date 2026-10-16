@@ -9,7 +9,7 @@ import { useVivo } from '../../../core/vivo';
 import { confirmar, mostrarToast } from '../../../ui/capas';
 import { Interruptor, Segmentado } from '../../../ui/form';
 import { Icono } from '../../../ui/Icono';
-import { ajustesCocina, anadirArticulo, desmarcarTodo, leerCompra, marcarArticulo, quitarArticulo } from '../estado';
+import { ajustesCocina, anadirArticulo, desmarcarTodo, gustosCocina, leerCompra, marcarArticulo, marcarEnCasa, quitarArticulo } from '../estado';
 import { listaCompra, planSemana } from '../plan';
 import { CATEGORIAS, type Categoria } from '../tipos';
 import { G_HUEVO } from '../datos/nutricion';
@@ -43,7 +43,11 @@ export function CompraCocina() {
   const delMenu = listaCompra(dias, raciones);
   const marcado = new Map(estado.map((a) => [a.nombre, a]));
   const manuales = estado.filter((a) => a.manual);
-  const todos = [...delMenu.map((a) => ({ ...a, manual: false })), ...manuales.filter((m) => !delMenu.some((a) => a.nombre === m.nombre)).map((m) => ({ nombre: m.nombre, c: m.c, usos: [] as string[], manual: true, g: undefined as number | undefined }))];
+  const enCasa = new Set(gustosCocina.value.enCasa);
+  const lista = [...delMenu.map((a) => ({ ...a, manual: false })), ...manuales.filter((m) => !delMenu.some((a) => a.nombre === m.nombre)).map((m) => ({ nombre: m.nombre, c: m.c, usos: [] as string[], manual: true, g: undefined as number | undefined }))];
+  // Lo que siempre hay en casa no se cuenta ni se comparte: va aparte, al final.
+  const todos = lista.filter((a) => !enCasa.has(a.nombre));
+  const deCasa = lista.filter((a) => enCasa.has(a.nombre));
   const hechos = todos.filter((a) => marcado.get(a.nombre)?.hecho).length;
 
   const alternar = (nombre: string, c: Categoria, manual: boolean) => marcarArticulo(clave, nombre, c, !marcado.get(nombre)?.hecho, manual);
@@ -99,7 +103,7 @@ export function CompraCocina() {
       </div>
 
       <form class="anadir-compra" onSubmit={anadir}>
-        <input type="text" value={nuevo} placeholder="Añadir algo más (papel de horno, café…)" onInput={(e) => setNuevo((e.target as HTMLInputElement).value)} />
+        <input type="text" value={nuevo} placeholder="Añadir algo más (papel de horno, servilletas…)" onInput={(e) => setNuevo((e.target as HTMLInputElement).value)} />
         <button type="submit" class="btn-icono" aria-label="Añadir">
           <Icono n="anadir" t={20} />
         </button>
@@ -128,9 +132,22 @@ export function CompraCocina() {
                           {a.manual && <small>Añadido a mano</small>}
                         </span>
                       </button>
-                      {a.manual && (
+                      {a.manual ? (
                         <button type="button" class="art-quitar" aria-label={`Quitar ${a.nombre}`} onClick={() => quitarArticulo(clave, a.nombre)}>
                           <Icono n="cerrar" t={16} />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          class="art-quitar"
+                          title="Siempre lo tenemos en casa"
+                          aria-label={`${a.nombre}: siempre lo tenemos en casa`}
+                          onClick={() => {
+                            marcarEnCasa(a.nombre, true);
+                            mostrarToast(`${a.nombre}: siempre en casa`, 'Deshacer', () => marcarEnCasa(a.nombre, false));
+                          }}
+                        >
+                          <Icono n="hogar" t={16} />
                         </button>
                       )}
                     </div>
@@ -141,6 +158,21 @@ export function CompraCocina() {
           );
         })}
       </div>
+
+      {deCasa.length > 0 && (
+        <details class="siempre-en-casa">
+          <summary>
+            Siempre en casa ({deCasa.length}) <small>no se compran</small>
+          </summary>
+          <div class="chips compactos">
+            {deCasa.map((a) => (
+              <button type="button" class="chip" title="Volver a la lista" onClick={() => marcarEnCasa(a.nombre, false)}>
+                {a.nombre} <Icono n="anadir" t={14} />
+              </button>
+            ))}
+          </div>
+        </details>
+      )}
 
       <div class="lista separada">
         <div class="campo">
@@ -158,7 +190,7 @@ export function CompraCocina() {
         {raciones.activo
           ? `Cantidades en crudo de toda la semana según las kcal de cada uno${raciones.ninoEnCompra ? ', con la parte del niño' : ''}. Redondea al comprar: el pescado y la carne se venden por piezas.`
           : 'Sin cantidades: activa los gramos por persona en los ajustes de cocina para verlas.'}{' '}
-        Debajo de cada artículo verás para qué día es. Los básicos (fruta, leche del niño, frutos secos, aceite) se añaden cada semana.
+        Debajo de cada artículo verás para qué día es. Los básicos (fruta, leche del niño, frutos secos, aceite) se añaden cada semana. El icono de la casa aparta lo que siempre tenéis (sal, especias…).
       </p>
     </>
   );

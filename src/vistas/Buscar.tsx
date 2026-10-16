@@ -1,7 +1,7 @@
 // BUSCAR en todos los módulos a la vez.
 import { useEffect, useState } from 'preact/hooks';
 import type { ResultadoBusqueda } from '../core/modulos';
-import { MODULOS } from '../core/registro';
+import { visibles } from '../core/registro';
 import { ir } from '../core/router';
 import { BarraDetalle } from '../ui/Cabecera';
 import { Icono } from '../ui/Icono';
@@ -16,7 +16,7 @@ export function Buscar() {
       setRes([]);
       return;
     }
-    Promise.all(MODULOS.filter((m) => m.buscar).map(async (m) => (await m.buscar!(t)).map((r) => ({ ...r, modulo: m.nombre })))).then((listas) => {
+    Promise.all(visibles.value.filter((m) => m.buscar).map(async (m) => (await m.buscar!(t)).map((r) => ({ ...r, modulo: m.nombre })))).then((listas) => {
       if (vigente) setRes(listas.flat());
     });
     return () => {
@@ -29,7 +29,7 @@ export function Buscar() {
       <div class="pagina">
         <div class="buscador">
           <Icono n="buscar" t={18} />
-          <input type="search" placeholder="Cafés, tareas, notas…" value={q} autoFocus onInput={(e) => setQ((e.target as HTMLInputElement).value)} />
+          <input type="search" placeholder="Tareas, recetas, sesiones…" value={q} autoFocus onInput={(e) => setQ((e.target as HTMLInputElement).value)} />
         </div>
         {q.trim().length >= 2 && !res.length && <p class="vacio">Sin resultados para «{q.trim()}».</p>}
         {res.length > 0 && (

@@ -173,3 +173,24 @@ input.fecha { min-height: 40px; border: 0; border-radius: 10px; background: var(
 .indicador-nube .ico { color: var(--ok); flex: none; }
 .indicador-nube.error .ico { color: #d97a00; }
 .indicador-nube.girando .ico { color: var(--accent); animation: latido 1.2s ease infinite; }
+
+/* ---------- Hogar · Progreso ---------- */
+.progreso-cifras { margin-top: 2px; }
+.mapa-calor { padding: 12px 14px 10px; display: grid; gap: 4px; }
+.mc-fila { display: grid; grid-template-columns: 52px repeat(7, 1fr); gap: 4px; align-items: center; }
+.mc-cab span { font-size: 11px; font-weight: 700; color: var(--label-2); text-align: center; }
+.mc-sem { font-size: 11px; color: var(--label-2); font-variant-numeric: tabular-nums; }
+.mc-dia { display: inline-block; aspect-ratio: 1; min-width: 12px; border-radius: 5px; background: color-mix(in srgb, var(--accent) calc(var(--f, 0) * 75%), var(--fill)); }
+.mc-dia.cumplido { background: var(--ok); }
+.mc-dia.vacio { background: transparent; border: 1px dashed var(--sep); }
+.mc-dia.futuro { background: transparent; }
+.mc-dia.hoy { outline: 2px solid var(--label); outline-offset: 1px; }
+.mc-leyenda { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; color: var(--label-2); }
+.mc-leyenda .mc-dia { width: 12px; }
+.barras-cat { gap: 10px; }
+.bc-fila { display: grid; grid-template-columns: 26px minmax(0, 1fr) 90px 44px; align-items: center; gap: 10px; font-size: 14.5px; }
+.bc-barra { height: 8px; border-radius: 4px; background: var(--fill); overflow: hidden; }
+.bc-barra span { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+.bc-valor { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.grupo.pendientes .grupo-tit .ico { color: #d97a00; }
+.widget-racha { font-size: 14px; font-weight: 600; color: var(--ok); }

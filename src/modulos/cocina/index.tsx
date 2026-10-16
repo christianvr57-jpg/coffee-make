@@ -11,19 +11,21 @@ import { FilaBoton, Lista } from '../../ui/form';
 import { Icono } from '../../ui/Icono';
 import { DESAYUNOS, MERIENDAS, SEMANAS } from './datos/menu';
 import { RECETAS, receta } from './datos/recetas';
-import { ajustesCocina, iniciarCocina, leerCambios } from './estado';
-import { listaCompra, planDia, planSemana, semanaDelCiclo } from './plan';
+import { ajustesCocina, gustosCocina, iniciarCocina, leerCambios } from './estado';
+import { efectiva, listaCompra, planDia, planSemana, semanaDelCiclo } from './plan';
 import { CATEGORIAS } from './tipos';
 import { CompraCocina } from './vistas/Compra';
 import { GuiaCocina } from './vistas/Guia';
 import { HoyCocina } from './vistas/Hoy';
 import { FichaRecetaCocina, RecetasCocina } from './vistas/Recetas';
 import { SemanaCocina } from './vistas/Semana';
+import { CocinarCocina } from './vistas/Cocinar';
 import { AjustesCocinaPantalla } from './vistas/Ajustes';
 import { nombrePersona } from './raciones';
 
 function WidgetCocina() {
   const cambios = useVivo(leerCambios, []);
+  void gustosCocina.value.sustituciones;
   if (!cambios) return null;
   const p = planDia(parse(diaActual.value), ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
   return (
@@ -55,6 +57,7 @@ function WidgetCocina() {
 /** Agenda de Inicio (ordenador): comida y cena del día. */
 function AgendaCocina({ fecha }: { fecha: string }) {
   const cambios = useVivo(leerCambios, []);
+  void gustosCocina.value.sustituciones;
   if (!cambios) return null;
   const p = planDia(parse(fecha), ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
   return (
@@ -133,6 +136,7 @@ export const moduloCocina: ModuloApp = {
     { patron: '/cocina/compra', vista: CompraCocina },
     { patron: '/cocina/recetas', vista: RecetasCocina },
     { patron: '/cocina/recetas/:id', vista: FichaRecetaCocina },
+    { patron: '/cocina/cocinar/:id', vista: CocinarCocina, pantallaCompleta: true },
     { patron: '/cocina/guia', vista: GuiaCocina },
     { patron: '/cocina/ajustes', vista: AjustesCocinaPantalla },
   ],
@@ -151,7 +155,7 @@ export const moduloCocina: ModuloApp = {
       .map((r) => {
         const cuando = proximos.find((d) => {
           const s = SEMANAS[semanaDelCiclo(d, ajustesCocina.value.inicio, ajustesCocina.value.ciclo)].dias[(d.getDay() || 7) - 1];
-          return s.comida === r.id || s.cena === r.id;
+          return efectiva(s.comida) === r.id || efectiva(s.cena) === r.id;
         });
         return { titulo: r.nombre, detalle: `Receta${cuando ? ` · toca el ${DIAS[cuando.getDay() || 7].toLowerCase()} ${cuando.getDate()}` : ''}`, ruta: `/cocina/recetas/${r.id}`, icono: 'cocina' };
       });

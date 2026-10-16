@@ -1,7 +1,7 @@
 // Ordenador: barra lateral con los módulos (y las secciones del que está abierto), el buscador y
 // los ajustes, y la cabecera de cada sección. Sustituye a la barra de pestañas del móvil.
 import { seccionDe, type ModuloApp, type Seccion } from '../core/modulos';
-import { MODULOS } from '../core/registro';
+import { visibles } from '../core/registro';
 import { ir } from '../core/router';
 import { Icono } from './Icono';
 import { IndicadorNube } from '../vistas/Nube';
@@ -29,7 +29,7 @@ export function Lateral({ path, modulo }: { path: string; modulo?: ModuloApp }) 
           Inicio
         </a>
         <div class="lat-tit">Módulos</div>
-        {MODULOS.map((m) => {
+        {visibles.value.map((m) => {
           const abierto = modulo?.id === m.id;
           return (
             <div class={`lat-modulo ${m.tema}${abierto ? ' abierto' : ''}`}>

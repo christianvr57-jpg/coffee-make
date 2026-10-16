@@ -10,9 +10,9 @@ import { useFlechas } from '../../../ui/teclado';
 import { SEMANAS } from '../datos/menu';
 import { receta } from '../datos/recetas';
 import { ajustesCocina } from '../estado';
-import { equilibrio, planDia, planSemana, type PlanDia } from '../plan';
+import { efectiva, equilibrio, planDia, planSemana, type PlanDia } from '../plan';
 import { PROTEINAS, type Momento, type Receta } from '../tipos';
-import { ComidasNino, TarjetaPlato, elegirCambio, fechaLarga, useCambios } from './comunes';
+import { ComidasNino, MarcaGusto, TarjetaPlato, elegirCambio, fechaLarga, useCambios } from './comunes';
 import { Lote } from './Hoy';
 
 type Criterio = ReturnType<typeof equilibrio>[number];
@@ -27,8 +27,8 @@ function DiaDetalle({ fecha, cerrar }: { fecha: string; cerrar: () => void }) {
   return (
     <Hoja titulo={fechaLarga(fecha)} cerrar={cerrar}>
       <div class="tit-lista">Adultos</div>
-      <TarjetaPlato momento="comida" r={p.comida} cambiada={p.comidaCambiada} fecha={p.fecha} finde={p.finde} />
-      <TarjetaPlato momento="cena" r={p.cena} cambiada={p.cenaCambiada} fecha={p.fecha} finde={p.finde} />
+      <TarjetaPlato p={p} momento="comida" />
+      <TarjetaPlato p={p} momento="cena" />
       <p class="pie">Postre: {p.postre}</p>
       <div class="tit-lista">El niño</div>
       <ComidasNino p={p} />
@@ -85,6 +85,7 @@ function Equilibrio({ crit }: { crit: Criterio[] }) {
 function CeldaPlato({ p, momento }: { p: PlanDia; momento: Momento }) {
   const r = momento === 'comida' ? p.comida : p.cena;
   const cambiada = momento === 'comida' ? p.comidaCambiada : p.cenaCambiada;
+  const sustituida = momento === 'comida' ? p.comidaSustituida : p.cenaSustituida;
   return (
     <div class="cs-plato">
       <a href={`#/cocina/recetas/${r.id}?m=${momento}`} title="Ver la receta">
@@ -93,9 +94,11 @@ function CeldaPlato({ p, momento }: { p: PlanDia; momento: Momento }) {
           <span class={`chip-proteina p-${r.proteina}`}>{PROTEINAS[r.proteina]}</span>
           <span>{r.minutos} min</span>
           {cambiada && <em>cambiado</em>}
+          {sustituida && <em>sustituido</em>}
+          <MarcaGusto id={r.id} />
         </span>
       </a>
-      <button type="button" class="cs-cambiar" title={`Cambiar la ${momento} de este día`} aria-label={`Cambiar la ${momento}`} onClick={() => elegirCambio(p.fecha, momento, r, p.finde, cambiada)}>
+      <button type="button" class="cs-cambiar" title={`Cambiar la ${momento} de este día`} aria-label={`Cambiar la ${momento}`} onClick={() => elegirCambio(p.fecha, momento, r, p.finde, cambiada, momento === 'comida' ? p.base.comida : p.base.cena)}>
         <Icono n="repetir" t={15} />
       </button>
     </div>
@@ -123,7 +126,7 @@ function CeldaNino({ p }: { p: PlanDia }) {
 function CicloCompleto({ actual }: { actual: number }) {
   const ciclo = ajustesCocina.value.ciclo;
   const Plato = ({ id, m }: { id: string; m: Momento }) => {
-    const r = receta(id) as Receta;
+    const r = receta(efectiva(id)) as Receta;
     return (
       <a class={`cc-plato p-${r.proteina}`} href={`#/cocina/recetas/${r.id}?m=${m}`} title={`${m === 'comida' ? 'Comida' : 'Cena'} · ${PROTEINAS[r.proteina]}`}>
         {r.nombre}
@@ -169,7 +172,7 @@ function CicloCompleto({ actual }: { actual: number }) {
             <span class={`cc-leyenda p-${k}`}>{n.toLowerCase()}</span>
           </>
         ))}
-        . Es el menú base: los cambios de un día concreto se ven en la semana de arriba.
+        . Incluye los platos sustituidos para siempre; los cambios de un día concreto se ven en la semana de arriba.
       </p>
     </>
   );

@@ -202,7 +202,7 @@ export function SeccionNube() {
       titulo="Sincronización en la nube"
       pie={
         <>
-          Se sincroniza sola al abrir la app, al volver a ella, a los pocos segundos de cada cambio y cada 30 segundos mientras está abierta. Las fotos de los paquetes de café se quedan en cada dispositivo. Repositorio: <code>{e.repo}</code>.
+          Se sincroniza sola al abrir la app, al volver a ella, a los pocos segundos de cada cambio y cada 30 segundos mientras está abierta. Las fotos se quedan en cada dispositivo. Repositorio: <code>{e.repo}</code>.
         </>
       }
     >

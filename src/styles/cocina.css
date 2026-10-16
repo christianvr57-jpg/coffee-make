@@ -104,3 +104,48 @@
 .tc-total { font-weight: 700; }
 .tc-pie { font-weight: 600; color: var(--accent); border-bottom: 0; }
 .art-cantidad { font-style: normal; font-weight: 600; color: var(--accent); }
+
+/* Gustos y sustituciones */
+.marca-gusto.si { color: #e5375f; font-weight: 700; }
+.marca-gusto.no { color: var(--peligro); font-weight: 600; font-size: 12px; }
+.tp-aviso { font-size: 13px; color: #b26400; line-height: 1.35; }
+.ficha-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 4px 4px; }
+.ficha-acciones .segmentado.gusto { flex: 1; min-width: 240px; }
+.segmentado.gusto button[aria-pressed='true']:first-child { color: #e5375f; }
+.segmentado.gusto button[aria-pressed='true']:last-child { color: var(--peligro); }
+.aviso-proteina { color: #b26400; font-weight: 500; }
+.siempre-en-casa { margin-top: 18px; }
+.siempre-en-casa summary { cursor: pointer; padding: 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label-2); }
+.siempre-en-casa summary small { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--label-3); margin-left: 4px; }
+.siempre-en-casa .chips { padding: 4px 4px 0; }
+
+/* Modo cocinar */
+.cocinar { display: flex; flex-direction: column; min-height: calc(100dvh - var(--arriba) - var(--abajo) - 40px); gap: 12px; }
+.cocinar-cab { display: flex; align-items: center; gap: 10px; }
+.cocinar-cab > div { flex: 1; min-width: 0; display: grid; }
+.cocinar-cab small { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+.cocinar-cab b { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cocinar-progreso { display: flex; gap: 4px; }
+.cocinar-progreso button { flex: 1; height: 6px; border-radius: 3px; background: var(--fill); }
+.cocinar-progreso button.hecho { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+.cocinar-progreso button.actual { background: var(--accent); }
+.cocinar-timers { display: flex; flex-wrap: wrap; gap: 8px; }
+.cocinar-timer { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 14px; background: var(--card); box-shadow: var(--sombra); color: var(--label); }
+.cocinar-timer span { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); }
+.cocinar-timer small { font-size: 12px; color: var(--label-2); }
+.cocinar-timer .ico:last-child { color: var(--label-3); }
+.cocinar-timer.listo { background: var(--accent); animation: latido 0.9s ease infinite; }
+.cocinar-timer.listo span, .cocinar-timer.listo small, .cocinar-timer.listo .ico { color: #fff; }
+.cocinar-cuerpo { flex: 1; display: grid; align-content: start; gap: 14px; padding: 6px 2px; }
+.cocinar-tit { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+.cocinar-paso { font-size: 25px; line-height: 1.45; font-weight: 500; letter-spacing: -0.005em; }
+.cocinar-tiempos { display: flex; flex-wrap: wrap; gap: 10px; }
+.cocinar-ingredientes { display: grid; gap: 1px; border-radius: var(--radio); overflow: hidden; background: var(--sep); box-shadow: var(--sombra); }
+.cocinar-ingredientes button { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 14px; background: var(--card); text-align: left; color: var(--label); }
+.ci-nombre { flex: 1; font-size: 17px; }
+.ci-cantidad { font-size: 15px; font-weight: 600; color: var(--accent); text-align: right; }
+.cocinar-ingredientes button.hecho .ci-nombre, .cocinar-ingredientes button.hecho .ci-cantidad { color: var(--label-3); text-decoration: line-through; }
+.cocinar-pie { display: flex; gap: 10px; padding-top: 6px; }
+.cocinar-pie > * { flex: 1; }
+.cocinar-nino { margin-top: 6px; }
+.escritorio .cocinar-paso { font-size: 30px; }

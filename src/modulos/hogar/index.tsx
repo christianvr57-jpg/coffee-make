@@ -9,16 +9,19 @@ import { minutosATexto } from '../../core/fechas';
 import { Campo, Interruptor, Lista, Segmentado, FilaBoton } from '../../ui/form';
 import { confirmar, mostrarToast } from '../../ui/capas';
 import { elementosDelDia, planDelDia, tipoSemana } from './calendario';
-import { ajustesHogar, cambiarAjustesHogar, iniciarHogar, migrarLocalStorage, modelo, restablecerTareas, estaHecha } from './estado';
+import { ajustesHogar, cambiarAjustesHogar, hechas as hechasHogar, iniciarHogar, migrarLocalStorage, modelo, restablecerTareas, estaHecha } from './estado';
+import { progreso } from './progreso';
 import { HoyHogar, resumenDia } from './vistas/Hoy';
 import { SemanaHogar } from './vistas/Semana';
 import { TareasHogar } from './vistas/Tareas';
+import { ProgresoHogar } from './vistas/Progreso';
 import { lunesDe, iso } from '../../core/fechas';
 
 function WidgetHogar() {
   const { total, hechas, resta, plan, items } = resumenDia();
   const pendientes = items.filter((i) => !estaHecha(i.clave)).slice(0, 3);
   const frac = total ? hechas / total : 0;
+  const { racha } = progreso(modelo.value, ajustesHogar.value, hechasHogar.value, parse(diaActual.value), 8);
   return (
     <button type="button" class="widget tema-hogar" onClick={() => ir('/hogar')}>
       <div class="widget-cab">
@@ -35,6 +38,7 @@ function WidgetHogar() {
           <b>{total && hechas === total ? '¡Día completado!' : `${hechas} de ${total} tareas`}</b>
           <span>{total && hechas < total ? `Te quedan ${minutosATexto(resta)}` : 'Todo hecho por hoy'}</span>
           {plan.coladas[0] && <span class="widget-linea">Colada: {plan.coladas[0].t.titulo}</span>}
+          {racha >= 2 && <span class="widget-racha">Racha de {racha} días cumplidos</span>}
         </div>
       </div>
       {pendientes.length > 0 && (
@@ -131,11 +135,13 @@ export const moduloHogar: ModuloApp = {
     { id: 'hoy', nombre: 'Hoy', ruta: '/hogar' },
     { id: 'semana', nombre: 'Semana', ruta: '/hogar/semana' },
     { id: 'tareas', nombre: 'Tareas', ruta: '/hogar/tareas' },
+    { id: 'progreso', nombre: 'Progreso', ruta: '/hogar/progreso' },
   ],
   rutas: [
     { patron: '/hogar', vista: HoyHogar },
     { patron: '/hogar/semana', vista: SemanaHogar },
     { patron: '/hogar/tareas', vista: TareasHogar },
+    { patron: '/hogar/progreso', vista: ProgresoHogar },
   ],
   widgetInicio: WidgetHogar,
   agendaDia: AgendaHogar,

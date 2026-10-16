@@ -1,26 +1,29 @@
 // COCINA · Recetas: biblioteca con buscador y filtro por proteína, y ficha de cada receta.
 import { signal } from '@preact/signals';
 import { useState } from 'preact/hooks';
-import { consulta } from '../../../core/router';
+import { consulta, ir } from '../../../core/router';
 import { BarraDetalle } from '../../../ui/Cabecera';
 import { Segmentado, Texto } from '../../../ui/form';
 import { Icono } from '../../../ui/Icono';
 import { RECETAS, receta } from '../datos/recetas';
 import { apariciones } from '../plan';
 import { CATEGORIAS, PROTEINAS, type Momento, type Proteina, type Receta } from '../tipos';
-import { ajustesCocina } from '../estado';
+import { ajustesCocina, gustosCocina, valorarReceta } from '../estado';
 import { nombrePersona, nutrientesReceta, racionesReceta, redondear, tablaCantidades, textoCantidad } from '../raciones';
 import { NUTRICION } from '../datos/nutricion';
 import { Etiquetas } from './comunes';
 
 const busqueda = signal('');
-const filtro = signal<Proteina | 'todas'>('todas');
+const filtro = signal<Proteina | 'todas' | 'favoritas'>('todas');
 
 export function RecetasCocina() {
   const q = busqueda.value.trim().toLowerCase();
-  const lista = RECETAS.filter((r) => (filtro.value === 'todas' || r.proteina === filtro.value) && (!q || `${r.nombre} ${r.ingredientes.map((x) => x.n).join(' ')}`.toLowerCase().includes(q))).sort((a, b) =>
+  const val = gustosCocina.value.valoraciones;
+  const pasaFiltro = (r: Receta) => (filtro.value === 'todas' ? true : filtro.value === 'favoritas' ? val[r.id] === 1 : r.proteina === filtro.value);
+  const lista = RECETAS.filter((r) => pasaFiltro(r) && (!q || `${r.nombre} ${r.ingredientes.map((x) => x.n).join(' ')}`.toLowerCase().includes(q))).sort((a, b) =>
     a.nombre.localeCompare(b.nombre, 'es'),
   );
+  const nFav = Object.values(val).filter((v) => v === 1).length;
   return (
     <>
       <div class="buscador-guia">
@@ -30,6 +33,9 @@ export function RecetasCocina() {
       <div class="chips desplazables compactos filtro-proteina">
         <button type="button" class="chip" aria-pressed={filtro.value === 'todas'} onClick={() => (filtro.value = 'todas')}>
           Todas
+        </button>
+        <button type="button" class="chip" aria-pressed={filtro.value === 'favoritas'} onClick={() => (filtro.value = 'favoritas')}>
+          ♥ Os gustan{nFav ? ` (${nFav})` : ''}
         </button>
         {(Object.keys(PROTEINAS) as Proteina[]).map((p) => (
           <button type="button" class="chip" aria-pressed={filtro.value === p} onClick={() => (filtro.value = p)}>
@@ -48,7 +54,7 @@ export function RecetasCocina() {
           </a>
         ))}
       </div>
-      {lista.length === 0 && <div class="vacio">No hay recetas con esa búsqueda.</div>}
+      {lista.length === 0 && <div class="vacio">{filtro.value === 'favoritas' ? 'Aún no habéis marcado ninguna receta como favorita: hazlo desde su ficha.' : 'No hay recetas con esa búsqueda.'}</div>}
       <p class="pie">{RECETAS.length} recetas: todas forman parte del menú de 8 semanas.</p>
     </>
   );
@@ -139,6 +145,23 @@ export function FichaRecetaCocina({ params }: { params: Record<string, string> }
           <Etiquetas r={r} />
         </div>
         {r.acompanamiento && <p class="resumen-receta">Acompañamiento: {r.acompanamiento.toLowerCase()}.</p>}
+
+        <div class="ficha-acciones">
+          <button type="button" class="boton-principal auto" onClick={() => ir(`/cocina/cocinar/${r.id}?m=${momento}`)}>
+            <Icono n="crono" t={20} /> Cocinar paso a paso
+          </button>
+          <div class="segmentado gusto" role="group" aria-label="¿Os gusta?">
+            <button type="button" aria-pressed={gustosCocina.value.valoraciones[r.id] === 1} onClick={() => valorarReceta(r.id, gustosCocina.value.valoraciones[r.id] === 1 ? 0 : 1)}>
+              ♥ Nos gusta
+            </button>
+            <button type="button" aria-pressed={gustosCocina.value.valoraciones[r.id] === -1} onClick={() => valorarReceta(r.id, gustosCocina.value.valoraciones[r.id] === -1 ? 0 : -1)}>
+              ✕ No nos gusta
+            </button>
+          </div>
+        </div>
+        {gustosCocina.value.valoraciones[r.id] === -1 && donde.length > 0 && (
+          <p class="pie">Para quitarlo del menú, en Hoy o en Semana pulsa ⟳ en el plato y activa «Para siempre».</p>
+        )}
 
         <div class="columnas">
           <div>

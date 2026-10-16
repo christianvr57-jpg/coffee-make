@@ -1,10 +1,10 @@
 // Estado del módulo Cocina: ajustes (qué lunes empezó el ciclo), cambios de plato y lista de la compra.
-import { signal } from '@preact/signals';
+import { effect, signal } from '@preact/signals';
 import { borrar, db, escribirAjuste, escribirAjusteInicial, guardar, leerAjuste, vivos } from '../../core/db';
 import { iso, lunesDe } from '../../core/fechas';
 import type { ArticuloCompra, Categoria, Momento } from './tipos';
 import type { AjustesRaciones } from './raciones';
-import { claveCambio, type Cambios } from './plan';
+import { claveCambio, fijarSustituciones, type Cambios } from './plan';
 
 export interface AjustesCocina {
   /** Lunes en que empezó la semana 1 del ciclo. */
@@ -33,11 +33,54 @@ export async function cambiarAjustesCocina(p: Partial<AjustesCocina>) {
   await escribirAjuste('cocina', ajustesCocina.value);
 }
 
+/**
+ * Gustos de la familia: valoración de cada receta y platos sustituidos para siempre (en todas las
+ * semanas del ciclo). También lo que siempre hay en casa y no hace falta comprar.
+ */
+export interface GustosCocina {
+  valoraciones: Record<string, 1 | -1>;
+  /** receta del menú → receta que la sustituye en todas las semanas. */
+  sustituciones: Record<string, string>;
+  /** Artículos de la compra que siempre hay en casa (no se cuentan ni se comparten). */
+  enCasa: string[];
+}
+const GUSTOS_INICIALES: GustosCocina = { valoraciones: {}, sustituciones: {}, enCasa: [] };
+export const gustosCocina = signal<GustosCocina>(GUSTOS_INICIALES);
+// El menú (plan.ts) aplica las sustituciones al calcular cada día.
+effect(() => fijarSustituciones(gustosCocina.value.sustituciones));
+
+async function guardarGustos(g: GustosCocina) {
+  gustosCocina.value = g;
+  await escribirAjuste('cocina:gustos', g);
+}
+
+export function valorarReceta(id: string, v: 1 | -1 | 0) {
+  const valoraciones = { ...gustosCocina.value.valoraciones };
+  if (v) valoraciones[id] = v;
+  else delete valoraciones[id];
+  return guardarGustos({ ...gustosCocina.value, valoraciones });
+}
+
+/** Sustituye un plato del menú en todas las semanas (o deshace la sustitución con `por = null`). */
+export function sustituirSiempre(original: string, por: string | null) {
+  const sustituciones = { ...gustosCocina.value.sustituciones };
+  if (por && por !== original) sustituciones[original] = por;
+  else delete sustituciones[original];
+  return guardarGustos({ ...gustosCocina.value, sustituciones });
+}
+
+export function marcarEnCasa(nombre: string, siempre: boolean) {
+  const enCasa = gustosCocina.value.enCasa.filter((x) => x !== nombre);
+  if (siempre) enCasa.push(nombre);
+  return guardarGustos({ ...gustosCocina.value, enCasa });
+}
+
 export async function iniciarCocina(): Promise<void> {
   const guardado = await db.ajustes.get('cocina');
   if (guardado) ajustesCocina.value = await leerAjuste('cocina', ajustesCocina.value);
   // La primera vez, la semana 1 empieza esta semana.
   else await escribirAjusteInicial('cocina', ajustesCocina.value);
+  gustosCocina.value = await leerAjuste<GustosCocina>('cocina:gustos', GUSTOS_INICIALES);
 }
 
 // ---------- Cambios de plato ----------

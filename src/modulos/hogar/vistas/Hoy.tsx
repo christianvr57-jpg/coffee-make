@@ -7,7 +7,8 @@ import { DIAS, MESES, DIAS_CORTOS, fechaCorta, minutosATexto, parse, isoWeekday 
 import { Icono } from '../../../ui/Icono';
 import { Anillo } from '../../../ui/Anillo';
 import { planDelDia, elementosDelDia, type ItemColada, type ItemTarea } from '../calendario';
-import { ajustesHogar, modelo, estaHecha, fechaHecha } from '../estado';
+import { ajustesHogar, hechas, modelo, estaHecha, fechaHecha } from '../estado';
+import { pendientesSemana } from '../progreso';
 import { Check, FilaTarea, alternar, abiertas } from './comunes';
 
 const GRUPOS = [
@@ -113,6 +114,39 @@ function Grupo({ titulo, icono, items, contar = true }: { titulo: string; icono:
   );
 }
 
+/** Lo que se quedó sin hacer en días anteriores de esta semana (no cuenta para el anillo de hoy). */
+function PendientesSemana() {
+  const lista = pendientesSemana(modelo.value, ajustesHogar.value, hechas.value, parse(diaActual.value));
+  if (!lista.length) return null;
+  return (
+    <section class="grupo pendientes">
+      <h2 class="grupo-tit">
+        <Icono n="aviso" t={16} />
+        <span>Se quedó pendiente esta semana</span>
+        <span class="cuenta">{lista.length}</span>
+      </h2>
+      <ul class="tarjeta">
+        {lista.map(({ item, fecha }) => {
+          const d = parse(fecha);
+          const titulo = item.tipo === 'colada' ? `Colada: ${item.t.titulo}` : item.t.titulo;
+          return (
+            <FilaTarea
+              key={item.clave}
+              clave={item.clave}
+              titulo={titulo}
+              categoria={item.categoria}
+              minutos={item.minutos}
+              meta={`Era del ${DIAS[isoWeekday(d)].toLowerCase()}`}
+              clase={item.tipo === 'colada' ? 'colada-fila' : ''}
+            />
+          );
+        })}
+      </ul>
+      <p class="pie">Márcalas cuando las hagas; si no, desaparecen el lunes.</p>
+    </section>
+  );
+}
+
 export function HoyHogar() {
   const { fecha, plan, total, hechas: nHechas, resta } = resumenDia();
   const hoy = diaActual.value;
@@ -165,10 +199,12 @@ export function HoyHogar() {
           </section>
           {plan.coladas.map((c) => <TarjetaColada key={c.clave} it={c} />)}
           {escritorio.value && <Grupo titulo="Periódicas" icono="periodicas" items={periodicas} />}
+          {escritorio.value && <PendientesSemana />}
         </div>
         <div>
           {GRUPOS.map(([k, titulo]) => <Grupo key={k} titulo={titulo} icono={k} items={plan.grupos[k]} />)}
           {!escritorio.value && <Grupo titulo="Periódicas" icono="periodicas" items={periodicas} />}
+          {!escritorio.value && <PendientesSemana />}
         </div>
       </div>
       {nada && (

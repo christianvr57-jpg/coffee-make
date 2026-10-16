@@ -1,10 +1,13 @@
 // Piezas compartidas por las vistas de Cocina.
+import { useState } from 'preact/hooks';
 import { DIAS, MESES, parse } from '../../../core/fechas';
 import { useVivo } from '../../../core/vivo';
-import { ajustesCocina, cambiarPlato, leerCambios } from '../estado';
+import { ajustesCocina, cambiarPlato, gustosCocina, leerCambios, sustituirSiempre } from '../estado';
 import { Hoja, abrirHoja, mostrarToast } from '../../../ui/capas';
 import { Icono } from '../../../ui/Icono';
-import { alternativas, planDia, type PlanDia } from '../plan';
+import { Interruptor } from '../../../ui/form';
+import { receta } from '../datos/recetas';
+import { alternativas, cambiaProteina, planDia, type PlanDia } from '../plan';
 import { nombrePersona, racionesReceta } from '../raciones';
 import { APARATOS, PROTEINAS, type Momento, type Receta } from '../tipos';
 
@@ -13,8 +16,11 @@ export const fechaLarga = (f: string) => {
   return `${DIAS[d.getDay() || 7]} ${d.getDate()} de ${MESES[d.getMonth() + 1]}`;
 };
 
-/** Cambios de plato en vivo (se repinta al cambiar uno). */
-export const useCambios = () => useVivo(leerCambios, []);
+/** Cambios de plato en vivo (se repinta al cambiar uno o al sustituir un plato para siempre). */
+export const useCambios = () => {
+  void gustosCocina.value.sustituciones;
+  return useVivo(leerCambios, []);
+};
 
 /** Plan del día con los cambios ya aplicados. */
 export function usePlanDia(fecha: string): PlanDia | undefined {
@@ -23,9 +29,25 @@ export function usePlanDia(fecha: string): PlanDia | undefined {
   return planDia(parse(fecha), ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
 }
 
+/** ♥ si os gusta, ✕ si no. */
+export function MarcaGusto({ id }: { id: string }) {
+  const v = gustosCocina.value.valoraciones[id];
+  if (!v) return null;
+  return v > 0 ? (
+    <span class="marca-gusto si" title="Os gusta">
+      ♥
+    </span>
+  ) : (
+    <span class="marca-gusto no" title="No os gusta">
+      ✕ no os gusta
+    </span>
+  );
+}
+
 export function Etiquetas({ r }: { r: Receta }) {
   return (
     <span class="etiquetas-receta">
+      <MarcaGusto id={r.id} />
       <span class={`chip-proteina p-${r.proteina}`}>{PROTEINAS[r.proteina]}</span>
       <span>
         <Icono n="reloj" t={13} /> {r.minutos} min
@@ -36,14 +58,21 @@ export function Etiquetas({ r }: { r: Receta }) {
 }
 
 /** Tarjeta de un plato de adultos con enlace a la receta y botón para cambiarlo. */
-export function TarjetaPlato({ momento, r, cambiada, fecha, finde }: { momento: Momento; r: Receta; cambiada: boolean; fecha: string; finde: boolean }) {
+export function TarjetaPlato({ p, momento }: { p: PlanDia; momento: Momento }) {
   const raciones = ajustesCocina.value.raciones;
+  const comida = momento === 'comida';
+  const r = comida ? p.comida : p.cena;
+  const cambiada = comida ? p.comidaCambiada : p.cenaCambiada;
+  const sustituida = comida ? p.comidaSustituida : p.cenaSustituida;
+  const base = comida ? p.base.comida : p.base.cena;
+  const noGusta = gustosCocina.value.valoraciones[r.id] === -1;
   return (
     <div class="tarjeta-plato">
       <a class="tp-cuerpo" href={`#/cocina/recetas/${r.id}?m=${momento}`}>
         <span class="tp-momento">
           {momento === 'comida' ? 'Comida' : 'Cena'}
-          {cambiada && <em> · cambiado</em>}
+          {cambiada && <em> · cambiado hoy</em>}
+          {sustituida && <em> · sustituido siempre</em>}
         </span>
         <b>{r.nombre}</b>
         {r.acompanamiento && <span class="tp-acomp">Con: {r.acompanamiento.toLowerCase()}</span>}
@@ -55,8 +84,9 @@ export function TarjetaPlato({ momento, r, cambiada, fecha, finde }: { momento: 
               .join(' · ')}
           </span>
         )}
+        {noGusta && <span class="tp-aviso">No os gusta: pulsa ⟳ y «Para siempre» para quitarlo del menú.</span>}
       </a>
-      <button type="button" class="tp-cambiar" aria-label={`Cambiar ${momento}`} onClick={() => elegirCambio(fecha, momento, r, finde, cambiada)}>
+      <button type="button" class="tp-cambiar" aria-label={`Cambiar ${momento}`} onClick={() => elegirCambio(p.fecha, momento, r, p.finde, cambiada, base)}>
         <Icono n="repetir" t={18} />
       </button>
     </div>
@@ -97,11 +127,20 @@ export function ComidasNino({ p }: { p: PlanDia }) {
   );
 }
 
-function ElegirCambio({ cerrar, fecha, momento, actual, finde, cambiada }: { cerrar: () => void; fecha: string; momento: Momento; actual: Receta; finde: boolean; cambiada: boolean }) {
-  const { misma, otras } = alternativas(actual, finde);
+function ElegirCambio({ cerrar, fecha, momento, actual, finde, cambiada, base }: { cerrar: () => void; fecha: string; momento: Momento; actual: Receta; finde: boolean; cambiada: boolean; base: string }) {
+  const { misma, otras } = alternativas(actual, finde, gustosCocina.value.valoraciones);
+  const [siempre, setSiempre] = useState(false);
+  const sustituto = gustosCocina.value.sustituciones[base];
+  const original = receta(base);
   const elegir = async (id: string | null) => {
-    await cambiarPlato(fecha, momento, id);
-    mostrarToast(id ? 'Plato cambiado para ese día' : 'Vuelve el plato del menú');
+    if (siempre && id) {
+      await sustituirSiempre(base, id);
+      if (cambiada) await cambiarPlato(fecha, momento, null);
+      mostrarToast(cambiaProteina(base, id) ? 'Sustituido en todas las semanas (cambia la proteína: revisa el equilibrio)' : 'Sustituido en todas las semanas');
+    } else {
+      await cambiarPlato(fecha, momento, id);
+      mostrarToast(id ? 'Plato cambiado para ese día' : 'Vuelve el plato del menú');
+    }
     cerrar();
   };
   const Fila = ({ r }: { r: Receta }) => (
@@ -114,13 +153,33 @@ function ElegirCambio({ cerrar, fecha, momento, actual, finde, cambiada }: { cer
   );
   return (
     <Hoja titulo={`Cambiar la ${momento} del ${fechaLarga(fecha).toLowerCase()}`} cerrar={cerrar}>
-      {cambiada && (
-        <div class="lista">
+      <div class="lista">
+        <div class="campo">
+          <div class="et">
+            Para siempre
+            <small>{siempre ? `Sustituye «${original?.nombre}» en todas las semanas del menú` : 'Solo cambia este día'}</small>
+          </div>
+          <Interruptor valor={siempre} cambiar={setSiempre} etiqueta="Cambiar para siempre" />
+        </div>
+        {cambiada && (
           <button type="button" class="boton-fila" onClick={() => elegir(null)}>
             <Icono n="reiniciar" t={22} /> Volver al plato del menú
           </button>
-        </div>
-      )}
+        )}
+        {sustituto && (
+          <button
+            type="button"
+            class="boton-fila"
+            onClick={async () => {
+              await sustituirSiempre(base, null);
+              mostrarToast(`Vuelve «${original?.nombre}» al menú`);
+              cerrar();
+            }}
+          >
+            <Icono n="reiniciar" t={22} /> Recuperar «{original?.nombre}» en todas las semanas
+          </button>
+        )}
+      </div>
       <div class="tit-lista">{PROTEINAS[actual.proteina]}: mantiene el equilibrio de la semana</div>
       <div class="lista">
         {misma.map((r) => (
@@ -138,5 +197,5 @@ function ElegirCambio({ cerrar, fecha, momento, actual, finde, cambiada }: { cer
   );
 }
 
-export const elegirCambio = (fecha: string, momento: Momento, actual: Receta, finde: boolean, cambiada: boolean) =>
-  abrirHoja((cerrar) => <ElegirCambio cerrar={cerrar} fecha={fecha} momento={momento} actual={actual} finde={finde} cambiada={cambiada} />);
+export const elegirCambio = (fecha: string, momento: Momento, actual: Receta, finde: boolean, cambiada: boolean, base: string) =>
+  abrirHoja((cerrar) => <ElegirCambio cerrar={cerrar} fecha={fecha} momento={momento} actual={actual} finde={finde} cambiada={cambiada} base={base} />);

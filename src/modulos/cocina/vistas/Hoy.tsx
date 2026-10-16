@@ -45,8 +45,8 @@ export function HoyCocina() {
       <div class="columnas">
         <div>
           <div class="tit-lista">Adultos</div>
-          <TarjetaPlato momento="comida" r={p.comida} cambiada={p.comidaCambiada} fecha={p.fecha} finde={p.finde} />
-          <TarjetaPlato momento="cena" r={p.cena} cambiada={p.cenaCambiada} fecha={p.fecha} finde={p.finde} />
+          <TarjetaPlato p={p} momento="comida" />
+          <TarjetaPlato p={p} momento="cena" />
           <div class="lista bloque-texto consejo-dia">
             <p>
               <Icono n="check" t={16} />

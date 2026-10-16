@@ -22,6 +22,14 @@ export function inicioParaSemana(fecha: Date, n: number): string {
 export type Cambios = Map<string, string>;
 export const claveCambio = (fecha: string, m: Momento) => `${fecha}|${m}`;
 
+/** Platos sustituidos para siempre (receta del menú → la que la sustituye). Los fija estado.ts. */
+let sustituciones: Record<string, string> = {};
+export const fijarSustituciones = (s: Record<string, string>) => {
+  sustituciones = s;
+};
+/** Receta que ocupa un hueco del menú base, con la sustitución permanente si la hay. */
+export const efectiva = (id: string) => (sustituciones[id] && receta(sustituciones[id]) ? sustituciones[id] : id);
+
 export interface PlanDia {
   fecha: string;
   /** 1 = lunes … 7 = domingo. */
@@ -30,8 +38,14 @@ export interface PlanDia {
   finde: boolean;
   comida: Receta;
   cena: Receta;
+  /** Cambiado solo ese día. */
   comidaCambiada: boolean;
   cenaCambiada: boolean;
+  /** Recetas del menú original en ese hueco (antes de sustituciones y cambios). */
+  base: { comida: string; cena: string };
+  /** Sustituido para siempre (en todas las semanas). */
+  comidaSustituida: boolean;
+  cenaSustituida: boolean;
   merienda: Toma;
   desayuno?: Toma;
   /** Postre recomendado según el plato. */
@@ -49,8 +63,10 @@ export function planDia(fecha: Date, inicio: string, cambios: Cambios = new Map(
   const f = iso(fecha);
   const idComida = cambios.get(claveCambio(f, 'comida'));
   const idCena = cambios.get(claveCambio(f, 'cena'));
-  const comida = (idComida && receta(idComida)) || receta(base.comida)!;
-  const cena = (idCena && receta(idCena)) || receta(base.cena)!;
+  const menuComida = efectiva(base.comida);
+  const menuCena = efectiva(base.cena);
+  const comida = (idComida && receta(idComida)) || receta(menuComida)!;
+  const cena = (idCena && receta(idCena)) || receta(menuCena)!;
   return {
     fecha: f,
     dia,
@@ -58,8 +74,11 @@ export function planDia(fecha: Date, inicio: string, cambios: Cambios = new Map(
     finde: dia >= 6,
     comida,
     cena,
-    comidaCambiada: !!idComida && idComida !== base.comida,
-    cenaCambiada: !!idCena && idCena !== base.cena,
+    comidaCambiada: !!idComida && idComida !== menuComida,
+    cenaCambiada: !!idCena && idCena !== menuCena,
+    base: { comida: base.comida, cena: base.cena },
+    comidaSustituida: menuComida !== base.comida && comida.id === menuComida,
+    cenaSustituida: menuCena !== base.cena && cena.id === menuCena,
     merienda: MERIENDAS.find((m) => m.id === base.merienda)!,
     desayuno: base.desayuno ? DESAYUNOS.find((m) => m.id === base.desayuno) : undefined,
     postre: postreDe(comida),
@@ -148,19 +167,26 @@ export function equilibrio(dias: PlanDia[]): Criterio[] {
   ];
 }
 
-/** Recetas alternativas para un cambio: primero las de la misma proteína (mantienen el equilibrio). */
-export function alternativas(actual: Receta, findeSemana: boolean): { misma: Receta[]; otras: Receta[] } {
-  const validas = RECETAS.filter((r) => r.id !== actual.id && (findeSemana || r.minutos <= 40));
+/**
+ * Recetas alternativas para un cambio: primero las de la misma proteína (mantienen el equilibrio).
+ * Con valoraciones, las que os gustan van primero y las que no, al final.
+ */
+export function alternativas(actual: Receta, findeSemana: boolean, valoraciones: Record<string, number> = {}): { misma: Receta[]; otras: Receta[] } {
+  const orden = (r: Receta) => -(valoraciones[r.id] || 0);
+  const validas = RECETAS.filter((r) => r.id !== actual.id && (findeSemana || r.minutos <= 40)).sort((a, b) => orden(a) - orden(b));
   return { misma: validas.filter((r) => r.proteina === actual.proteina), otras: validas.filter((r) => r.proteina !== actual.proteina) };
 }
 
-/** En qué días del ciclo aparece una receta. */
+/** Sustituciones que rompen el equilibrio porque cambian la proteína del plato. */
+export const cambiaProteina = (original: string, por: string) => receta(original)?.proteina !== receta(por)?.proteina;
+
+/** En qué días del ciclo aparece una receta (con las sustituciones permanentes aplicadas). */
 export function apariciones(id: string): string[] {
   const res: string[] = [];
   SEMANAS.forEach((s) =>
     s.dias.forEach((d, i) => {
-      if (d.comida === id) res.push(`Semana ${s.numero} · ${DIAS[i + 1].toLowerCase()} · comida`);
-      if (d.cena === id) res.push(`Semana ${s.numero} · ${DIAS[i + 1].toLowerCase()} · cena`);
+      if (efectiva(d.comida) === id) res.push(`Semana ${s.numero} · ${DIAS[i + 1].toLowerCase()} · comida`);
+      if (efectiva(d.cena) === id) res.push(`Semana ${s.numero} · ${DIAS[i + 1].toLowerCase()} · cena`);
     }),
   );
   return res;

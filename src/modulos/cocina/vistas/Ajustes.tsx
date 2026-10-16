@@ -7,8 +7,9 @@ import { confirmar, mostrarToast } from '../../../ui/capas';
 import { Ajuste, Campo, FilaBoton, Interruptor, Lista, Segmentado, Texto } from '../../../ui/form';
 import { Icono } from '../../../ui/Icono';
 import { FUENTE_NUTRICION } from '../datos/nutricion';
-import { ajustesCocina, cambiarAjustesCocina, restablecerCambios } from '../estado';
-import { inicioParaSemana, semanaDelCiclo } from '../plan';
+import { ajustesCocina, cambiarAjustesCocina, gustosCocina, marcarEnCasa, restablecerCambios, sustituirSiempre } from '../estado';
+import { receta } from '../datos/recetas';
+import { cambiaProteina, inicioParaSemana, semanaDelCiclo } from '../plan';
 import type { AjustesRaciones, Persona } from '../raciones';
 
 export function AjustesCocinaPantalla() {
@@ -19,6 +20,7 @@ export function AjustesCocinaPantalla() {
   const setR = (p: Partial<AjustesRaciones>) => cambiarAjustesCocina({ raciones: { ...r, ...p } });
   const setPersona = (i: number, p: Partial<Persona>) => setR({ personas: r.personas.map((x, j) => (j === i ? { ...x, ...p } : x)) });
   const resto = 100 - r.pctComida - r.pctCena;
+  const sust = gustosCocina.value.sustituciones;
 
   return (
     <>
@@ -87,6 +89,39 @@ export function AjustesCocinaPantalla() {
             }}
           />
         </Lista>
+
+        <Lista
+          titulo="Platos sustituidos para siempre"
+          pie={
+            Object.keys(sust).length
+              ? 'Se aplican en todas las semanas del menú. Para sustituir otro, pulsa ⟳ en un plato y activa «Para siempre».'
+              : 'Ninguno. Para quitar del menú un plato que no os gusta, pulsa ⟳ en él (en Hoy o en Semana) y activa «Para siempre».'
+          }
+        >
+          {Object.entries(sust).map(([de, por]) => (
+            <FilaBoton
+              icono="reiniciar"
+              texto={
+                <>
+                  {receta(de)?.nombre} → <b>{receta(por)?.nombre}</b>
+                  {cambiaProteina(de, por) && <small class="aviso-proteina"> · cambia la proteína</small>}
+                </>
+              }
+              onClick={async () => {
+                await sustituirSiempre(de, null);
+                mostrarToast(`Vuelve «${receta(de)?.nombre}» al menú`);
+              }}
+            />
+          ))}
+        </Lista>
+
+        {gustosCocina.value.enCasa.length > 0 && (
+          <Lista titulo="Siempre en casa" pie="No se cuentan ni se comparten en la lista de la compra. Toca uno para que vuelva a la lista.">
+            {gustosCocina.value.enCasa.map((n) => (
+              <FilaBoton icono="cerrar" texto={n} onClick={() => marcarEnCasa(n, false)} />
+            ))}
+          </Lista>
+        )}
 
         <div class="aviso-suave">
           <Icono n="info" t={18} />

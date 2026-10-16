@@ -9,7 +9,7 @@ import { escritorio } from '../core/pantalla';
 import { hayActualizacion, aplicarActualizacion } from '../core/pwa';
 import { estadoNube } from '../core/nube';
 import { ir } from '../core/router';
-import { MODULOS } from '../core/registro';
+import { visibles } from '../core/registro';
 import { Icono } from '../ui/Icono';
 import { useFlechas } from '../ui/teclado';
 
@@ -25,7 +25,7 @@ function AgendaSemana() {
   const hoy = diaActual.value;
   const lunes = addDays(lunesDe(parse(hoy)), 7 * desfaseAgenda.value);
   const dias = Array.from({ length: 7 }, (_, i) => iso(addDays(lunes, i)));
-  const mods = MODULOS.filter((m) => m.agendaDia);
+  const mods = visibles.value.filter((m) => m.agendaDia);
   useFlechas(() => desfaseAgenda.value--, () => desfaseAgenda.value++);
   const titulo = desfaseAgenda.value === 0 ? 'Tu semana' : desfaseAgenda.value === 1 ? 'La semana que viene' : desfaseAgenda.value === -1 ? 'La semana pasada' : `Semana del ${fechaCorta(lunes)}`;
   return (
@@ -121,7 +121,7 @@ export function Inicio() {
       {esc && <div class="tit-lista">Hoy</div>}
 
       <div class="widgets">
-        {MODULOS.filter((m) => m.widgetInicio).map((m) => {
+        {visibles.value.filter((m) => m.widgetInicio).map((m) => {
           const W = m.widgetInicio!;
           return <W key={m.id} />;
         })}

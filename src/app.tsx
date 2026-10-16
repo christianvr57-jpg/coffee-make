@@ -4,7 +4,7 @@ import { useEffect, useState } from 'preact/hooks';
 import type { ModuloApp } from './core/modulos';
 import { escritorio } from './core/pantalla';
 import { coincide, ir, ruta } from './core/router';
-import { fijados, MODULOS } from './core/registro';
+import { modulosBarra, visibles } from './core/registro';
 import { BarraSecciones } from './ui/Cabecera';
 import { Capas, ocultarToast } from './ui/capas';
 import { Icono } from './ui/Icono';
@@ -27,7 +27,7 @@ function resolver(path: string): Resuelta {
   if (path === '/mas') return { vista: <Mas />, pestana: 'mas', tema: '', completa: false };
   if (path === '/ajustes') return { vista: <Ajustes />, pestana: 'mas', tema: '', completa: false };
   if (path === '/buscar') return { vista: <Buscar />, pestana: 'inicio', tema: '', completa: false };
-  for (const m of MODULOS) {
+  for (const m of visibles.value) {
     for (const r of m.rutas) {
       const params = coincide(r.patron, path);
       if (!params) continue;
@@ -40,7 +40,7 @@ function resolver(path: string): Resuelta {
             <V params={params} />
           </>
         ),
-        pestana: fijados.value.includes(m.id) ? m.id : 'mas',
+        pestana: modulosBarra.value.includes(m) ? m.id : 'mas',
         tema: m.tema,
         completa: !!r.pantallaCompleta,
         modulo: m,
@@ -125,7 +125,7 @@ export function App() {
 
   const pestanas = [
     { id: 'inicio', nombre: 'Inicio', icono: 'inicio', ruta: '/' },
-    ...MODULOS.filter((m) => fijados.value.includes(m.id)).map((m) => ({ id: m.id, nombre: m.nombre, icono: m.icono, ruta: m.rutaInicio })),
+    ...modulosBarra.value.map((m) => ({ id: m.id, nombre: m.nombre, icono: m.icono, ruta: m.rutaInicio })),
     { id: 'mas', nombre: 'Más', icono: 'mas', ruta: '/mas' },
   ];
 

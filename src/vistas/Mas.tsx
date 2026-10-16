@@ -1,6 +1,6 @@
 // MÁS: todos los módulos, buscador, ajustes y copia de seguridad.
 import { ir } from '../core/router';
-import { MODULOS } from '../core/registro';
+import { visibles } from '../core/registro';
 import { escritorio } from '../core/pantalla';
 import { esAppInstalada } from '../core/pwa';
 import { TituloGrande } from '../ui/Cabecera';
@@ -26,7 +26,7 @@ export function Mas() {
         </div>
       )}
       <Lista titulo="Módulos">
-        {MODULOS.map((m) => (
+        {visibles.value.map((m) => (
           <FilaBoton icono={m.icono} texto={m.nombre} chevron onClick={() => ir(m.rutaInicio)} />
         ))}
       </Lista>
