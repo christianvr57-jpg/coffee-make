@@ -8,7 +8,7 @@ import { Anillo } from '../../ui/Anillo';
 import { minutosATexto } from '../../core/fechas';
 import { Campo, Interruptor, Lista, Segmentado, FilaBoton } from '../../ui/form';
 import { confirmar, mostrarToast } from '../../ui/capas';
-import { tipoSemana } from './calendario';
+import { elementosDelDia, planDelDia, tipoSemana } from './calendario';
 import { ajustesHogar, cambiarAjustesHogar, iniciarHogar, migrarLocalStorage, modelo, restablecerTareas, estaHecha } from './estado';
 import { HoyHogar, resumenDia } from './vistas/Hoy';
 import { SemanaHogar } from './vistas/Semana';
@@ -45,6 +45,34 @@ function WidgetHogar() {
         </ul>
       )}
     </button>
+  );
+}
+
+/** Agenda de Inicio (ordenador): colada, tarea fija y periódicas del día, y cuántas tareas hay. */
+function AgendaHogar({ fecha }: { fecha: string }) {
+  const plan = planDelDia(modelo.value, ajustesHogar.value, parse(fecha));
+  const items = elementosDelDia(plan);
+  const hechas = items.filter((i) => estaHecha(i.clave)).length;
+  const destacadas = [
+    ...plan.coladas.map((c) => ({ clave: c.clave, sobre: 'Colada', titulo: c.t.titulo })),
+    ...plan.grupos.fija.map((t) => ({ clave: t.clave, sobre: 'Tarea del día', titulo: t.t.titulo })),
+    ...plan.periodicas.filter((p) => p.nueva).map((t) => ({ clave: t.clave, sobre: 'Periódica', titulo: t.t.titulo })),
+  ];
+  return (
+    <>
+      {destacadas.slice(0, 3).map((x) => (
+        <a class={`ag-item${estaHecha(x.clave) ? ' hecho' : ''}`} href="#/hogar/semana">
+          <small>{x.sobre}</small>
+          <span>{x.titulo}</span>
+        </a>
+      ))}
+      {items.length > 0 && (
+        <span class="ag-resumen">
+          {destacadas.length > 3 ? `y ${destacadas.length - 3} más · ` : ''}
+          {hechas}/{items.length} tareas · {minutosATexto(items.reduce((s, i) => s + i.minutos, 0))}
+        </span>
+      )}
+    </>
   );
 }
 
@@ -110,6 +138,7 @@ export const moduloHogar: ModuloApp = {
     { patron: '/hogar/tareas', vista: TareasHogar },
   ],
   widgetInicio: WidgetHogar,
+  agendaDia: AgendaHogar,
   accionesRapidas: [{ nombre: 'Tareas de hoy', icono: 'hogar', ruta: '/hogar' }],
   ajustes: AjustesHogarVista,
   async iniciar() {

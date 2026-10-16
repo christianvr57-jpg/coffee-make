@@ -52,7 +52,7 @@ export function Cafes() {
           <p>{filtro.value === 'activos' ? 'No tienes cafés en casa. Añade el primero con el botón +.' : 'Aún no has terminado ningún café.'}</p>
         </div>
       )}
-      <div class="lista">
+      <div class="lista rejilla-tarjetas">
         {lista.map((c) => {
           const st = stock(c, preps);
           const usoPrincipal = c.uso === 'espresso' ? 'espresso' : 'filtro';

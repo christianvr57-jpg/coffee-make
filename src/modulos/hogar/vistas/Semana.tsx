@@ -3,7 +3,9 @@ import { signal } from '@preact/signals';
 import { useEffect, useRef } from 'preact/hooks';
 import { diaActual } from '../../../core/hoy';
 import { DIAS, addDays, fechaCorta, iso, lunesDe, minutosATexto, parse } from '../../../core/fechas';
+import { escritorio } from '../../../core/pantalla';
 import { Icono } from '../../../ui/Icono';
+import { useFlechas } from '../../../ui/teclado';
 import { planDelDia, tipoSemana } from '../calendario';
 import { ajustesHogar, modelo, estaHecha } from '../estado';
 import { FilaTarea } from './comunes';
@@ -86,9 +88,11 @@ export function SemanaHogar() {
   const tipo = tipoSemana(lunes, ajustesHogar.value);
   const raiz = useRef<HTMLDivElement>(null);
 
-  // Al entrar en la semana actual, lleva la vista al día de hoy.
+  useFlechas(() => mover(-1), () => mover(1), escritorio.value);
+
+  // Al entrar en la semana actual, lleva la vista al día de hoy (en el móvil; en el ordenador se ve entera).
   useEffect(() => {
-    if (desfaseSemana.value !== 0) return;
+    if (desfaseSemana.value !== 0 || escritorio.value) return;
     const el = raiz.current?.querySelector<HTMLElement>('.dia.hoy');
     if (el) window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - 150) });
   }, []);
@@ -123,9 +127,11 @@ export function SemanaHogar() {
           </button>
         </div>
       </div>
-      {Array.from({ length: 7 }, (_, i) => (
-        <Dia key={iso(addDays(lunes, i))} fecha={addDays(lunes, i)} />
-      ))}
+      <div class="semana-hogar">
+        {Array.from({ length: 7 }, (_, i) => (
+          <Dia key={iso(addDays(lunes, i))} fecha={addDays(lunes, i)} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -42,45 +42,50 @@ export function HoyCocina() {
 
       {p.dia === 7 && <Lote semana={m.semana} titulo="Hoy toca preparar la semana (batch cooking)" />}
 
-      <div class="tit-lista">Adultos</div>
-      <TarjetaPlato momento="comida" r={p.comida} cambiada={p.comidaCambiada} fecha={p.fecha} finde={p.finde} />
-      <TarjetaPlato momento="cena" r={p.cena} cambiada={p.cenaCambiada} fecha={p.fecha} finde={p.finde} />
-      <div class="lista bloque-texto consejo-dia">
-        <p>
-          <Icono n="check" t={16} />
-          <span>
-            <b>Postre:</b> {p.postre}
-          </span>
-        </p>
-        <p>
-          <Icono n="check" t={16} />
-          <span>Adultos: un puñado de frutos secos naturales sin sal entre horas.</span>
-        </p>
-      </div>
+      <div class="columnas">
+        <div>
+          <div class="tit-lista">Adultos</div>
+          <TarjetaPlato momento="comida" r={p.comida} cambiada={p.comidaCambiada} fecha={p.fecha} finde={p.finde} />
+          <TarjetaPlato momento="cena" r={p.cena} cambiada={p.cenaCambiada} fecha={p.fecha} finde={p.finde} />
+          <div class="lista bloque-texto consejo-dia">
+            <p>
+              <Icono n="check" t={16} />
+              <span>
+                <b>Postre:</b> {p.postre}
+              </span>
+            </p>
+            <p>
+              <Icono n="check" t={16} />
+              <span>Adultos: un puñado de frutos secos naturales sin sal entre horas.</span>
+            </p>
+          </div>
+        </div>
+        <div>
+          <div class="tit-lista">El niño</div>
+          <ComidasNino p={p} />
 
-      <div class="tit-lista">El niño</div>
-      <ComidasNino p={p} />
-
-      <div class="tit-lista">Mañana · {fechaLarga(m.fecha).split(' ')[0].toLowerCase()}</div>
-      <div class="lista">
-        {[m.comida, m.cena].map((r, i) => (
-          <a class="item" href={`#/cocina/recetas/${r.id}`}>
-            <div class="item-txt">
-              <div class="item-meta">{i === 0 ? 'Comida' : 'Cena'}</div>
-              <div class="item-tit">{r.nombre}</div>
-            </div>
-            <Icono n="chevron" t={16} clase="chev" />
-          </a>
-        ))}
+          <div class="tit-lista">Mañana · {fechaLarga(m.fecha).split(' ')[0].toLowerCase()}</div>
+          <div class="lista">
+            {[m.comida, m.cena].map((r, i) => (
+              <a class="item" href={`#/cocina/recetas/${r.id}`}>
+                <div class="item-txt">
+                  <div class="item-meta">{i === 0 ? 'Comida' : 'Cena'}</div>
+                  <div class="item-tit">{r.nombre}</div>
+                </div>
+                <Icono n="chevron" t={16} clase="chev" />
+              </a>
+            ))}
+          </div>
+          {m.comida.ingredientes.some((x) => /garbanzos|alubias/i.test(x.n)) && (
+            <p class="pie">Si mañana usas legumbre seca (garbanzos o alubias) y no la tienes cocida, déjala hoy en remojo.</p>
+          )}
+          <p class="pie">
+            <a class="enlace" href="#/cocina/semana">
+              Ver la semana completa
+            </a>
+          </p>
+        </div>
       </div>
-      {m.comida.ingredientes.some((x) => /garbanzos|alubias/i.test(x.n)) && (
-        <p class="pie">Si mañana usas legumbre seca (garbanzos o alubias) y no la tienes cocida, déjala hoy en remojo.</p>
-      )}
-      <p class="pie">
-        <a class="enlace" href="#/cocina/semana">
-          Ver la semana completa
-        </a>
-      </p>
     </>
   );
 }

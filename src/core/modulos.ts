@@ -40,6 +40,8 @@ export interface ModuloApp {
   rutas: RutaModulo[];
   /** Tarjeta para la pantalla de Inicio. */
   widgetInicio?: ComponentType;
+  /** Lo de este módulo en un día, para la agenda semanal de Inicio en el ordenador. */
+  agendaDia?: ComponentType<{ fecha: string }>;
   accionesRapidas?: AccionRapida[];
   buscar?: (q: string) => Promise<ResultadoBusqueda[]>;
   /** Bloque propio dentro de Ajustes. */
@@ -48,4 +50,11 @@ export interface ModuloApp {
   iniciar?: () => Promise<void>;
   /** Exportaciones CSV propias del módulo (para abrir en Excel o Numbers). */
   exportarCsv?: () => Promise<{ nombre: string; contenido: string }[]>;
+}
+
+/** Sección a la que pertenece una ruta: la de prefijo más largo (/cocina/recetas/x → Recetas). */
+export function seccionDe(m: Pick<ModuloApp, 'secciones'>, path: string): Seccion | undefined {
+  return m.secciones
+    .filter((s) => path === s.ruta || path.startsWith(`${s.ruta}/`))
+    .sort((a, b) => b.ruta.length - a.ruta.length)[0];
 }

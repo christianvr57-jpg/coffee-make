@@ -4,6 +4,7 @@ import { useState } from 'preact/hooks';
 import { addDays, DIAS, fechaCorta, fechaLarga, hoyISO, iso, parse } from '../../../core/fechas';
 import { diaActual } from '../../../core/hoy';
 import { db } from '../../../core/db';
+import { escritorio } from '../../../core/pantalla';
 import { useVivo } from '../../../core/vivo';
 import { Hoja, abrirHoja, avisar, confirmar, mostrarToast } from '../../../ui/capas';
 import { Campo, Lista, Numero, Selector, Texto, fmt } from '../../../ui/form';
@@ -154,15 +155,8 @@ export function RegistroRunning() {
     else await avisar('No se pudo copiar', t);
   };
 
-  return (
+  const resumen = (
     <>
-      <div class="sub-cabecera">
-        <div class="sub">Tras cada entreno: esfuerzo, sueño y molestias. Ritmos y FC puedes copiarlos de tu reloj.</div>
-        <button type="button" class="btn-mas" aria-label="Registrar sesión" onClick={() => abrirRegistro({})}>
-          <Icono n="anadir" t={24} />
-        </button>
-      </div>
-
       <div class="tit-lista">Km de carrera · últimas 4 semanas</div>
       <div class="lista bloque-grafico">
         <Barras titulo="Km por semana" datos={r.semanas.map((s, i) => ({ etiqueta: i === 3 ? 'últ. 7 d' : fechaCorta(parse(s.desde)), valor: Math.round(s.km * 10) / 10 }))} />
@@ -203,6 +197,51 @@ export function RegistroRunning() {
         ))}
       </div>
       <p class="pie">Ninguna métrica predice lesiones por sí sola. La relación aguda:crónica y la monotonía solo indican cambios bruscos o semanas sin contraste; se leen junto con las molestias, el sueño y las sensaciones.</p>
+    </>
+  );
+  const botonResumen = (
+    <>
+      <div class="lista separada">
+        <button type="button" class="boton-fila" onClick={copiar}>
+          <Icono n="subir" t={22} /> Copiar resumen para el entrenador
+        </button>
+      </div>
+      <p class="pie">Pégalo en el chat con Claude cuando quieras la revisión semanal.</p>
+    </>
+  );
+
+  if (escritorio.value) {
+    return (
+      <>
+        <div class="sub-cabecera">
+          <div class="sub">Tras cada entreno: esfuerzo, sueño y molestias. Ritmos y FC puedes copiarlos de tu reloj.</div>
+          <button type="button" class="boton-principal auto" onClick={() => abrirRegistro({})}>
+            <Icono n="anadir" t={20} /> Registrar sesión
+          </button>
+        </div>
+        <div class="columnas izq">
+          <div>
+            {resumen}
+            {botonResumen}
+          </div>
+          <div>
+            <div class="tit-lista">Sesiones registradas ({regs.length})</div>
+            {regs.length ? <TablaRegistros regs={regs} /> : <div class="vacio">Aún no hay sesiones registradas. Pulsa «Registrar sesión» después de entrenar.</div>}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div class="sub-cabecera">
+        <div class="sub">Tras cada entreno: esfuerzo, sueño y molestias. Ritmos y FC puedes copiarlos de tu reloj.</div>
+        <button type="button" class="btn-mas" aria-label="Registrar sesión" onClick={() => abrirRegistro({})}>
+          <Icono n="anadir" t={24} />
+        </button>
+      </div>
+      {resumen}
 
       <div class="tit-lista">Sesiones</div>
       {regs.length ? (
@@ -232,13 +271,63 @@ export function RegistroRunning() {
           <p>Aún no has registrado sesiones. Pulsa + después de entrenar: lo importante es el RPE, el sueño y las molestias.</p>
         </div>
       )}
-      <div class="lista separada">
-        <button type="button" class="boton-fila" onClick={copiar}>
-          <Icono n="subir" t={22} /> Copiar resumen para el entrenador
-        </button>
-      </div>
-      <p class="pie">Pégalo en el chat con Claude cuando quieras la revisión semanal.</p>
+      {botonResumen}
     </>
+  );
+}
+
+/** Ordenador: todas las sesiones en una tabla (pulsa una fila para editarla). */
+function TablaRegistros({ regs }: { regs: RegistroRun[] }) {
+  const dolorMax = (x: RegistroRun) => {
+    const vals = MOLESTIAS.filter(([k]) => typeof x[k] === 'number').map(([k, n]) => [n, x[k] as number] as const);
+    if (!vals.length) return null;
+    return vals.reduce((a, b) => (b[1] > a[1] ? b : a));
+  };
+  return (
+    <div class="tabla-marco">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Sesión</th>
+            <th class="num">Min</th>
+            <th class="num">Km</th>
+            <th class="num">Ritmo</th>
+            <th class="num">FC</th>
+            <th class="num">RPE</th>
+            <th class="num">Carga</th>
+            <th class="num">Sueño</th>
+            <th>Molestia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {regs.map((x) => {
+            const rit = ritmoMedio(x);
+            const dolor = dolorMax(x);
+            return (
+              <tr class="clic" onClick={() => abrirRegistro({ registro: x })} title={x.notas || 'Editar'}>
+                <td class="sec">{fechaTxt(x.fecha)}</td>
+                <td class="titulo-celda">
+                  {x.titulo || nombreTipo(x.tipo)}
+                  <small>
+                    {nombreTipo(x.tipo)}
+                    {x.notas ? ' · con notas' : ''}
+                  </small>
+                </td>
+                <td class="num">{x.minutos ?? ''}</td>
+                <td class="num">{x.km ? kmTxt(x.km) : ''}</td>
+                <td class="num">{rit && esCarrera(x.tipo) ? formatoRitmo(rit) : ''}</td>
+                <td class="num">{x.fc ?? ''}</td>
+                <td class="num">{x.rpe ?? ''}</td>
+                <td class="num">{cargaSesion(x) || ''}</td>
+                <td class="num">{x.sueno ? `${fmt(x.sueno, 1)} h` : ''}</td>
+                <td>{dolor ? <span class={`run-dolor ${dolor[1] <= 2 ? 'verde' : dolor[1] <= 5 ? 'ambar' : 'rojo'}`}>{`${dolor[0]} ${dolor[1]}`}</span> : ''}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

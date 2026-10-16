@@ -114,145 +114,159 @@ export function Analisis() {
       </dl>
       {r.conCoste < r.n && <p class="pie">El gasto solo cuenta los cafés con precio y peso del paquete anotados.</p>}
 
-      <div class="tit-lista">Ritmo · últimas 12 semanas</div>
-      <div class="lista bloque-grafico">
-        <Barras titulo="Preparaciones por semana" datos={semanas.map((s) => ({ etiqueta: s.etiqueta, valor: s.n }))} cadaEtiqueta={3} />
-      </div>
+      <div class="paneles">
+        <section>
+          <div class="tit-lista">Ritmo · últimas 12 semanas</div>
+          <div class="lista bloque-grafico">
+            <Barras titulo="Preparaciones por semana" datos={semanas.map((s) => ({ etiqueta: s.etiqueta, valor: s.n }))} cadaEtiqueta={3} />
+          </div>
+        </section>
 
-      <div class="tit-lista">Evolución de la nota</div>
-      <div class="lista bloque-grafico">
-        {metodosUsados.length > 1 && (
-          <div class="chips desplazables compactos">
-            <button type="button" class="chip" aria-pressed={metodoNota === 'todos'} onClick={() => setMetodoNota('todos')}>
-              Todos
-            </button>
-            {metodosUsados.map((m) => (
-              <button type="button" class="chip" aria-pressed={metodoNota === m} onClick={() => setMetodoNota(m)}>
-                {metodo(m).nombre}
-              </button>
+        <section>
+          <div class="tit-lista">Evolución de la nota</div>
+          <div class="lista bloque-grafico">
+            {metodosUsados.length > 1 && (
+              <div class="chips desplazables compactos">
+                <button type="button" class="chip" aria-pressed={metodoNota === 'todos'} onClick={() => setMetodoNota('todos')}>
+                  Todos
+                </button>
+                {metodosUsados.map((m) => (
+                  <button type="button" class="chip" aria-pressed={metodoNota === m} onClick={() => setMetodoNota(m)}>
+                    {metodo(m).nombre}
+                  </button>
+                ))}
+              </div>
+            )}
+            {evol.length >= 2 ? (
+              <>
+                <LineaNotas titulo="Notas en el tiempo" puntos={evol} />
+                <p class="ayuda">
+                  Puntos: cada preparación. Línea: media de las últimas 5.
+                  {evol.length >= 10 && primeras !== undefined && ultimas !== undefined
+                    ? ` Tus 5 primeras: ${fmt(primeras)} de media; tus 5 últimas: ${fmt(ultimas)}.${ultimas > primeras + 0.3 ? ' Vas mejorando.' : ''}`
+                    : ''}
+                </p>
+              </>
+            ) : (
+              <p class="ayuda">Puntúa al menos dos preparaciones en este periodo para ver la evolución.</p>
+            )}
+          </div>
+        </section>
+
+        <section>
+          <div class="tit-lista">Lo que vas aprendiendo</div>
+          <div class="lista bloque-texto">
+            {aprendido.length ? (
+              aprendido.slice(0, 5).map((a) => (
+                <p class="aprendizaje">
+                  <Icono n={a.media >= 0.25 ? 'check' : a.media <= -0.25 ? 'aviso' : 'info'} t={16} clase={a.media >= 0.25 ? 'bien' : a.media <= -0.25 ? 'mal' : ''} />
+                  <span>{a.texto}</span>
+                </p>
+              ))
+            ) : (
+              <p class="ayuda">Cuando repitas una preparación cambiando una sola cosa (botón «Repetir»), aquí verás qué cambios te suben la nota. Hacen falta al menos dos repeticiones del mismo cambio.</p>
+            )}
+            {aprendido.length > 0 && <p class="ayuda">Son tendencias de tus propios registros, no reglas: con pocos datos pueden deberse al azar o al día.</p>}
+          </div>
+        </section>
+
+        <section>
+          <div class="tit-lista">Tus gustos</div>
+          <div class="lista bloque-texto">
+            {gustos.cafesPuntuados < 2 ? (
+              <p class="ayuda">Con al menos dos cafés puntuados verás aquí qué orígenes, procesos y tuestes te gustan más.</p>
+            ) : (
+              <>
+                <BarrasGrupo titulo="Proceso" grupos={gustos.procesos} />
+                <BarrasGrupo titulo="Origen" grupos={gustos.paises} />
+                <BarrasGrupo titulo="Tueste" grupos={gustos.tuestes} />
+                {gustos.sabores.length > 0 && (
+                  <p class="ayuda">
+                    En tus tazas de 8 o más aparecen sobre todo: <b>{gustos.sabores.slice(0, 3).map((s) => s.nombre.toLowerCase()).join(', ')}</b>.
+                  </p>
+                )}
+                <p class="ayuda">Nota media de cada café y número de cafés. {consejo || 'Con más cafés distintos la app te sugerirá qué buscar al comprar.'}</p>
+              </>
+            )}
+          </div>
+        </section>
+
+        {c && (
+          <section>
+            <div class="tit-lista">Ajuste fino de la molienda</div>
+            <div class="lista bloque-grafico">
+              {combos.length > 1 && (
+                <Selector
+                  opciones={combos.map((x, i) => [i, `${x.cafeNombre} · ${metodo(x.metodo).nombre}`] as [number, string])}
+                  valor={Math.min(combo, combos.length - 1)}
+                  cambiar={setCombo}
+                />
+              )}
+              <Dispersion
+                titulo="Molienda frente a nota"
+                puntos={puntos.map((p) => ({ x: p.x, y: p.y, reciente: recientes.has(p.id) }))}
+                etiquetaX={molinoC?.molino?.escala === 'clics' ? `Clics en ${molinoC.nombre} (más fino ←  → más grueso)` : `Posición${molinoC ? ` en ${molinoC.nombre}` : ''} (más fino ←  → más grueso)`}
+              />
+              {mejorAjuste && (
+                <p class="ayuda">
+                  {c.cafeNombre} con {metodo(c.metodo).nombre}: tu mejor nota ({fmt(mejorAjuste.y)}) fue con la molienda en <b>{fmt(mejorAjuste.x)}</b>. El punto con borde es el más reciente.
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
+        <section>
+          <div class="tit-lista">Por método</div>
+          <div class="lista">
+            {metodos.map((m) => (
+              <div class="item">
+                <IconoMetodo id={m.metodo} />
+                <div class="item-txt">
+                  <div class="item-tit">{metodo(m.metodo).nombre}</div>
+                  <div class="item-meta">
+                    {m.n} {m.n === 1 ? 'preparación' : 'preparaciones'}
+                    {m.media !== undefined ? ` · media ${fmt(m.media)}` : ''}
+                  </div>
+                </div>
+                <Nota p={m.mejor?.puntuacion} />
+              </div>
             ))}
           </div>
-        )}
-        {evol.length >= 2 ? (
-          <>
-            <LineaNotas titulo="Notas en el tiempo" puntos={evol} />
-            <p class="ayuda">
-              Puntos: cada preparación. Línea: media de las últimas 5.
-              {evol.length >= 10 && primeras !== undefined && ultimas !== undefined
-                ? ` Tus 5 primeras: ${fmt(primeras)} de media; tus 5 últimas: ${fmt(ultimas)}.${ultimas > primeras + 0.3 ? ' Vas mejorando.' : ''}`
-                : ''}
-            </p>
-          </>
-        ) : (
-          <p class="ayuda">Puntúa al menos dos preparaciones en este periodo para ver la evolución.</p>
-        )}
-      </div>
+          <p class="pie">A la derecha, tu mejor nota con cada método en el periodo.</p>
+        </section>
 
-      <div class="tit-lista">Lo que vas aprendiendo</div>
-      <div class="lista bloque-texto">
-        {aprendido.length ? (
-          aprendido.slice(0, 5).map((a) => (
-            <p class="aprendizaje">
-              <Icono n={a.media >= 0.25 ? 'check' : a.media <= -0.25 ? 'aviso' : 'info'} t={16} clase={a.media >= 0.25 ? 'bien' : a.media <= -0.25 ? 'mal' : ''} />
-              <span>{a.texto}</span>
-            </p>
-          ))
-        ) : (
-          <p class="ayuda">Cuando repitas una preparación cambiando una sola cosa (botón «Repetir»), aquí verás qué cambios te suben la nota. Hacen falta al menos dos repeticiones del mismo cambio.</p>
-        )}
-        {aprendido.length > 0 && <p class="ayuda">Son tendencias de tus propios registros, no reglas: con pocos datos pueden deberse al azar o al día.</p>}
-      </div>
-
-      <div class="tit-lista">Tus gustos</div>
-      <div class="lista bloque-texto">
-        {gustos.cafesPuntuados < 2 ? (
-          <p class="ayuda">Con al menos dos cafés puntuados verás aquí qué orígenes, procesos y tuestes te gustan más.</p>
-        ) : (
-          <>
-            <BarrasGrupo titulo="Proceso" grupos={gustos.procesos} />
-            <BarrasGrupo titulo="Origen" grupos={gustos.paises} />
-            <BarrasGrupo titulo="Tueste" grupos={gustos.tuestes} />
-            {gustos.sabores.length > 0 && (
-              <p class="ayuda">
-                En tus tazas de 8 o más aparecen sobre todo: <b>{gustos.sabores.slice(0, 3).map((s) => s.nombre.toLowerCase()).join(', ')}</b>.
-              </p>
-            )}
-            <p class="ayuda">Nota media de cada café y número de cafés. {consejo || 'Con más cafés distintos la app te sugerirá qué buscar al comprar.'}</p>
-          </>
-        )}
-      </div>
-
-      {c && (
-        <>
-          <div class="tit-lista">Ajuste fino de la molienda</div>
-          <div class="lista bloque-grafico">
-            {combos.length > 1 && (
-              <Selector
-                opciones={combos.map((x, i) => [i, `${x.cafeNombre} · ${metodo(x.metodo).nombre}`] as [number, string])}
-                valor={Math.min(combo, combos.length - 1)}
-                cambiar={setCombo}
-              />
-            )}
-            <Dispersion
-              titulo="Molienda frente a nota"
-              puntos={puntos.map((p) => ({ x: p.x, y: p.y, reciente: recientes.has(p.id) }))}
-              etiquetaX={molinoC?.molino?.escala === 'clics' ? `Clics en ${molinoC.nombre} (más fino ←  → más grueso)` : `Posición${molinoC ? ` en ${molinoC.nombre}` : ''} (más fino ←  → más grueso)`}
-            />
-            {mejorAjuste && (
-              <p class="ayuda">
-                {c.cafeNombre} con {metodo(c.metodo).nombre}: tu mejor nota ({fmt(mejorAjuste.y)}) fue con la molienda en <b>{fmt(mejorAjuste.x)}</b>. El punto con borde es el más reciente.
-              </p>
-            )}
+        <section>
+          <div class="tit-lista">Tu mejor receta de cada café</div>
+          <div class="lista">
+            {mejores.slice(0, 15).map((m) => (
+              <a class={`item${m.terminado ? ' inactiva' : ''}`} href={`#/cafe/p/${m.mejor.id}`}>
+                <IconoMetodo id={m.metodo} />
+                <div class="item-txt">
+                  <div class="item-tit">
+                    {m.cafeNombre} · {metodo(m.metodo).nombre}
+                  </div>
+                  <div class="item-meta">
+                    {resumenPrep(m.mejor, equipo)}
+                    {m.mejor.temperatura ? ` · ${m.mejor.temperatura} °C` : ''}
+                  </div>
+                </div>
+                <Nota p={m.mejor.puntuacion} />
+              </a>
+            ))}
           </div>
-        </>
-      )}
+          <p class="pie">Una fila por café y método, con tu preparación mejor puntuada (de siempre). Ábrela para repetirla o guardarla como receta.</p>
+        </section>
 
-      <div class="tit-lista">Por método</div>
-      <div class="lista">
-        {metodos.map((m) => (
-          <div class="item">
-            <IconoMetodo id={m.metodo} />
-            <div class="item-txt">
-              <div class="item-tit">{metodo(m.metodo).nombre}</div>
-              <div class="item-meta">
-                {m.n} {m.n === 1 ? 'preparación' : 'preparaciones'}
-                {m.media !== undefined ? ` · media ${fmt(m.media)}` : ''}
-              </div>
+        {conTds.length > 0 && (
+          <section>
+            <div class="tit-lista">Control chart · filtro</div>
+            <div class="lista bloque-grafico">
+              <ControlChart tipo="filtro" puntos={conTds.map((p) => ({ tds: p.tds!, ey: extraccion(p)! }))} />
             </div>
-            <Nota p={m.mejor?.puntuacion} />
-          </div>
-        ))}
+          </section>
+        )}
       </div>
-      <p class="pie">A la derecha, tu mejor nota con cada método en el periodo.</p>
-
-      <div class="tit-lista">Tu mejor receta de cada café</div>
-      <div class="lista">
-        {mejores.slice(0, 15).map((m) => (
-          <a class={`item${m.terminado ? ' inactiva' : ''}`} href={`#/cafe/p/${m.mejor.id}`}>
-            <IconoMetodo id={m.metodo} />
-            <div class="item-txt">
-              <div class="item-tit">
-                {m.cafeNombre} · {metodo(m.metodo).nombre}
-              </div>
-              <div class="item-meta">
-                {resumenPrep(m.mejor, equipo)}
-                {m.mejor.temperatura ? ` · ${m.mejor.temperatura} °C` : ''}
-              </div>
-            </div>
-            <Nota p={m.mejor.puntuacion} />
-          </a>
-        ))}
-      </div>
-      <p class="pie">Una fila por café y método, con tu preparación mejor puntuada (de siempre). Ábrela para repetirla o guardarla como receta.</p>
-
-      {conTds.length > 0 && (
-        <>
-          <div class="tit-lista">Control chart · filtro</div>
-          <div class="lista bloque-grafico">
-            <ControlChart tipo="filtro" puntos={conTds.map((p) => ({ tds: p.tds!, ey: extraccion(p)! }))} />
-          </div>
-        </>
-      )}
 
       <div class="lista separada">
         <button type="button" class="boton-fila" onClick={() => elegirParaComparar()}>

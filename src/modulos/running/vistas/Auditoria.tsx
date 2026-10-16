@@ -69,7 +69,7 @@ export function AuditoriaRunning() {
   return (
     <>
       <div class="run-tarjeta">
-        <p>Responde por bloques y en orden: el primero es el que condiciona el plan. Vale con notas cortas. Las respuestas se guardan en este iPhone; cuando termines un bloque, cópialas y pégalas en el chat.</p>
+        <p>Responde por bloques y en orden: el primero es el que condiciona el plan. Vale con notas cortas. Las respuestas se guardan en este dispositivo; cuando termines un bloque, cópialas y pégalas en el chat.</p>
         <div class="barra-stock">
           <div style={{ width: `${ids.length ? (hechas / ids.length) * 100 : 0}%` }} />
         </div>
@@ -77,23 +77,25 @@ export function AuditoriaRunning() {
           {hechas} de {ids.length} respondidas
         </small>
       </div>
-      {bloques.map((b) => (
-        <>
-          <div class="tit-lista">{b.titulo}</div>
-          {b.porque && <p class="pie primero">{b.porque}</p>}
-          <div class="lista">
-            {b.preguntas.map((p) => (
-              <div class={`campo col run-pregunta${resp[p.id]?.trim() ? ' respondida' : ''}`}>
-                <div class="et">
-                  <b>{p.texto}</b>
-                  {p.ayuda && <small>{p.ayuda}</small>}
+      <div class="paneles">
+        {bloques.map((b) => (
+          <section>
+            <div class="tit-lista">{b.titulo}</div>
+            {b.porque && <p class="pie primero">{b.porque}</p>}
+            <div class="lista">
+              {b.preguntas.map((p) => (
+                <div class={`campo col run-pregunta${resp[p.id]?.trim() ? ' respondida' : ''}`}>
+                  <div class="et">
+                    <b>{p.texto}</b>
+                    {p.ayuda && <small>{p.ayuda}</small>}
+                  </div>
+                  <Respuesta id={p.id} />
                 </div>
-                <Respuesta id={p.id} />
-              </div>
-            ))}
-          </div>
-        </>
-      ))}
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
       <div class="lista separada">
         <button type="button" class="boton-fila" onClick={copiar}>
           <Icono n="subir" t={22} /> Copiar respuestas para el entrenador

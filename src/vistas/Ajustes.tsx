@@ -3,13 +3,15 @@ import { useRef } from 'preact/hooks';
 import { entregarArchivo } from '../core/archivos';
 import { borrarTodo, exportarTodo, importarTodo } from '../core/copia';
 import { hoyISO } from '../core/fechas';
+import { escritorio } from '../core/pantalla';
 import { MAX_FIJADOS, MODULOS, cambiarFijados, fijados } from '../core/registro';
 import { BarraDetalle } from '../ui/Cabecera';
 import { Hoja, abrirHoja, avisar, confirmar, mostrarToast } from '../ui/capas';
 import { FilaBoton, Lista, Texto } from '../ui/form';
+import { Icono } from '../ui/Icono';
 import { useState } from 'preact/hooks';
 
-async function aplicarImportacion(texto: string) {
+export async function aplicarImportacion(texto: string) {
   if (!(await confirmar({ titulo: '¿Importar esta copia?', texto: 'Las copias de Coffee Make sustituyen todos los datos actuales. Las de la app antigua «Rutina del hogar» solo añaden tu progreso del hogar y tus datos de running.', ok: 'Importar', peligro: true }))) return;
   try {
     const r = await importarTodo(texto);
@@ -82,36 +84,47 @@ export function Ajustes() {
     <>
       <BarraDetalle padre="/mas" textoAtras="Más" titulo="Ajustes" />
       <div class="pagina">
-        <Lista titulo="Barra de pestañas" pie={`Elige hasta ${MAX_FIJADOS} módulos para la barra de abajo. Los demás se abren desde «Más» y desde su tarjeta en Inicio.`}>
-          <div class="campo col">
-            <div class="chips">
-              {MODULOS.map((m) => {
-                const activo = fijados.value.includes(m.id);
-                return (
-                  <button
-                    type="button"
-                    class="chip"
-                    aria-pressed={activo}
-                    onClick={() => {
-                      if (activo) cambiarFijados(fijados.value.filter((x) => x !== m.id));
-                      else if (fijados.value.length >= MAX_FIJADOS) mostrarToast(`Caben ${MAX_FIJADOS}: quita uno antes`);
-                      else cambiarFijados([...fijados.value, m.id]);
-                    }}
-                  >
-                    {m.nombre}
-                  </button>
-                );
-              })}
+        {!escritorio.value && (
+          <Lista titulo="Barra de pestañas" pie={`Elige hasta ${MAX_FIJADOS} módulos para la barra de abajo. Los demás se abren desde «Más» y desde su tarjeta en Inicio.`}>
+            <div class="campo col">
+              <div class="chips">
+                {MODULOS.map((m) => {
+                  const activo = fijados.value.includes(m.id);
+                  return (
+                    <button
+                      type="button"
+                      class="chip"
+                      aria-pressed={activo}
+                      onClick={() => {
+                        if (activo) cambiarFijados(fijados.value.filter((x) => x !== m.id));
+                        else if (fijados.value.length >= MAX_FIJADOS) mostrarToast(`Caben ${MAX_FIJADOS}: quita uno antes`);
+                        else cambiarFijados([...fijados.value, m.id]);
+                      }}
+                    >
+                      {m.nombre}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </Lista>
+        )}
+
+        {escritorio.value && (
+          <div class="aviso-instalar">
+            <Icono n="info" t={22} />
+            <div>
+              <b>Tus datos del iPhone en el ordenador.</b> Cada dispositivo guarda lo suyo. Para ver aquí lo que apuntas en el móvil: en el iPhone, Ajustes → «Exportar copia» y guárdala (iCloud Drive, correo…); aquí, arrastra ese archivo a la ventana o pulsa «Importar copia». Sustituye lo que haya en este navegador.
             </div>
           </div>
-        </Lista>
+        )}
 
         {MODULOS.filter((m) => m.ajustes).map((m) => {
           const A = m.ajustes!;
           return <A key={m.id} />;
         })}
 
-        <Lista titulo="Copia de seguridad" pie="Todo vive solo en este iPhone. Guarda una copia de vez en cuando (por ejemplo en Archivos o iCloud Drive), sobre todo antes de cambiar de móvil.">
+        <Lista titulo="Copia de seguridad" pie={escritorio.value ? 'Todo vive solo en este navegador. Exporta una copia si apuntas cosas aquí que no quieras perder.' : 'Todo vive solo en este iPhone. Guarda una copia de vez en cuando (por ejemplo en Archivos o iCloud Drive), sobre todo antes de cambiar de móvil.'}>
           <FilaBoton icono="subir" texto="Exportar copia (JSON)" onClick={exportar} />
           <FilaBoton icono="descargar" texto="Importar copia…" onClick={() => archivo.current?.click()} />
           <FilaBoton icono="copiar" texto="Copiar copia al portapapeles" onClick={copiar} />

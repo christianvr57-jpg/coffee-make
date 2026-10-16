@@ -2,6 +2,7 @@
 import type { ComponentChildren } from 'preact';
 import { useState } from 'preact/hooks';
 import { diaActual } from '../../../core/hoy';
+import { escritorio } from '../../../core/pantalla';
 import { DIAS, MESES, DIAS_CORTOS, fechaCorta, minutosATexto, parse, isoWeekday } from '../../../core/fechas';
 import { Icono } from '../../../ui/Icono';
 import { Anillo } from '../../../ui/Anillo';
@@ -138,31 +139,38 @@ export function HoyHogar() {
           {fecha.getDate()} de {MESES[fecha.getMonth() + 1]}
         </h1>
       </header>
-      <section class={`resumen${completo ? ' completo' : ''}`}>
-        <Anillo fraccion={frac}>
-          {Math.round(frac * 100)}
-          <small>%</small>
-        </Anillo>
-        <div class="resumen-txt">
-          <div class="resumen-grande">{total ? (completo ? '¡Día completado!' : `${nHechas} de ${total} tareas`) : 'Día libre'}</div>
-          <div class="resumen-sub">
-            {completo ? (
-              <>
-                <Icono n="check" t={18} /> Todo hecho por hoy
-              </>
-            ) : total ? (
-              <>
-                <Icono n="reloj" t={18} /> Te quedan {minutosATexto(resta)}
-              </>
-            ) : (
-              'Nada programado'
-            )}
-          </div>
+      <div class="columnas hogar-hoy">
+        <div>
+          <section class={`resumen${completo ? ' completo' : ''}`}>
+            <Anillo fraccion={frac}>
+              {Math.round(frac * 100)}
+              <small>%</small>
+            </Anillo>
+            <div class="resumen-txt">
+              <div class="resumen-grande">{total ? (completo ? '¡Día completado!' : `${nHechas} de ${total} tareas`) : 'Día libre'}</div>
+              <div class="resumen-sub">
+                {completo ? (
+                  <>
+                    <Icono n="check" t={18} /> Todo hecho por hoy
+                  </>
+                ) : total ? (
+                  <>
+                    <Icono n="reloj" t={18} /> Te quedan {minutosATexto(resta)}
+                  </>
+                ) : (
+                  'Nada programado'
+                )}
+              </div>
+            </div>
+          </section>
+          {plan.coladas.map((c) => <TarjetaColada key={c.clave} it={c} />)}
+          {escritorio.value && <Grupo titulo="Periódicas" icono="periodicas" items={periodicas} />}
         </div>
-      </section>
-      {plan.coladas.map((c) => <TarjetaColada key={c.clave} it={c} />)}
-      {GRUPOS.map(([k, titulo]) => <Grupo key={k} titulo={titulo} icono={k} items={plan.grupos[k]} />)}
-      <Grupo titulo="Periódicas" icono="periodicas" items={periodicas} />
+        <div>
+          {GRUPOS.map(([k, titulo]) => <Grupo key={k} titulo={titulo} icono={k} items={plan.grupos[k]} />)}
+          {!escritorio.value && <Grupo titulo="Periódicas" icono="periodicas" items={periodicas} />}
+        </div>
+      </div>
       {nada && (
         <div class="vacio">
           <Icono n="hoy" t={40} />

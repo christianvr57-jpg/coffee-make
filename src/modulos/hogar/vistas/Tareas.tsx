@@ -2,6 +2,7 @@
 import { signal } from '@preact/signals';
 import { useState } from 'preact/hooks';
 import { DIAS, DIAS_CORTOS, DIAS_INICIAL, MESES, MESES_CORTOS, fechaCorta, isoWeekday, minutosATexto } from '../../../core/fechas';
+import { escritorio } from '../../../core/pantalla';
 import { Icono } from '../../../ui/Icono';
 import { Hoja, abrirHoja, confirmar, elegir } from '../../../ui/capas';
 import { Campo, Interruptor, Lista, Segmentado, Selector, Texto } from '../../../ui/form';
@@ -69,62 +70,64 @@ export function TareasHogar() {
   return (
     <>
       <div class="sub-cabecera">
-        <div class="sub">Toca una tarea para editarla</div>
+        <div class="sub">{escritorio.value ? 'Pulsa una tarea para editarla' : 'Toca una tarea para editarla'}</div>
         <button type="button" class="btn-mas" aria-label="Añadir tarea" onClick={nueva}>
           <Icono n="anadir" t={24} />
         </button>
       </div>
-      {SECCIONES.map(([k, titulo]) => {
-        let filas;
-        if (k === 'coladas') {
-          filas = [...m.coladas]
-            .sort((a, b) => a.dia - b.dia || String(a.semana).localeCompare(String(b.semana)))
-            .map((c) => (
-              <button type="button" class="item cat-ropa" onClick={() => editarColada(c)}>
-                <Insignia cat="ropa" tam={36} />
-                <div class="item-txt">
-                  <div class="item-tit">{c.titulo}</div>
-                  <div class="item-meta">
-                    {DIAS[c.dia]}
-                    {c.semana ? ` · semana ${c.semana}` : ''} · {c.programa}
+      <div class="paneles">
+        {SECCIONES.map(([k, titulo]) => {
+          let filas;
+          if (k === 'coladas') {
+            filas = [...m.coladas]
+              .sort((a, b) => a.dia - b.dia || String(a.semana).localeCompare(String(b.semana)))
+              .map((c) => (
+                <button type="button" class="item cat-ropa" onClick={() => editarColada(c)}>
+                  <Insignia cat="ropa" tam={36} />
+                  <div class="item-txt">
+                    <div class="item-tit">{c.titulo}</div>
+                    <div class="item-meta">
+                      {DIAS[c.dia]}
+                      {c.semana ? ` · semana ${c.semana}` : ''} · {c.programa}
+                    </div>
                   </div>
-                </div>
-                <Icono n="chevron" t={16} clase="chev" />
-              </button>
-            ));
-        } else {
-          let ts = m.tareas.filter((t) => t.frecuencia === k);
-          if (k === 'semanal') ts = ts.sort((a, b) => Math.min(...(a.dias || [8])) - Math.min(...(b.dias || [8])));
-          else if (k !== 'diaria') ts = ts.sort((a, b) => (proximaFecha(a, hoy)?.getTime() ?? Infinity) - (proximaFecha(b, hoy)?.getTime() ?? Infinity));
-          filas = ts.map((t) => {
-            const inactiva = t.requiere === 'camaBaja' && !aj.camaBaja;
-            return (
-              <button type="button" class={`item ${claseCategoria(t.categoria)}${inactiva ? ' inactiva' : ''}`} onClick={() => editarTarea(t)}>
-                <Insignia cat={t.categoria} tam={36} />
-                <div class="item-txt">
-                  <div class="item-tit">
-                    {t.titulo}
-                    {t.requiere === 'camaBaja' && <span class="tag">Cama baja</span>}
+                  <Icono n="chevron" t={16} clase="chev" />
+                </button>
+              ));
+          } else {
+            let ts = m.tareas.filter((t) => t.frecuencia === k);
+            if (k === 'semanal') ts = ts.sort((a, b) => Math.min(...(a.dias || [8])) - Math.min(...(b.dias || [8])));
+            else if (k !== 'diaria') ts = ts.sort((a, b) => (proximaFecha(a, hoy)?.getTime() ?? Infinity) - (proximaFecha(b, hoy)?.getTime() ?? Infinity));
+            filas = ts.map((t) => {
+              const inactiva = t.requiere === 'camaBaja' && !aj.camaBaja;
+              return (
+                <button type="button" class={`item ${claseCategoria(t.categoria)}${inactiva ? ' inactiva' : ''}`} onClick={() => editarTarea(t)}>
+                  <Insignia cat={t.categoria} tam={36} />
+                  <div class="item-txt">
+                    <div class="item-tit">
+                      {t.titulo}
+                      {t.requiere === 'camaBaja' && <span class="tag">Cama baja</span>}
+                    </div>
+                    <div class="item-meta">{metaTarea(t)}</div>
                   </div>
-                  <div class="item-meta">{metaTarea(t)}</div>
-                </div>
-                <Icono n="chevron" t={16} clase="chev" />
+                  <Icono n="chevron" t={16} clase="chev" />
+                </button>
+              );
+            });
+          }
+          if (!filas.length) return null;
+          return (
+            <section class={`seccion${plegadas.value.has(k) ? ' plegada' : ''}`}>
+              <button type="button" class="seccion-btn" onClick={() => alternarSeccion(k)}>
+                <span class="t">{titulo}</span>
+                <span class="n">{filas.length}</span>
+                <Icono n="chevronAbajo" t={18} />
               </button>
-            );
-          });
-        }
-        if (!filas.length) return null;
-        return (
-          <section class={`seccion${plegadas.value.has(k) ? ' plegada' : ''}`}>
-            <button type="button" class="seccion-btn" onClick={() => alternarSeccion(k)}>
-              <span class="t">{titulo}</span>
-              <span class="n">{filas.length}</span>
-              <Icono n="chevronAbajo" t={18} />
-            </button>
-            <div class="tarjeta">{filas}</div>
-          </section>
-        );
-      })}
+              <div class="tarjeta">{filas}</div>
+            </section>
+          );
+        })}
+      </div>
     </>
   );
 }

@@ -52,19 +52,25 @@ function Tema({ icono, titulo, sub, ruta }: { icono: string; titulo: string; sub
 
 export function Guia() {
   return (
-    <>
-      <Lista titulo="Preparar mejor">
-        <Tema icono="equipo" titulo="Ajustar la extracción" sub="Qué cambiar si sale agrio, amargo, aguado o fuerte" ruta="/cafe/guia/extraccion" />
-        <Tema icono="gota" titulo="El agua" sub="Qué mirar en la etiqueta y cómo están tus aguas" ruta="/cafe/guia/agua" />
-      </Lista>
-      <Lista titulo="Conocer el café" pie="Fichas resumidas de fuentes de referencia, con el enlace en cada una.">
-        <Tema icono="grano" titulo="Variedades" sub={`${VARIEDADES_GUIA.length} fichas del catálogo de World Coffee Research y otras fuentes`} ruta="/cafe/guia/variedades" />
-        <Tema icono="libro" titulo="Procesos" sub={`${PROCESOS_GUIA.length} fichas: lavado, natural, honey, anaeróbico…`} ruta="/cafe/guia/procesos" />
-      </Lista>
-      <Lista titulo="Tu equipo">
-        <Tema icono="molino" titulo="Equipo y aguas" sub="Molinos, cafetera, básculas y tipos de agua" ruta="/cafe/equipo" />
-      </Lista>
-    </>
+    <div class="paneles tres">
+      <section>
+        <Lista titulo="Preparar mejor">
+          <Tema icono="equipo" titulo="Ajustar la extracción" sub="Qué cambiar si sale agrio, amargo, aguado o fuerte" ruta="/cafe/guia/extraccion" />
+          <Tema icono="gota" titulo="El agua" sub="Qué mirar en la etiqueta y cómo están tus aguas" ruta="/cafe/guia/agua" />
+        </Lista>
+      </section>
+      <section>
+        <Lista titulo="Conocer el café" pie="Fichas resumidas de fuentes de referencia, con el enlace en cada una.">
+          <Tema icono="grano" titulo="Variedades" sub={`${VARIEDADES_GUIA.length} fichas del catálogo de World Coffee Research y otras fuentes`} ruta="/cafe/guia/variedades" />
+          <Tema icono="libro" titulo="Procesos" sub={`${PROCESOS_GUIA.length} fichas: lavado, natural, honey, anaeróbico…`} ruta="/cafe/guia/procesos" />
+        </Lista>
+      </section>
+      <section>
+        <Lista titulo="Tu equipo">
+          <Tema icono="molino" titulo="Equipo y aguas" sub="Molinos, cafetera, básculas y tipos de agua" ruta="/cafe/equipo" />
+        </Lista>
+      </section>
+    </div>
   );
 }
 

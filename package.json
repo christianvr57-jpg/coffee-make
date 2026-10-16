@@ -1,8 +1,8 @@
 {
   "name": "coffee-make",
   "private": true,
-  "version": "3.4.0",
-  "description": "Segundo cerebro personal: módulos de Hogar y Café en una PWA sin servidor.",
+  "version": "3.5.0",
+  "description": "Segundo cerebro personal: Hogar, Cocina, Café y Running en una PWA sin servidor, para el móvil y el ordenador.",
   "type": "module",
   "scripts": {
     "dev": "vite --port 8123 --host 127.0.0.1",

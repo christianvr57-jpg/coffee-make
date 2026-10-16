@@ -53,6 +53,25 @@ function WidgetRunning() {
   );
 }
 
+/** Agenda de Inicio (ordenador): sesiones del plan ese día, tachadas si están hechas. */
+function AgendaRunning({ fecha }: { fecha: string }) {
+  const ses = sesionesDelDia(fecha);
+  if (!ses.length) return <span class="ag-nada">—</span>;
+  return (
+    <>
+      {ses.map((s) => (
+        <a class={`ag-item${sesionHecha(s.id) ? ' hecho' : ''}${s.tipo === 'descanso' ? ' suave' : ''}`} href={`#/running?sesion=${encodeURIComponent(s.id)}`}>
+          <small>
+            {nombreTipo(s.tipo)}
+            {sesionHecha(s.id) ? ' · hecha' : ''}
+          </small>
+          <span>{s.titulo}</span>
+        </a>
+      ))}
+    </>
+  );
+}
+
 function AjustesRunningVista() {
   const p = plan.value;
   return (
@@ -103,6 +122,7 @@ export const moduloRunning: ModuloApp = {
     { patron: '/running/entrenador', vista: EntrenadorRunning },
   ],
   widgetInicio: WidgetRunning,
+  agendaDia: AgendaRunning,
   accionesRapidas: [{ nombre: 'Registrar entreno', icono: 'running', ruta: '/running/registro' }],
   ajustes: AjustesRunningVista,
   iniciar: iniciarRunning,

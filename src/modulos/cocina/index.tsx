@@ -52,6 +52,25 @@ function WidgetCocina() {
   );
 }
 
+/** Agenda de Inicio (ordenador): comida y cena del día. */
+function AgendaCocina({ fecha }: { fecha: string }) {
+  const cambios = useVivo(leerCambios, []);
+  if (!cambios) return null;
+  const p = planDia(parse(fecha), ajustesCocina.value.inicio, cambios, ajustesCocina.value.ciclo);
+  return (
+    <>
+      <a class="ag-item" href={`#/cocina/recetas/${p.comida.id}?m=comida`}>
+        <small>Comida</small>
+        <span>{p.comida.nombre}</span>
+      </a>
+      <a class="ag-item" href={`#/cocina/recetas/${p.cena.id}?m=cena`}>
+        <small>Cena</small>
+        <span>{p.cena.nombre}</span>
+      </a>
+    </>
+  );
+}
+
 function AjustesCocinaVista() {
   const aj = ajustesCocina.value;
   const r = aj.raciones;
@@ -118,6 +137,7 @@ export const moduloCocina: ModuloApp = {
     { patron: '/cocina/ajustes', vista: AjustesCocinaPantalla },
   ],
   widgetInicio: WidgetCocina,
+  agendaDia: AgendaCocina,
   accionesRapidas: [{ nombre: 'Lista de la compra', icono: 'cocina', ruta: '/cocina/compra' }],
   ajustes: AjustesCocinaVista,
   iniciar: iniciarCocina,

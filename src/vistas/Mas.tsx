@@ -1,6 +1,7 @@
 // MÁS: todos los módulos, buscador, ajustes y copia de seguridad.
 import { ir } from '../core/router';
 import { MODULOS } from '../core/registro';
+import { escritorio } from '../core/pantalla';
 import { esAppInstalada } from '../core/pwa';
 import { TituloGrande } from '../ui/Cabecera';
 import { FilaBoton, Lista } from '../ui/form';
@@ -13,9 +14,15 @@ export function Mas() {
       {!esAppInstalada() && (
         <div class="aviso-instalar">
           <Icono n="info" t={22} />
-          <div>
-            <b>Instálala en el iPhone.</b> En Safari pulsa Compartir y luego «Añadir a pantalla de inicio». Así se abre a pantalla completa y sin conexión.
-          </div>
+          {escritorio.value ? (
+            <div>
+              <b>Instálala en el ordenador.</b> En Chrome o Edge, pulsa el icono de instalar que aparece a la derecha de la barra de direcciones. Se abrirá en su propia ventana y funcionará sin conexión.
+            </div>
+          ) : (
+            <div>
+              <b>Instálala en el iPhone.</b> En Safari pulsa Compartir y luego «Añadir a pantalla de inicio». Así se abre a pantalla completa y sin conexión.
+            </div>
+          )}
         </div>
       )}
       <Lista titulo="Módulos">

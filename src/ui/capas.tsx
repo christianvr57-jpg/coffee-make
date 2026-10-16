@@ -94,6 +94,20 @@ function Dialogo() {
       d.resolver(v);
     }, 180);
   };
+  // Teclado (ordenador): Escape cancela y Enter acepta el botón principal.
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && d.cancelable) cerrar(d.botones.find((b) => b.valor <= 0)?.valor ?? 0);
+      else if (e.key === 'Enter' && d.botones.length <= 2) {
+        const b = d.botones.find((x) => x.estilo) || d.botones[d.botones.length - 1];
+        e.preventDefault();
+        cerrar(b.valor);
+      } else return;
+      e.stopImmediatePropagation();
+    };
+    window.addEventListener('keydown', tecla, true);
+    return () => window.removeEventListener('keydown', tecla, true);
+  }, [d]);
   return (
     <div class={`dialogo-fondo${visible ? ' visible' : ''}`} onClick={(e) => e.target === e.currentTarget && d.cancelable && cerrar(d.botones.find((b) => b.valor <= 0)?.valor ?? 0)}>
       <div class="dialogo" role="alertdialog" aria-modal="true">
@@ -143,6 +157,16 @@ function MarcoHoja({ item }: { item: ItemHoja }) {
     requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
   }, []);
   const cerrar = () => cerrarHoja(item.id);
+  // Escape cierra la hoja de arriba del todo (si no hay un diálogo abierto encima).
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || dialogo.value) return;
+      const arriba = pila.value.filter((h) => !h.cerrando).pop();
+      if (arriba?.id === item.id) cerrar();
+    };
+    window.addEventListener('keydown', tecla);
+    return () => window.removeEventListener('keydown', tecla);
+  }, []);
   return (
     <div class={`hoja-fondo${visible && !item.cerrando ? ' visible' : ''}`} onClick={(e) => e.target === e.currentTarget && cerrar()}>
       <div class="hoja" role="dialog" aria-modal="true">
@@ -159,6 +183,8 @@ export function Hoja(props: {
   cerrar: () => void;
   guardar?: string;
   onGuardar?: () => boolean | void | Promise<boolean | void>;
+  /** Texto del botón de la izquierda (por defecto «Cancelar»; «Cerrar» en hojas de solo lectura). */
+  textoCerrar?: string;
   children: ComponentChildren;
 }) {
   const guardar = async () => {
@@ -168,7 +194,7 @@ export function Hoja(props: {
   return (
     <>
       <header class="hoja-cab">
-        <button type="button" class="hoja-btn" onClick={props.cerrar}>Cancelar</button>
+        <button type="button" class="hoja-btn" onClick={props.cerrar}>{props.textoCerrar || 'Cancelar'}</button>
         <h2>{props.titulo}</h2>
         {props.onGuardar ? (
           <button type="button" class="hoja-btn fuerte" onClick={guardar}>{props.guardar || 'Guardar'}</button>

@@ -73,7 +73,7 @@ export function Recetas() {
       </div>
 
       {mias.length > 0 && (
-        <Lista titulo="Tus recetas">
+        <Lista titulo="Tus recetas" clase="rejilla-tarjetas">
           {mias.map((r) => (
             <FilaReceta r={r} usos={usos(r.id)} />
           ))}
@@ -81,7 +81,7 @@ export function Recetas() {
       )}
 
       {refs.length > 0 && (
-        <Lista titulo="De referencia" pie="Recetas publicadas por sus autores, con enlace a la fuente. Duplica una para adaptarla a tu gusto.">
+        <Lista titulo="De referencia" clase="rejilla-tarjetas" pie="Recetas publicadas por sus autores, con enlace a la fuente. Duplica una para adaptarla a tu gusto.">
           {refs.map((r) => (
             <FilaReceta r={r} usos={usos(r.id)} />
           ))}

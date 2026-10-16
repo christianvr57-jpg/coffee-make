@@ -37,7 +37,7 @@ export function RecetasCocina() {
           </button>
         ))}
       </div>
-      <div class="lista">
+      <div class="lista rejilla-tarjetas">
         {lista.map((r) => (
           <a class="item" href={`#/cocina/recetas/${r.id}`}>
             <div class="item-txt">
@@ -133,67 +133,72 @@ export function FichaRecetaCocina({ params }: { params: Record<string, string> }
   return (
     <>
       <BarraDetalle padre="/cocina/recetas" textoAtras="Recetas" />
-      <div class="pagina">
+      <div class="pagina ancha-receta">
         <h1 class="titulo-guia">{r.nombre}</h1>
         <div class="ficha-etiquetas">
           <Etiquetas r={r} />
         </div>
         {r.acompanamiento && <p class="resumen-receta">Acompañamiento: {r.acompanamiento.toLowerCase()}.</p>}
 
-        {aj.raciones.activo ? (
-          <Cantidades r={r} momento={momento} cambiarMomento={setMomento} />
-        ) : (
-          <>
-            <div class="tit-lista">Ingredientes · ración de referencia (≈ {Math.round(nutrientesReceta(r).kcal)} kcal)</div>
-            <div class="lista bloque-texto">
-              {CATEGORIAS.map(([c, nombre]) => {
-                const xs = r.ingredientes.filter((x) => x.c === c);
-                return xs.length ? (
-                  <p class="ing-grupo">
-                    <span>{nombre}</span>
-                    {xs.map((x) => (x.g ? `${x.n}: ${textoCantidad(x.n, x.g)}` : `${x.n}: al gusto`)).join(' · ')}
+        <div class="columnas">
+          <div>
+            {aj.raciones.activo ? (
+              <Cantidades r={r} momento={momento} cambiarMomento={setMomento} />
+            ) : (
+              <>
+                <div class="tit-lista">Ingredientes · ración de referencia (≈ {Math.round(nutrientesReceta(r).kcal)} kcal)</div>
+                <div class="lista bloque-texto">
+                  {CATEGORIAS.map(([c, nombre]) => {
+                    const xs = r.ingredientes.filter((x) => x.c === c);
+                    return xs.length ? (
+                      <p class="ing-grupo">
+                        <span>{nombre}</span>
+                        {xs.map((x) => (x.g ? `${x.n}: ${textoCantidad(x.n, x.g)}` : `${x.n}: al gusto`)).join(' · ')}
+                      </p>
+                    ) : null;
+                  })}
+                  <p class="ayuda">
+                    Gramos en crudo para una ración de adulto. Para calcularlos según las kcal de cada uno,{' '}
+                    <a class="enlace" href="#/cocina/ajustes">
+                      actívalo en los ajustes de cocina
+                    </a>
+                    . Sal, al final y solo en la parte de los adultos.
                   </p>
-                ) : null;
-              })}
-              <p class="ayuda">
-                Gramos en crudo para una ración de adulto. Para calcularlos según las kcal de cada uno,{' '}
-                <a class="enlace" href="#/cocina/ajustes">
-                  actívalo en los ajustes de cocina
-                </a>
-                . Sal, al final y solo en la parte de los adultos.
-              </p>
-            </div>
-          </>
-        )}
-
-        <div class="tit-lista">Pasos</div>
-        <ol class="lista bloque-texto pasos-cocina">
-          {r.pasos.map((p) => (
-            <li>{p}</li>
-          ))}
-        </ol>
-
-        <div class="tit-lista">Para el niño (1 año)</div>
-        <div class="lista bloque-texto nino-receta">
-          <p>
-            <b>Textura:</b> {r.nino.adaptacion}
-          </p>
-          <p>
-            <b>Ración:</b> {r.nino.racion}
-          </p>
-          <p class="ayuda">Siempre sin sal: separa su parte antes de salar. Si tiene poco apetito un día, no pasa nada: ofrece sin forzar.</p>
-        </div>
-
-        {donde.length > 0 && (
-          <>
-            <div class="tit-lista">En el menú</div>
-            <div class="lista bloque-texto">
-              {donde.map((d) => (
-                <p>{d}</p>
+                </div>
+              </>
+            )}
+          </div>
+          <div>
+            <div class="tit-lista">Pasos</div>
+            <ol class="lista bloque-texto pasos-cocina">
+              {r.pasos.map((p) => (
+                <li>{p}</li>
               ))}
+            </ol>
+
+            <div class="tit-lista">Para el niño (1 año)</div>
+            <div class="lista bloque-texto nino-receta">
+              <p>
+                <b>Textura:</b> {r.nino.adaptacion}
+              </p>
+              <p>
+                <b>Ración:</b> {r.nino.racion}
+              </p>
+              <p class="ayuda">Siempre sin sal: separa su parte antes de salar. Si tiene poco apetito un día, no pasa nada: ofrece sin forzar.</p>
             </div>
-          </>
-        )}
+
+            {donde.length > 0 && (
+              <>
+                <div class="tit-lista">En el menú</div>
+                <div class="lista bloque-texto">
+                  {donde.map((d) => (
+                    <p>{d}</p>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

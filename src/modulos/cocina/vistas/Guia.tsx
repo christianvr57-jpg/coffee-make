@@ -4,18 +4,18 @@ import { CRITERIOS_SEMANA, FUENTES, GUIA_NINO, type Apartado } from '../datos/gu
 
 function Bloques({ apartados }: { apartados: Apartado[] }) {
   return (
-    <>
+    <div class="paneles">
       {apartados.map((a) => (
-        <>
+        <section>
           <div class="tit-lista">{a.titulo}</div>
           <ul class="lista bloque-texto consejos">
             {a.puntos.map((p) => (
               <li>{p}</li>
             ))}
           </ul>
-        </>
+        </section>
       ))}
-    </>
+    </div>
   );
 }
 
@@ -31,7 +31,7 @@ export function GuiaCocina() {
       <h2 class="titulo-seccion">El menú</h2>
       <Bloques apartados={CRITERIOS_SEMANA} />
       <div class="tit-lista">Fuentes</div>
-      <div class="lista">
+      <div class="lista rejilla-tarjetas">
         {FUENTES.map((f) => (
           <a class="item" href={f.url} target="_blank" rel="noopener noreferrer">
             <span class="insignia" style={{ '--tam': '32px' }}>

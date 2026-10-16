@@ -105,40 +105,42 @@ export function CompraCocina() {
         </button>
       </form>
 
-      {CATEGORIAS.map(([c, nombre]) => {
-        const xs = todos.filter((a) => a.c === c && !(ocultarHecho.value && marcado.get(a.nombre)?.hecho));
-        if (!xs.length) return null;
-        return (
-          <>
-            <div class="tit-lista">{nombre}</div>
-            <div class="lista">
-              {xs.map((a) => {
-                const hecho = !!marcado.get(a.nombre)?.hecho;
-                return (
-                  <div class={`articulo${hecho ? ' hecho' : ''}`}>
-                    <button type="button" class="art-toque" aria-pressed={hecho} onClick={() => alternar(a.nombre, a.c, a.manual)}>
-                      <span class={`casilla${hecho ? ' marcada' : ''}`}>{hecho && <Icono n="check" t={16} />}</span>
-                      <span class="art-txt">
-                        <b>
-                          {a.nombre}
-                          {a.g ? <em class="art-cantidad"> · {cantidadCompra(a.nombre, a.g)}</em> : null}
-                        </b>
-                        {a.usos.length > 0 && <small>{a.usos.length > 4 ? `${a.usos.length} veces esta semana` : a.usos.join(' · ')}</small>}
-                        {a.manual && <small>Añadido a mano</small>}
-                      </span>
-                    </button>
-                    {a.manual && (
-                      <button type="button" class="art-quitar" aria-label={`Quitar ${a.nombre}`} onClick={() => quitarArticulo(clave, a.nombre)}>
-                        <Icono n="cerrar" t={16} />
+      <div class="paneles tres compra-paneles">
+        {CATEGORIAS.map(([c, nombre]) => {
+          const xs = todos.filter((a) => a.c === c && !(ocultarHecho.value && marcado.get(a.nombre)?.hecho));
+          if (!xs.length) return null;
+          return (
+            <section>
+              <div class="tit-lista">{nombre}</div>
+              <div class="lista">
+                {xs.map((a) => {
+                  const hecho = !!marcado.get(a.nombre)?.hecho;
+                  return (
+                    <div class={`articulo${hecho ? ' hecho' : ''}`}>
+                      <button type="button" class="art-toque" aria-pressed={hecho} onClick={() => alternar(a.nombre, a.c, a.manual)}>
+                        <span class={`casilla${hecho ? ' marcada' : ''}`}>{hecho && <Icono n="check" t={16} />}</span>
+                        <span class="art-txt">
+                          <b>
+                            {a.nombre}
+                            {a.g ? <em class="art-cantidad"> · {cantidadCompra(a.nombre, a.g)}</em> : null}
+                          </b>
+                          {a.usos.length > 0 && <small>{a.usos.length > 4 ? `${a.usos.length} veces esta semana` : a.usos.join(' · ')}</small>}
+                          {a.manual && <small>Añadido a mano</small>}
+                        </span>
                       </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        );
-      })}
+                      {a.manual && (
+                        <button type="button" class="art-quitar" aria-label={`Quitar ${a.nombre}`} onClick={() => quitarArticulo(clave, a.nombre)}>
+                          <Icono n="cerrar" t={16} />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </div>
 
       <div class="lista separada">
         <div class="campo">

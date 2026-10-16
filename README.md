@@ -15,8 +15,8 @@ Las recetas de referencia (`src/modulos/cafe/datos/recetas.ts`) y las fichas de 
 
 ```
 src/
-  core/          base de datos (Dexie), enrutado, contrato de módulos, copias, PWA
-  ui/            componentes compartidos (formularios, hojas, diálogos, iconos, gráficos SVG)
+  core/          base de datos (Dexie), enrutado, contrato de módulos, copias, PWA, tamaño de pantalla
+  ui/            componentes compartidos (formularios, hojas, diálogos, iconos, gráficos SVG, barra lateral)
   vistas/        Inicio, Más, Buscar, Ajustes
   modulos/
     hogar/       calendario.ts (lógica), reparto.ts, rutina.json (datos), vistas/
@@ -32,7 +32,7 @@ tools/           reparto de tareas periódicas e iconos
 
 ### Añadir un módulo nuevo
 
-1. Crea `src/modulos/<nombre>/index.tsx` exportando un objeto `ModuloApp` (ver `src/core/modulos.ts`): rutas, secciones, tarjeta de Inicio, búsqueda, ajustes y exportación CSV.
+1. Crea `src/modulos/<nombre>/index.tsx` exportando un objeto `ModuloApp` (ver `src/core/modulos.ts`): rutas, secciones, tarjeta de Inicio, fila de la agenda semanal (ordenador), búsqueda, ajustes y exportación CSV.
 2. Si necesita tablas, añádelas en `src/core/db.ts` con una nueva `version()` de Dexie (las migraciones son automáticas).
 3. Regístralo en `src/core/registro.ts`.
 
@@ -72,3 +72,17 @@ npm run build      # compila en dist/
 4. Haz copias de seguridad desde **Más → Ajustes → Copia de seguridad** (JSON completo o CSV para Excel).
 
 Cuando se publica una versión nueva, la app lo avisa en Inicio («Hay una versión nueva») o la aplica sola la próxima vez que la abras tras cerrarla.
+
+## En el ordenador
+
+La misma URL se adapta a pantallas de 1000 px o más (`src/core/pantalla.ts`, estilos en `src/styles/escritorio.css`):
+
+- **Barra lateral** con los módulos y las secciones del que está abierto, en lugar de la barra de pestañas.
+- **Inicio**: la semana de todos los módulos en una rejilla (cada módulo aporta su fila con `agendaDia` en su `ModuloApp`).
+- **Cocina**: la semana como calendario (comida, cena, niño y postre por día) y las 8 semanas del menú en una tabla.
+- **Running**: la semana como calendario, el plan completo en una tabla y el registro de sesiones como tabla.
+- **Café**: el diario como tabla; análisis, guía y listas en columnas.
+- **Hogar**: la semana en tarjetas por día y las tareas en columnas.
+- Las hojas se abren como ventanas centradas. Atajos: `Ctrl/⌘ K` o `/` para buscar, `←` `→` para cambiar de semana y `Esc` para cerrar.
+
+Cada navegador guarda sus propios datos. Para ver en el ordenador lo del iPhone: en el iPhone, **Ajustes → Exportar copia**; en el ordenador, arrastra ese `.json` a la ventana (o **Ajustes → Importar copia**). En Chrome o Edge se puede instalar como app con el icono de instalar de la barra de direcciones.

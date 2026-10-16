@@ -145,3 +145,5 @@ input.fecha { min-height: 40px; border: 0; border-radius: 10px; background: var(
 .gr-punto { fill: color-mix(in srgb, var(--accent) 40%, transparent); }
 .gr-punto.mejor { fill: var(--ok); }
 .gr-punto.reciente { stroke: var(--label); stroke-width: 1.6; }
+/* Texto corto en una fila con etiqueta (p. ej. el tiempo de la marca en Zonas): a la derecha, sin pisar la etiqueta. */
+.campo:not(.col) > input[type='text'] { width: 40%; flex: none; text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }

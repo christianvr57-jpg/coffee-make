@@ -63,6 +63,27 @@ function WidgetCafe() {
   );
 }
 
+/** Agenda de Inicio (ordenador): cafés preparados ese día, con su nota. */
+function AgendaCafe({ fecha }: { fecha: string }) {
+  const preps = useVivo(listarPreparaciones, []) || [];
+  const delDia = preps.filter((p) => iso(new Date(p.fecha)) === fecha);
+  if (!delDia.length) return null;
+  return (
+    <>
+      {delDia.slice(0, 3).map((p) => (
+        <a class="ag-item" href={`#/cafe/p/${p.id}`}>
+          <small>
+            {metodo(p.metodo).nombre}
+            {p.puntuacion !== undefined ? ` · ${fmt(p.puntuacion)}` : ''}
+          </small>
+          <span>{p.cafeNombre || 'Sin registrar'}</span>
+        </a>
+      ))}
+      {delDia.length > 3 && <span class="ag-resumen">y {delDia.length - 3} más</span>}
+    </>
+  );
+}
+
 function AjustesCafeVista() {
   const aj = ajustesCafe.value;
   const demo = useVivo(hayDemo, []);
@@ -160,6 +181,7 @@ export const moduloCafe: ModuloApp = {
     { patron: '/cafe/p/:id/cata', vista: CataVista },
   ],
   widgetInicio: WidgetCafe,
+  agendaDia: AgendaCafe,
   accionesRapidas: [{ nombre: 'Preparar café', icono: 'cafe', ruta: '/cafe/preparar' }],
   ajustes: AjustesCafeVista,
   iniciar: iniciarCafe,
