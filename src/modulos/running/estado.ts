@@ -1,12 +1,14 @@
-// Estado del módulo Running. Todo vive solo en el dispositivo:
-//  - plan del entrenador (ajuste "running:plan"), que se carga pegando o abriendo un JSON;
+// Estado del módulo Running.
+//  - plan del entrenador: viene con la app (datos/plan.json) y se actualiza con cada versión. Si se
+//    pega un plan más reciente en el dispositivo (ajuste "running:plan"), se usa ese hasta que la
+//    app traiga uno posterior;
 //  - tus datos (ajuste "running:datos"): respuestas de la auditoría, zonas propias y sesiones del
 //    plan marcadas como hechas;
 //  - sesiones registradas (tabla running_registros), que entran en la copia de seguridad.
 import { signal } from '@preact/signals';
 import { borrar, db, escribirAjuste, guardar, leerAjuste, vivos } from '../../core/db';
 import type { DatosZonas, PlanEntrenador, RegistroRun } from './tipos';
-import { validarPlan } from './validar';
+import { PLAN_APP, elegirPlan, validarPlan } from './validar';
 
 export interface DatosRunning {
   respuestas: Record<string, string>;
@@ -17,12 +19,15 @@ export interface DatosRunning {
 
 const DATOS_INICIALES: DatosRunning = { respuestas: {}, zonas: {}, hechas: {} };
 
-export const plan = signal<PlanEntrenador | null>(null);
+export const plan = signal<PlanEntrenador | null>(PLAN_APP);
+/** Si el plan en uso es uno pegado en el dispositivo (no el de la app). */
+export const planPropio = signal(false);
 export const datos = signal<DatosRunning>(DATOS_INICIALES);
 
 export async function iniciarRunning(): Promise<void> {
-  const p = await db.ajustes.get('running:plan');
-  plan.value = (p?.valor as PlanEntrenador) || null;
+  const p = (await db.ajustes.get('running:plan'))?.valor as PlanEntrenador | undefined;
+  plan.value = elegirPlan(p || null);
+  planPropio.value = !!p && plan.value === p;
   datos.value = await leerAjuste<DatosRunning>('running:datos', DATOS_INICIALES);
 }
 
@@ -49,12 +54,14 @@ export async function cargarPlan(texto: string): Promise<PlanEntrenador> {
   const { guia: _g, ...limpio } = r as PlanEntrenador & { guia?: unknown };
   await db.ajustes.put({ clave: 'running:plan', valor: limpio, actualizado: Date.now() });
   plan.value = limpio;
+  planPropio.value = true;
   return limpio;
 }
 
 export async function borrarPlan(): Promise<void> {
   await db.ajustes.delete('running:plan');
-  plan.value = null;
+  plan.value = PLAN_APP;
+  planPropio.value = false;
 }
 
 // ---------- Auditoría y zonas ----------

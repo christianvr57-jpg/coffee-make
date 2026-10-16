@@ -227,7 +227,7 @@ export function PlanRunning() {
           <p>
             <b>Aún no hay plan del entrenador en este dispositivo.</b>
           </p>
-          <p class="pie">Tu plan es personal (perfil, molestias, objetivos), así que no va dentro de la app publicada: se carga aquí y se queda solo en tu iPhone.</p>
+          <p class="pie">Cuando el entrenador publique el plan llegará con la app. También puedes pegarlo a mano.</p>
           <button type="button" class="boton-principal" onClick={() => ir('/running/entrenador')}>
             <Icono n="descargar" t={20} /> Cargar el plan
           </button>

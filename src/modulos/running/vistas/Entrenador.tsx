@@ -1,13 +1,11 @@
-// RUNNING · Plan del entrenador: cargarlo (pegando o abriendo un JSON), exportarlo y borrarlo.
-// El plan es personal y por eso vive solo en el dispositivo, nunca en el código publicado.
+// RUNNING · Plan del entrenador: el que trae la app y, si hace falta, uno pegado a mano más reciente.
 import { useRef, useState } from 'preact/hooks';
 import { entregarArchivo } from '../../../core/archivos';
 import { fechaCorta, hoyISO, parse } from '../../../core/fechas';
 import { BarraDetalle } from '../../../ui/Cabecera';
 import { Hoja, abrirHoja, avisar, confirmar, mostrarToast } from '../../../ui/capas';
 import { FilaBoton, Lista, Texto } from '../../../ui/form';
-import { Icono } from '../../../ui/Icono';
-import { borrarDatosRunning, borrarPlan, cargarPlan, plan } from '../estado';
+import { borrarDatosRunning, borrarPlan, cargarPlan, plan, planPropio } from '../estado';
 
 async function aplicar(texto: string) {
   try {
@@ -68,7 +66,7 @@ export function EntrenadorRunning() {
         <div class="run-tarjeta acento">
           <span class="run-sobre">Cómo funciona</span>
           <p>
-            Tu entrenador (Claude, en el chat) te da el plan como un bloque de texto que empieza por <code>{'{'}</code>. Cópialo entero y pulsa «Pegar plan». Cada semana, cuando te pase el plan actualizado, repites el paso: tus registros y respuestas no se tocan.
+            El plan viene dentro de la app y se actualiza solo cuando el entrenador publica la semana nueva: no tienes que hacer nada. Si alguna vez te pasa el plan como texto (empieza por <code>{'{'}</code>), puedes pegarlo aquí. Tus registros y respuestas nunca se tocan.
           </p>
         </div>
 
@@ -77,7 +75,9 @@ export function EntrenadorRunning() {
             <div class="campo col">
               <div class="et">
                 <b>{semanas.length ? `${semanas.length} ${semanas.length === 1 ? 'semana' : 'semanas'}: ${fechaCorta(parse(semanas[0].lunes))} – ${fechaCorta(parse(semanas[semanas.length - 1].lunes))}` : 'Sin semanas todavía'}</b>
-                <small>{p.actualizado ? `Actualizado el ${fechaCorta(parse(p.actualizado))}` : 'Cargado en este dispositivo'}</small>
+                <small>
+                  {p.actualizado ? `Actualizado el ${fechaCorta(parse(p.actualizado))}` : 'Sin fecha'} · {planPropio.value ? 'pegado en este dispositivo' : 'el de la app'}
+                </small>
               </div>
             </div>
           ) : (
@@ -90,7 +90,7 @@ export function EntrenadorRunning() {
           )}
         </Lista>
 
-        <Lista titulo="Cargar o actualizar" pie="El plan sustituye al anterior. Va también dentro de la copia de seguridad general de la app.">
+        <Lista titulo="Cargar a mano (opcional)" pie="Un plan pegado se usa mientras sea igual o más reciente que el de la app. Va también dentro de la copia de seguridad.">
           <FilaBoton icono="descargar" texto="Pegar plan desde el portapapeles" onClick={pegar} />
           <FilaBoton icono="libro" texto="Abrir archivo del plan…" onClick={() => archivo.current?.click()} />
           {p && <FilaBoton icono="subir" texto="Exportar plan (para guardarlo)" onClick={exportar} />}
@@ -108,15 +108,14 @@ export function EntrenadorRunning() {
         />
 
         <Lista titulo="Borrar">
-          {p && (
+          {planPropio.value && (
             <FilaBoton
-              icono="papelera"
-              texto="Quitar el plan del dispositivo"
-              peligro
+              icono="reiniciar"
+              texto="Volver al plan de la app"
               onClick={async () => {
-                if (await confirmar({ titulo: '¿Quitar el plan?', texto: 'Tus registros, respuestas y zonas se conservan.', ok: 'Quitar', peligro: true })) {
+                if (await confirmar({ titulo: '¿Volver al plan de la app?', texto: 'Se quita el plan pegado a mano. Tus registros, respuestas y zonas se conservan.', ok: 'Volver' })) {
                   await borrarPlan();
-                  mostrarToast('Plan quitado');
+                  mostrarToast('Usando el plan de la app');
                 }
               }}
             />
@@ -134,9 +133,6 @@ export function EntrenadorRunning() {
           />
         </Lista>
 
-        <p class="pie">
-          <Icono n="info" t={14} /> Por qué no va dentro de la app: el plan incluye tu perfil, tus molestias y tus marcas, y la app se publica en un repositorio público. Así, tus datos de salud solo están en tu iPhone (y en tus copias).
-        </p>
       </div>
     </>
   );

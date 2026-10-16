@@ -13,8 +13,8 @@ import './styles/running.css';
 async function arrancar() {
   const raiz = document.getElementById('raiz')!;
   try {
-    for (const m of MODULOS) await m.iniciar?.();
-    await cargarFijados();
+    // Los módulos son independientes: se preparan a la vez.
+    await Promise.all([...MODULOS.map((m) => m.iniciar?.()), cargarFijados()]);
     pedirPersistencia();
     render(<App />, raiz);
     registrarPwa();

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { addDays, iso, parse } from '../src/core/fechas';
 import { formatoTiempo, indiceSemanaActual, leerTiempo, resumenCarga, tiempoEquivalente, vdot, zonasFC, zonasRitmo } from '../src/modulos/running/calculos';
 import { BIBLIOTECA, NUTRICION } from '../src/modulos/running/datos/guia';
-import { validarPlan } from '../src/modulos/running/validar';
+import { PLAN_APP, elegirPlan, validarPlan } from '../src/modulos/running/validar';
 
 describe('tiempos y VDOT', () => {
   it('lee y formatea tiempos', () => {
@@ -87,5 +87,29 @@ describe('guía', () => {
   it('la guía general no lleva datos personales (peso, altura, edad concretos)', () => {
     const texto = JSON.stringify([BIBLIOTECA, NUTRICION]).toLowerCase();
     for (const re of [/\d{2,3}\s?kg/, /\d{3}\s?cm/, /\d{2}\s?años/]) expect(texto, String(re)).not.toMatch(re);
+  });
+});
+
+describe('plan que trae la app', () => {
+  it('es válido: semanas que empiezan en lunes, días dentro de su semana e ids únicos', () => {
+    expect(typeof validarPlan(PLAN_APP)).toBe('object');
+    const semanas = PLAN_APP.plan!.semanas;
+    expect(semanas.length).toBeGreaterThan(0);
+    const ids = semanas.flatMap((s) => s.dias.flatMap((d) => d.sesiones.map((x) => x.id)));
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const s of semanas) {
+      expect(parse(s.lunes).getDay(), s.lunes).toBe(1);
+      for (const d of s.dias) expect(d.fecha >= s.lunes && d.fecha <= iso(addDays(parse(s.lunes), 6)), d.fecha).toBe(true);
+    }
+    expect(leerTiempo(PLAN_APP.perfil!.zonas!.marca)).not.toBeNull();
+    const preguntas = (PLAN_APP.auditoria || []).flatMap((b) => b.preguntas.map((p) => p.id));
+    expect(new Set(preguntas).size).toBe(preguntas.length);
+  });
+  it('un plan pegado manda solo si es igual o más reciente que el de la app', () => {
+    const viejo = { ...PLAN_APP, actualizado: '2000-01-01' };
+    const nuevo = { ...PLAN_APP, actualizado: '2999-01-01' };
+    expect(elegirPlan(null)).toBe(PLAN_APP);
+    expect(elegirPlan(viejo)).toBe(PLAN_APP);
+    expect(elegirPlan(nuevo)).toBe(nuevo);
   });
 });

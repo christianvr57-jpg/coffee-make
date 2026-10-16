@@ -1,0 +1,894 @@
+{
+  "actualizado": "2026-10-16",
+  "estado": "bloque1",
+  "perfil": {
+    "datos": [
+      [
+        "Atleta",
+        "Hombre, 32 años · 184 cm · ~81 kg"
+      ],
+      [
+        "Procedencia",
+        "Natación y triatlón durante años: base aeróbica histórica"
+      ],
+      [
+        "Marcas declaradas",
+        "5K ≈ 20:00 · 10K ≈ 41:00 (oct 2025, con ~1 mes de entrenamiento)"
+      ],
+      [
+        "Mejor 10K en Strava",
+        "40:00 (misma época)"
+      ],
+      [
+        "VO2max del reloj",
+        "≈ 51,6 (estimación, no medición)"
+      ],
+      [
+        "FC máx. observada",
+        "≈ 188 ppm"
+      ],
+      [
+        "FC umbral configurada",
+        "≈ 168 ppm (pendiente de validar)"
+      ],
+      [
+        "Otros deportes",
+        "Pádel ~1 vez por semana · gimnasio 2-3/sem · natación ocasional"
+      ],
+      [
+        "Disponibilidad",
+        "Todos los días, hasta 1 h 30 min"
+      ],
+      [
+        "Dispositivo",
+        "Suunto Race S · análisis en Intervals.icu"
+      ],
+      [
+        "Antecedentes",
+        "Gemelos y tendón de Aquiles · cervical y trapecios · rodilla izquierda tras ciertas cargas"
+      ],
+      [
+        "Estado (16 oct 2026)",
+        "Sin molestias · sin correr desde el 3 de agosto"
+      ]
+    ],
+    "zonas": {
+      "distancia": 10000,
+      "marca": "41:00",
+      "fcUmbral": 168,
+      "fcMax": 188
+    },
+    "pesoKg": 81
+  },
+  "diagnostico": {
+    "fuente": "Strava (consultado el 16 oct 2026) y tus respuestas al bloque 1 de la auditoría.",
+    "hallazgos": [
+      {
+        "nivel": "dato",
+        "titulo": "Volumen de abril a junio",
+        "texto": "Entre 2 y 3 salidas por semana. Semanas más altas: 18,5 km (27 abr), 18,8 km (18 may) y 21,6 km (8 jun). Tirada más larga: 12,4 km (25 may). Hubo semanas sueltas sin correr."
+      },
+      {
+        "nivel": "dato",
+        "titulo": "Tempo del 17 de junio",
+        "texto": "4,62 km en 19:59 (4:19/km) con FC media 166 y máxima 174. Es coherente con un umbral cercano a 4:15-4:20/km y una FC de umbral de unos 166-170 ppm en junio."
+      },
+      {
+        "nivel": "dato",
+        "titulo": "Rodaje del 15 de junio",
+        "texto": "7,9 km a 5:43/km con FC media 137. Buena respuesta cardíaca a ritmo fácil."
+      },
+      {
+        "nivel": "dato",
+        "titulo": "7×1000 del 20 de mayo",
+        "texto": "Series a 4:41-4:47/km con FC media por serie de 148 a 155. Para tu nivel fue un estímulo aeróbico, por debajo del umbral."
+      },
+      {
+        "nivel": "dato",
+        "titulo": "Julio",
+        "texto": "Salidas al ritmo de tu pareja; tu rodaje en zona 2 de entonces rondaba 5:30/km."
+      },
+      {
+        "nivel": "dato",
+        "titulo": "Última carrera real: 3 de agosto",
+        "texto": "5 km progresivos de 4:47 a 4:42/km con FC de 148 a 157."
+      },
+      {
+        "nivel": "alerta",
+        "titulo": "Parón desde el 3 de agosto",
+        "texto": "Confirmado: unas 10 semanas sin correr, con algo de pádel y gimnasio. No hay molestias."
+      },
+      {
+        "nivel": "duda",
+        "titulo": "Zonas configuradas en Strava",
+        "texto": "Strava tiene zonas manuales con Z4 158-171 y Z5 desde 172, que no encajan con un umbral de 168. Hay que unificar zonas en Suunto, Intervals.icu y Strava."
+      }
+    ],
+    "conclusion": "Tus marcas de hace un año (20:00 y 41:00, VDOT ≈ 50) salieron con apenas un mes de entrenamiento: tienes una capacidad aeróbica alta heredada del triatlón. Hoy te limitan la tolerancia mecánica al impacto (gemelo, sóleo, tendón de Aquiles) y el volumen, no el motor: nunca has pasado de ~22 km por semana. Tras 10 semanas sin correr no sabemos tu nivel real; lo medimos con un test en la semana 4. Las zonas de ritmo de calidad están en pausa hasta entonces."
+  },
+  "hojaDeRuta": [
+    {
+      "paso": "Auditoría inicial",
+      "texto": "Bloque 1 respondido el 16 oct. Quedan dudas del bloque 2 (sueño, gimnasio, pulsómetro).",
+      "estado": "hecho"
+    },
+    {
+      "paso": "Diagnóstico de rendimiento",
+      "texto": "Separo marcas, estimaciones del reloj y capacidad real. Valido FC máxima y FC de umbral.",
+      "estado": "hecho"
+    },
+    {
+      "paso": "Prioridades de mejora",
+      "texto": "Qué capacidad te limita hoy: volumen tolerable, umbral, VO2max o economía.",
+      "estado": "hecho"
+    },
+    {
+      "paso": "Objetivos de 10K",
+      "texto": "Uno realista y otro ambicioso, con objetivos intermedios revisables.",
+      "estado": "hecho"
+    },
+    {
+      "paso": "Primer bloque",
+      "texto": "Reconstrucción: 4 semanas (19 oct – 15 nov) con rodajes suaves, rectas, fuerza y test final.",
+      "estado": "actual"
+    },
+    {
+      "paso": "Seguimiento",
+      "texto": "Revisión semanal con tus datos reales y un test de control al final de cada bloque.",
+      "estado": "pendiente"
+    }
+  ],
+  "fases": [
+    {
+      "id": "base",
+      "nombre": "Base aeróbica",
+      "objetivo": "Volver a tolerar volumen con bajo coste: frecuencia de salidas, rodajes fáciles, rectas y fuerza.",
+      "duracion": "Bloque 1: 19 oct – 15 nov"
+    },
+    {
+      "id": "umbral",
+      "nombre": "Umbral de lactato",
+      "objetivo": "Correr más rápido sin acumular lactato: tempos e intervalos largos a ritmo de umbral.",
+      "duracion": "Por definir"
+    },
+    {
+      "id": "vo2",
+      "nombre": "VO2max y velocidad aeróbica",
+      "objetivo": "Subir el techo aeróbico con intervalos de 3-5 minutos.",
+      "duracion": "Por definir"
+    },
+    {
+      "id": "especifico",
+      "nombre": "Ritmo específico de 10K",
+      "objetivo": "Acostumbrarte al ritmo objetivo con repeticiones de 1-3 km.",
+      "duracion": "Por definir"
+    },
+    {
+      "id": "afinamiento",
+      "nombre": "Afinamiento",
+      "objetivo": "Bajar volumen manteniendo intensidad para llegar fresco a la carrera.",
+      "duracion": "7-10 días antes de competir"
+    }
+  ],
+  "auditoria": [
+    {
+      "id": "b1",
+      "titulo": "Bloque 1 · Imprescindible",
+      "porque": "Sin esto no puedo decidir ni el volumen de partida ni si es seguro meter intensidad.",
+      "preguntas": [
+        {
+          "id": "molestias",
+          "texto": "¿Cómo están hoy el gemelo y el tendón de Aquiles, la rodilla izquierda y el cuello y los trapecios?",
+          "ayuda": "Para cada zona: dolor de 0 a 10 y cuándo aparece (al levantarte, al empezar a correr, durante, después o al día siguiente). En la rodilla, di qué cargas la provocan: cuestas, bajadas, series, pádel o sentadillas."
+        },
+        {
+          "id": "volumen",
+          "texto": "¿Qué has corrido en las últimas 8 semanas?",
+          "ayuda": "Strava solo muestra una caminata (17 sep) desde el 3 de agosto. ¿Has parado o el Suunto no sincroniza con Strava? Si has corrido: km por semana, número de salidas y salida más larga."
+        },
+        {
+          "id": "julio",
+          "texto": "¿Por qué las salidas de julio fueron tan suaves (7:15-8:20/km) y luego paraste?",
+          "ayuda": "Acompañado, molestias, vacaciones, falta de tiempo…"
+        },
+        {
+          "id": "carrera",
+          "texto": "¿Tienes una carrera de 10K a la vista?",
+          "ayuda": "Fecha, nombre y perfil del circuito. Strava indica que entrenas para un evento: ¿cuál es? Si no hay ninguna, ¿te planteas alguna?"
+        },
+        {
+          "id": "marcas",
+          "texto": "¿Cuándo y dónde hiciste 20:00 en 5K y 41:00 en 10K? ¿Y el 40:00 que Strava guarda como mejor 10K?",
+          "ayuda": "Carrera oficial o entreno, fecha, circuito llano o no, medición con GPS o chip."
+        },
+        {
+          "id": "disponibilidad",
+          "texto": "¿Qué días y franjas tienes de verdad para correr?",
+          "ayuda": "Incluye si el pádel sigue siendo lunes y jueves: en Strava aparece también en miércoles y viernes. ¿Puedes hacer dobles sesiones algún día y en qué franja?"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "titulo": "Bloque 2 · Importante",
+      "porque": "Sirve para fijar zonas fiables y decidir cuánta intensidad y fuerza caben en la semana.",
+      "preguntas": [
+        {
+          "id": "fc",
+          "texto": "¿De dónde salen la FC máxima de 188 y el umbral de 168?",
+          "ayuda": "Carrera, test, pádel o cálculo automático del Suunto, y cuándo. ¿Usas banda de pecho o el sensor de muñeca?"
+        },
+        {
+          "id": "rodaje",
+          "texto": "Si salieras hoy a rodar 40 minutos cómodo, ¿a qué ritmo y FC irías?",
+          "ayuda": "Si no lo sabes, no pasa nada: lo veremos en las primeras salidas."
+        },
+        {
+          "id": "recuperacion",
+          "texto": "¿Cómo son tu sueño, tu estrés y tu energía?",
+          "ayuda": "Horas por noche, si se interrumpe y nivel de estrés de 1 a 5 (trabajo y casa). ¿Mide el Suunto la variabilidad cardíaca (HRV) o la FC en reposo por la noche?"
+        },
+        {
+          "id": "gimnasio",
+          "texto": "¿Qué haces en el gimnasio y qué días?",
+          "ayuda": "Ejercicios, series, cargas aproximadas y qué te molesta (gemelo, rodilla o cuello)."
+        },
+        {
+          "id": "terreno",
+          "texto": "¿Por dónde corres normalmente?",
+          "ayuda": "Asfalto, tierra o pista (en Carballo hay pista: ¿puedes usarla?), y si hay cuestas cerca."
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "titulo": "Bloque 3 · Complementario",
+      "porque": "Afina detalles. Puede esperar a la primera revisión.",
+      "preguntas": [
+        {
+          "id": "padel",
+          "texto": "¿El pádel es de competición o de ocio? ¿Puede cambiar de día si hace falta?",
+          "ayuda": "En Strava, el pádel del 23 sep marcó un esfuerzo relativo de 86, mayor que tu tempo de junio (45)."
+        },
+        {
+          "id": "natacion",
+          "texto": "¿Quieres mantener la natación? ¿Con qué frecuencia?",
+          "ayuda": "Puede servir como sesión aeróbica de bajo impacto si el tendón protesta."
+        },
+        {
+          "id": "zapatillas",
+          "texto": "¿Qué zapatillas usas y cuántos km llevan?",
+          "ayuda": "¿Tienes alguna para series o competición?"
+        },
+        {
+          "id": "potencia",
+          "texto": "¿La potencia de tus carreras viene del reloj o de un sensor de pie (Stryd o similar)?",
+          "ayuda": "Si es del reloj, la usaremos solo para compararte contigo mismo en llano."
+        },
+        {
+          "id": "nutricion",
+          "texto": "¿Cómo comes en un día normal y alrededor de los entrenos?",
+          "ayuda": "¿Quieres cambiar de peso? ¿Tomas cafeína o algún suplemento?"
+        },
+        {
+          "id": "intervals",
+          "texto": "¿Puedes compartir datos de Intervals.icu?",
+          "ayuda": "Los de bienestar (sueño, HRV, FC en reposo) y la curva de ritmos. Las actividades ya las leo de Strava."
+        }
+      ]
+    }
+  ],
+  "plan": {
+    "semanas": [
+      {
+        "id": "2026-W43",
+        "lunes": "2026-10-19",
+        "fase": "Bloque 1 · Reconstrucción · semana 1 de 4",
+        "diagnostico": "10 semanas sin correr y sin molestias. Motor aeróbico bueno; tendones y gemelos, desentrenados. Empezamos con 3 salidas cortas.",
+        "objetivo": "Volver a correr sin molestias: 3 rodajes suaves (~95 min, ~17 km) y 2 sesiones de fuerza de reintroducción.",
+        "porque": "El tendón tarda más que el corazón en recuperar su tolerancia. Una vuelta progresiva evita que tu buena forma aeróbica te lleve a correr más de lo que tus piernas soportan hoy.",
+        "observar": [
+          "FC media y ritmo de cada rodaje: queremos ver la FC bajar a ritmo similar semana a semana.",
+          "Sensaciones del gemelo y del Aquiles al levantarte el día después de correr.",
+          "RPE: los rodajes tienen que ser de 3-4 sobre 10. Si te parecen demasiado fáciles, es que van bien."
+        ],
+        "modificar": [
+          "Gemelo, Aquiles o rodilla a 3/10 o más, o más rigidez al levantarte: rodaje más corto o sustitúyelo por bici o natación suave (ver el semáforo de la Guía).",
+          "Dos noches seguidas durmiendo menos de 6 h: el rodaje de ese día se queda en 20-30 min o se cancela.",
+          "FC 8-10 ppm más alta de lo normal al mismo ritmo en un día fresco: corta la sesión y descansa al día siguiente."
+        ],
+        "dias": [
+          {
+            "fecha": "2026-10-19",
+            "sesiones": [
+              {
+                "id": "2026-10-19-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 30 min",
+                "duracion": 30,
+                "km": 5.2,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "30 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-20",
+            "sesiones": [
+              {
+                "id": "2026-10-20-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · A · Pierna y tendón",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa A · Pierna y tendón de la Guía.",
+                "notas": "Reintroducción: 2 series por ejercicio, 3-4 repeticiones en reserva. Agujetas leves, sí; dolor, no."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-21",
+            "sesiones": [
+              {
+                "id": "2026-10-21-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 30 min",
+                "duracion": 30,
+                "km": 5.2,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "30 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-22",
+            "sesiones": [
+              {
+                "id": "2026-10-22-a",
+                "tipo": "padel",
+                "titulo": "Pádel (opcional) o descanso",
+                "duracion": 90,
+                "rpe": "6-8",
+                "objetivo": "Si juegas, cuenta como sesión intensa. No lo pongas el día antes de la tirada.",
+                "notas": "Si te notas cargado de gemelos al día siguiente, avísame."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-23",
+            "sesiones": [
+              {
+                "id": "2026-10-23-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · B · Estabilidad, pie y tren superior",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa B · Estabilidad, pie y tren superior de la Guía.",
+                "notas": "2 series por ejercicio, técnica primero."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-24",
+            "sesiones": [
+              {
+                "id": "2026-10-24-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 35 min",
+                "duracion": 35,
+                "km": 6.1,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "35 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-25",
+            "sesiones": [
+              {
+                "id": "2026-10-25-a",
+                "tipo": "descanso",
+                "titulo": "Descanso",
+                "notas": "Descanso o natación muy suave (20-30 min)."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2026-W44",
+        "lunes": "2026-10-26",
+        "fase": "Bloque 1 · Reconstrucción · semana 2 de 4",
+        "diagnostico": "Si la semana 1 fue sin molestias, pasamos a 4 salidas.",
+        "objetivo": "4 rodajes (~145 min, ~25 km) con las primeras rectas y una salida algo más larga.",
+        "porque": "Subir la frecuencia antes que la duración de cada salida es la forma más segura de aumentar el volumen. Las rectas activan la economía de carrera sin coste de fatiga.",
+        "observar": [
+          "FC media y ritmo de cada rodaje: queremos ver la FC bajar a ritmo similar semana a semana.",
+          "Sensaciones del gemelo y del Aquiles al levantarte el día después de correr.",
+          "RPE: los rodajes tienen que ser de 3-4 sobre 10. Si te parecen demasiado fáciles, es que van bien."
+        ],
+        "modificar": [
+          "Gemelo, Aquiles o rodilla a 3/10 o más, o más rigidez al levantarte: rodaje más corto o sustitúyelo por bici o natación suave (ver el semáforo de la Guía).",
+          "Dos noches seguidas durmiendo menos de 6 h: el rodaje de ese día se queda en 20-30 min o se cancela.",
+          "FC 8-10 ppm más alta de lo normal al mismo ritmo en un día fresco: corta la sesión y descansa al día siguiente."
+        ],
+        "dias": [
+          {
+            "fecha": "2026-10-26",
+            "sesiones": [
+              {
+                "id": "2026-10-26-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 30 min",
+                "duracion": 30,
+                "km": 5.2,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "30 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-27",
+            "sesiones": [
+              {
+                "id": "2026-10-27-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · A · Pierna y tendón",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa A · Pierna y tendón de la Guía.",
+                "notas": "3 series, 2-3 repeticiones en reserva."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-28",
+            "sesiones": [
+              {
+                "id": "2026-10-28-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 35 min + 4 rectas",
+                "duracion": 41,
+                "km": 6.1,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "35 min continuos a ritmo fácil. Al final, 4 × 20 s de rectas: acelera progresivamente, relajado, sin esprintar.",
+                "recuperaciones": "60-90 s andando entre rectas.",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Base aeróbica más economía de carrera (las rectas mejoran coordinación sin cansar)."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-29",
+            "sesiones": [
+              {
+                "id": "2026-10-29-a",
+                "tipo": "padel",
+                "titulo": "Pádel (opcional) o descanso",
+                "duracion": 90,
+                "rpe": "6-8",
+                "objetivo": "Si juegas, cuenta como sesión intensa. No lo pongas el día antes de la tirada.",
+                "notas": "Si te notas cargado de gemelos al día siguiente, avísame."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-30",
+            "sesiones": [
+              {
+                "id": "2026-10-30-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 35 min",
+                "duracion": 35,
+                "km": 6.1,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "35 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-10-31",
+            "sesiones": [
+              {
+                "id": "2026-10-31-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · B · Estabilidad, pie y tren superior",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa B · Estabilidad, pie y tren superior de la Guía.",
+                "notas": "3 series."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-01",
+            "sesiones": [
+              {
+                "id": "2026-11-01-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 45 min",
+                "duracion": 45,
+                "km": 7.8,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "45 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica.",
+                "notas": "La salida más larga de la semana. Si llevas cansancio del pádel, déjala en 35 min."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2026-W45",
+        "lunes": "2026-11-02",
+        "fase": "Bloque 1 · Reconstrucción · semana 3 de 4",
+        "diagnostico": "Semana de más carga del bloque.",
+        "objetivo": "4 rodajes (~170 min, ~30 km): 2 con rectas y una tirada de 55 min.",
+        "porque": "Una tirada de 55 min y algo más de volumen consolidan la base sobre la que irá el umbral en el bloque 2.",
+        "observar": [
+          "FC media y ritmo de cada rodaje: queremos ver la FC bajar a ritmo similar semana a semana.",
+          "Sensaciones del gemelo y del Aquiles al levantarte el día después de correr.",
+          "RPE: los rodajes tienen que ser de 3-4 sobre 10. Si te parecen demasiado fáciles, es que van bien.",
+          "En la tirada, la FC de los últimos 15 min frente a los primeros 15 a ritmo parecido (deriva cardíaca)."
+        ],
+        "modificar": [
+          "Gemelo, Aquiles o rodilla a 3/10 o más, o más rigidez al levantarte: rodaje más corto o sustitúyelo por bici o natación suave (ver el semáforo de la Guía).",
+          "Dos noches seguidas durmiendo menos de 6 h: el rodaje de ese día se queda en 20-30 min o se cancela.",
+          "FC 8-10 ppm más alta de lo normal al mismo ritmo en un día fresco: corta la sesión y descansa al día siguiente."
+        ],
+        "dias": [
+          {
+            "fecha": "2026-11-02",
+            "sesiones": [
+              {
+                "id": "2026-11-02-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 35 min + 6 rectas",
+                "duracion": 41,
+                "km": 6.1,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "35 min continuos a ritmo fácil. Al final, 6 × 20 s de rectas: acelera progresivamente, relajado, sin esprintar.",
+                "recuperaciones": "60-90 s andando entre rectas.",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Base aeróbica más economía de carrera (las rectas mejoran coordinación sin cansar)."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-03",
+            "sesiones": [
+              {
+                "id": "2026-11-03-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · A · Pierna y tendón",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa A · Pierna y tendón de la Guía.",
+                "notas": "3 series. Sube la carga si la semana pasada te sobró."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-04",
+            "sesiones": [
+              {
+                "id": "2026-11-04-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 40 min",
+                "duracion": 40,
+                "km": 7.0,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "40 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-05",
+            "sesiones": [
+              {
+                "id": "2026-11-05-a",
+                "tipo": "padel",
+                "titulo": "Pádel (opcional) o descanso",
+                "duracion": 90,
+                "rpe": "6-8",
+                "objetivo": "Si juegas, cuenta como sesión intensa. No lo pongas el día antes de la tirada.",
+                "notas": "Si te notas cargado de gemelos al día siguiente, avísame."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-06",
+            "sesiones": [
+              {
+                "id": "2026-11-06-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 35 min + 6 rectas",
+                "duracion": 41,
+                "km": 6.1,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "35 min continuos a ritmo fácil. Al final, 6 × 20 s de rectas: acelera progresivamente, relajado, sin esprintar.",
+                "recuperaciones": "60-90 s andando entre rectas.",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Base aeróbica más economía de carrera (las rectas mejoran coordinación sin cansar)."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-07",
+            "sesiones": [
+              {
+                "id": "2026-11-07-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · B · Estabilidad, pie y tren superior",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa B · Estabilidad, pie y tren superior de la Guía.",
+                "notas": "3 series."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-08",
+            "sesiones": [
+              {
+                "id": "2026-11-08-a",
+                "tipo": "tirada",
+                "titulo": "Tirada 55 min",
+                "duracion": 55,
+                "km": 9.5,
+                "zona": "Z2",
+                "rpe": "4",
+                "calentamiento": "Los primeros 15 min, muy suaves.",
+                "principal": "55 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "Termina andando 3 min.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Resistencia aeróbica y resistencia de tendones y músculos.",
+                "notas": "Lleva agua si hace calor. No hace falta comer nada durante."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2026-W46",
+        "lunes": "2026-11-09",
+        "fase": "Bloque 1 · Reconstrucción · semana 4 de 4 (descarga y test)",
+        "diagnostico": "Bajamos volumen para asimilar el bloque y llegar fresco al test.",
+        "objetivo": "Asimilar el bloque y hacer el test de 30 minutos el sábado.",
+        "porque": "Sin una medición actual, cualquier ritmo de series sería una suposición. El test nos da tu nivel real, tu FC de umbral y las zonas del bloque 2.",
+        "observar": [
+          "Llegar al sábado con las piernas frescas.",
+          "En el test: ritmo por km y FC media de los últimos 20 minutos."
+        ],
+        "modificar": [
+          "Gemelo, Aquiles o rodilla a 3/10 o más, o más rigidez al levantarte: rodaje más corto o sustitúyelo por bici o natación suave (ver el semáforo de la Guía).",
+          "Dos noches seguidas durmiendo menos de 6 h: el rodaje de ese día se queda en 20-30 min o se cancela.",
+          "FC 8-10 ppm más alta de lo normal al mismo ritmo en un día fresco: corta la sesión y descansa al día siguiente.",
+          "Si el sábado llueve fuerte, hace mucho viento o has dormido mal, el test pasa al domingo o a la semana siguiente."
+        ],
+        "dias": [
+          {
+            "fecha": "2026-11-09",
+            "sesiones": [
+              {
+                "id": "2026-11-09-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 35 min",
+                "duracion": 35,
+                "km": 6.1,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "35 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-10",
+            "sesiones": [
+              {
+                "id": "2026-11-10-a",
+                "tipo": "fuerza",
+                "titulo": "Gimnasio · A · Pierna y tendón",
+                "duracion": 45,
+                "objetivo": "Fuerza útil para correr y prevención (gemelo, sóleo, cadena posterior).",
+                "principal": "Programa A · Pierna y tendón de la Guía.",
+                "notas": "Descarga: 2 series, sin subir carga."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-11",
+            "sesiones": [
+              {
+                "id": "2026-11-11-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 30 min + 6 rectas",
+                "duracion": 36,
+                "km": 5.2,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "30 min continuos a ritmo fácil. Al final, 6 × 20 s de rectas: acelera progresivamente, relajado, sin esprintar.",
+                "recuperaciones": "60-90 s andando entre rectas.",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Base aeróbica más economía de carrera (las rectas mejoran coordinación sin cansar)."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-12",
+            "sesiones": [
+              {
+                "id": "2026-11-12-a",
+                "tipo": "descanso",
+                "titulo": "Descanso",
+                "notas": "Descanso. Si juegas al pádel esta semana, que no sea hoy ni mañana."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-13",
+            "sesiones": [
+              {
+                "id": "2026-11-13-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 20 min + 3 rectas",
+                "duracion": 26,
+                "km": 3.5,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "20 min continuos a ritmo fácil. Al final, 3 × 20 s de rectas: acelera progresivamente, relajado, sin esprintar.",
+                "recuperaciones": "60-90 s andando entre rectas.",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Base aeróbica más economía de carrera (las rectas mejoran coordinación sin cansar).",
+                "notas": "Activación antes del test: muy suave."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-14",
+            "sesiones": [
+              {
+                "id": "2026-11-14-a",
+                "tipo": "competicion",
+                "titulo": "Test de 30 minutos",
+                "duracion": 60,
+                "km": 11,
+                "zona": "Z4-Z5",
+                "rpe": "9",
+                "calentamiento": "15 min a ritmo fácil, 4 rectas y 3 min de trote.",
+                "principal": "30 min corriendo solo, lo más rápido que puedas mantener de forma constante, en llano (la pista es ideal). Pulsa vuelta en el reloj al minuto 10.",
+                "recuperaciones": "—",
+                "vuelta": "10-15 min de trote muy suave.",
+                "ritmo": "Empieza a unos 4:20/km y ajusta por sensaciones. Los primeros 5 min no deben ser los más rápidos.",
+                "objetivo": "Medir tu nivel actual. La FC media de los últimos 20 min ≈ tu FC de umbral (protocolo de Friel); la distancia total da tu VDOT y tus zonas de ritmo.",
+                "notas": "Usa banda de pecho si tienes. Envíame distancia, FC media de los últimos 20 min y cómo te sentiste."
+              }
+            ]
+          },
+          {
+            "fecha": "2026-11-15",
+            "sesiones": [
+              {
+                "id": "2026-11-15-a",
+                "tipo": "rodaje",
+                "titulo": "Rodaje 40 min",
+                "duracion": 40,
+                "km": 7.0,
+                "zona": "Z1-Z2",
+                "rpe": "3-4",
+                "calentamiento": "Los primeros 10 min, más lento de lo que te pide el cuerpo.",
+                "principal": "40 min continuos a ritmo fácil.",
+                "recuperaciones": "—",
+                "vuelta": "2-3 min andando.",
+                "ritmo": "Por FC: techo de 150 ppm (Z2). Orientativo 5:30–6:00/km; si la FC sube, más lento",
+                "objetivo": "Readaptar tendones y músculos al impacto y recuperar la base aeróbica.",
+                "notas": "Suave de verdad: regenerar tras el test."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "objetivos": {
+    "nota": "Son hipótesis de trabajo, no predicciones. Se revisan al final de cada bloque según el volumen que toleres y los tests.",
+    "lista": [
+      [
+        "Realista (≈ 12 meses)",
+        "10K en 37:30–38:30"
+      ],
+      [
+        "Ambicioso (≈ 12 meses)",
+        "10K por debajo de 36:30"
+      ],
+      [
+        "Semana 4",
+        "Test de 30 minutos: nivel de partida, FC de umbral real y zonas nuevas"
+      ],
+      [
+        "≈ Mes 4",
+        "10K o test equivalente en 40:00 o menos"
+      ],
+      [
+        "≈ Mes 8",
+        "10K en torno a 38:30"
+      ],
+      [
+        "Volumen a 12 meses",
+        "50–65 km por semana en 5–6 salidas, si lo toleras bien"
+      ]
+    ],
+    "prioridades": [
+      "Constancia y volumen progresivo: pasar de 3 a 5-6 salidas por semana sin lesionarte.",
+      "Fuerza de gemelo, sóleo y cadena posterior desde el primer día, por tus antecedentes.",
+      "Economía de carrera: rectas desde la semana 2.",
+      "Umbral de lactato cuando la base esté asentada; después VO2max y ritmo específico en los últimos meses.",
+      "Distribución de intensidades de ~80 % fácil y ~20 % calidad cuando empiecen las series (el pádel cuenta como intenso)."
+    ],
+    "evaluacion": [
+      "Cada semana: me pegas el resumen del Registro o me pides que lea Strava, y ajusto la semana siguiente.",
+      "Indicadores: FC en rodaje a ritmo parecido (debería bajar), molestias, sueño y sensaciones.",
+      "Semana 4: test de 30 minutos. Con él recalculo zonas y diseño el bloque 2."
+    ]
+  }
+}

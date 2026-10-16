@@ -1,5 +1,15 @@
 // Validación del plan del entrenador (pura, con pruebas en tests/running.test.ts).
 import type { PlanEntrenador } from './tipos';
+import planBase from './datos/plan.json';
+
+/** Plan del entrenador que trae la app (se actualiza con cada versión). */
+export const PLAN_APP = planBase as unknown as PlanEntrenador;
+
+/** El plan pegado en el dispositivo solo manda si es igual o más reciente que el de la app. */
+export function elegirPlan(dispositivo: PlanEntrenador | null, app: PlanEntrenador = PLAN_APP): PlanEntrenador {
+  if (dispositivo && (dispositivo.actualizado || '') >= (app.actualizado || '')) return dispositivo;
+  return app;
+}
 
 /** Comprueba la forma mínima del plan. Devuelve el plan o un mensaje de error. */
 export function validarPlan(obj: unknown): PlanEntrenador | string {
