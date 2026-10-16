@@ -2,10 +2,12 @@
 .tema-hogar { --accent: #0a74e6; }
 .tema-cafe { --accent: #9b5a22; }
 .tema-cocina { --accent: #2e7d4f; }
+.tema-running { --accent: #d4472f; }
 @media (prefers-color-scheme: dark) {
   .tema-hogar { --accent: #4da3ff; }
   .tema-cafe { --accent: #e3a668; }
   .tema-cocina { --accent: #62c98b; }
+  .tema-running { --accent: #ff7a5c; }
 }
 
 main.vista.completa { padding-bottom: calc(var(--abajo) + 24px); }

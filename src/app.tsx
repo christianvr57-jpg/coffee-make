@@ -1,7 +1,7 @@
 // Carcasa de la app: pantalla según la ruta + barra de pestañas.
 import { useEffect } from 'preact/hooks';
 import { coincide, ir, ruta } from './core/router';
-import { FIJADOS, MODULOS } from './core/registro';
+import { fijados, MODULOS } from './core/registro';
 import { BarraSecciones } from './ui/Cabecera';
 import { Capas, ocultarToast } from './ui/capas';
 import { Icono } from './ui/Icono';
@@ -28,7 +28,7 @@ function resolver(path: string) {
             <V params={params} />
           </>
         ),
-        pestana: FIJADOS.includes(m.id) ? m.id : 'mas',
+        pestana: fijados.value.includes(m.id) ? m.id : 'mas',
         tema: m.tema,
         completa: !!r.pantallaCompleta,
       };
@@ -48,7 +48,7 @@ export function App() {
 
   const pestanas = [
     { id: 'inicio', nombre: 'Inicio', icono: 'inicio', ruta: '/' },
-    ...MODULOS.filter((m) => FIJADOS.includes(m.id)).map((m) => ({ id: m.id, nombre: m.nombre, icono: m.icono, ruta: m.rutaInicio })),
+    ...MODULOS.filter((m) => fijados.value.includes(m.id)).map((m) => ({ id: m.id, nombre: m.nombre, icono: m.icono, ruta: m.rutaInicio })),
     { id: 'mas', nombre: 'Más', icono: 'mas', ruta: '/mas' },
   ];
 

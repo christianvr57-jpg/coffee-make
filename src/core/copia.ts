@@ -2,6 +2,7 @@
 import { db, TABLAS_DATOS, escribirAjuste, leerAjuste } from './db';
 import { blobADataUrl, dataUrlABlob } from './archivos';
 import { importarLegado } from '../modulos/hogar/estado';
+import { importarLegadoRunning } from '../modulos/running/estado';
 
 export const APP_ID = 'coffee-make';
 export const VERSION_COPIA = 1;
@@ -36,7 +37,9 @@ export async function importarTodo(texto: string): Promise<ResultadoImportacion>
   }
   const o = obj as Partial<Copia> & { app?: string; datos?: unknown };
   if (o.app === 'rutina-hogar' && o.datos) {
-    const n = await importarLegado(o.datos as never);
+    let n = await importarLegado(o.datos as never);
+    const run = (o as { running?: unknown }).running;
+    if (run && typeof run === 'object') n += await importarLegadoRunning(run as never);
     return { tipo: 'hogar-antigua', registros: n };
   }
   if (o.app !== APP_ID || !o.tablas) throw new Error('El archivo no es una copia de Coffee Make.');

@@ -6,6 +6,7 @@ Módulos actuales:
 
 - **Hogar**: rutina de la casa (coladas, tareas diarias, semanales y periódicas repartidas por el mes).
 - **Cocina**: menú familiar (2 adultos y un niño de 1 año) en 8 semanas de rotación con dieta mediterránea, 112 recetas con adaptación para el niño, gramos por persona según las kcal diarias de cada adulto (composición de alimentos de USDA FoodData Central, `datos/nutricion.ts`), lista de la compra con cantidades, batch cooking del domingo y equilibrio semanal comprobado (AESAN y AEP, con fuentes en `src/modulos/cocina/datos/guia.ts`).
+- **Running**: entrenador de 10K. Plan semanal del entrenador, registro de sesiones (esfuerzo, sueño, molestias, carga de 4 semanas), zonas de ritmo (VDOT de Daniels) y de FC (Friel), auditoría inicial y guía (semáforo de molestias, sesiones clave, fuerza y nutrición). El plan del entrenador es personal: **no está en el código**; se carga en el dispositivo pegando o abriendo un JSON con la forma de `PlanEntrenador` (`src/modulos/running/tipos.ts`).
 - **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable", cata con rueda de sabores y diagnóstico de extracción, recetas (de referencia con su fuente y propias) que guían el temporizador paso a paso, un recomendador que aprende de tus registros, una guía (extracción, agua, variedades y procesos) y análisis con gráficos, mejores recetas por café y comparador.
 
 Las recetas de referencia (`src/modulos/cafe/datos/recetas.ts`) y las fichas de la guía (`datos/guia.ts`) llevan cada una el enlace a su fuente. Las cantidades, tiempos y temperaturas son los del autor; los clics del Comandante C40 son una estimación de la app y se muestran como tal.
@@ -21,6 +22,7 @@ src/
     hogar/       calendario.ts (lógica), reparto.ts, rutina.json (datos), vistas/
     cocina/      plan.ts (ciclo, compra, equilibrio), raciones.ts (gramos por kcal),
                  datos/ (recetas, menú, nutrición, guía), vistas/
+    running/     calculos.ts (VDOT, zonas, carga), validar.ts, datos/guia.ts, vistas/
     cafe/        modelo.ts, calculos.ts, diagnostico.ts, recetas.ts, aprendizaje.ts (recomendador),
                  estadisticas.ts, temporizador.ts,
                  datos/ (métodos, catálogos, rueda de sabores, recetas, guía), vistas/
@@ -37,6 +39,12 @@ tools/           reparto de tareas periódicas e iconos
 ### Preparado para sincronizar
 
 Cada registro tiene identificador ULID (se genera sin servidor), `creado`, `actualizado` y borrado lógico (`borrado`). Cada escritura deja constancia en la tabla `cambios`. Para sincronizar en el futuro basta con un adaptador que suba esa cola y descargue los cambios remotos (última escritura gana por registro).
+
+### Datos personales
+
+Nada personal va en el repositorio (es público). Lo que es de una persona (progreso, kcal, nombres, plan de entrenamiento, molestias…) vive en el dispositivo y en sus copias de seguridad. La carpeta `privado/` está en `.gitignore` para preparar archivos personales (por ejemplo, un plan de entrenamiento para cargarlo en la app).
+
+La barra inferior muestra hasta 3 módulos; se eligen en Ajustes.
 
 ## Desarrollo
 

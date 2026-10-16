@@ -3,17 +3,17 @@ import { useRef } from 'preact/hooks';
 import { entregarArchivo } from '../core/archivos';
 import { borrarTodo, exportarTodo, importarTodo } from '../core/copia';
 import { hoyISO } from '../core/fechas';
-import { MODULOS } from '../core/registro';
+import { MAX_FIJADOS, MODULOS, cambiarFijados, fijados } from '../core/registro';
 import { BarraDetalle } from '../ui/Cabecera';
 import { Hoja, abrirHoja, avisar, confirmar, mostrarToast } from '../ui/capas';
 import { FilaBoton, Lista, Texto } from '../ui/form';
 import { useState } from 'preact/hooks';
 
 async function aplicarImportacion(texto: string) {
-  if (!(await confirmar({ titulo: '¿Importar esta copia?', texto: 'Las copias de Coffee Make sustituyen todos los datos actuales. Las de la app antigua «Rutina del hogar» solo añaden tu progreso del hogar.', ok: 'Importar', peligro: true }))) return;
+  if (!(await confirmar({ titulo: '¿Importar esta copia?', texto: 'Las copias de Coffee Make sustituyen todos los datos actuales. Las de la app antigua «Rutina del hogar» solo añaden tu progreso del hogar y tus datos de running.', ok: 'Importar', peligro: true }))) return;
   try {
     const r = await importarTodo(texto);
-    await avisar('Copia importada', r.tipo === 'hogar-antigua' ? `Se han traído ${r.registros} marcas del hogar de la app antigua.` : `Se han restaurado ${r.registros} registros.`);
+    await avisar('Copia importada', r.tipo === 'hogar-antigua' ? `Se han traído ${r.registros} registros de la app antigua (hogar y running).` : `Se han restaurado ${r.registros} registros.`);
     location.reload();
   } catch (e) {
     await avisar('No se pudo importar', (e as Error).message);
@@ -73,7 +73,7 @@ export function Ajustes() {
     }
   };
   const borrar = async () => {
-    if (!(await confirmar({ titulo: '¿Borrar todos los datos?', texto: 'Progreso del hogar, cafés, preparaciones, equipo y ajustes. No se puede deshacer: haz antes una copia.', ok: 'Borrar todo', peligro: true }))) return;
+    if (!(await confirmar({ titulo: '¿Borrar todos los datos?', texto: 'Progreso del hogar, menú y compra, cafés, running y ajustes. No se puede deshacer: haz antes una copia.', ok: 'Borrar todo', peligro: true }))) return;
     await borrarTodo();
     location.reload();
   };
@@ -82,6 +82,30 @@ export function Ajustes() {
     <>
       <BarraDetalle padre="/mas" textoAtras="Más" titulo="Ajustes" />
       <div class="pagina">
+        <Lista titulo="Barra de pestañas" pie={`Elige hasta ${MAX_FIJADOS} módulos para la barra de abajo. Los demás se abren desde «Más» y desde su tarjeta en Inicio.`}>
+          <div class="campo col">
+            <div class="chips">
+              {MODULOS.map((m) => {
+                const activo = fijados.value.includes(m.id);
+                return (
+                  <button
+                    type="button"
+                    class="chip"
+                    aria-pressed={activo}
+                    onClick={() => {
+                      if (activo) cambiarFijados(fijados.value.filter((x) => x !== m.id));
+                      else if (fijados.value.length >= MAX_FIJADOS) mostrarToast(`Caben ${MAX_FIJADOS}: quita uno antes`);
+                      else cambiarFijados([...fijados.value, m.id]);
+                    }}
+                  >
+                    {m.nombre}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </Lista>
+
         {MODULOS.filter((m) => m.ajustes).map((m) => {
           const A = m.ajustes!;
           return <A key={m.id} />;

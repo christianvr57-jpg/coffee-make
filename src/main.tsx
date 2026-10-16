@@ -3,16 +3,18 @@ import { render } from 'preact';
 import { App } from './app';
 import { pedirPersistencia } from './core/db';
 import { registrarPwa } from './core/pwa';
-import { MODULOS } from './core/registro';
+import { MODULOS, cargarFijados } from './core/registro';
 import './styles/base.css';
 import './styles/nucleo.css';
 import './styles/cafe.css';
 import './styles/cocina.css';
+import './styles/running.css';
 
 async function arrancar() {
   const raiz = document.getElementById('raiz')!;
   try {
     for (const m of MODULOS) await m.iniciar?.();
+    await cargarFijados();
     pedirPersistencia();
     render(<App />, raiz);
     registrarPwa();

@@ -72,6 +72,8 @@ const TRAZOS: Record<string, string> = {
   reiniciar: '<path d="M4 12a8 8 0 1 0 2.6-5.9M4 4.5v4.6h4.6"/>',
   info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 7.9h.01"/>',
   aviso: '<path d="M12 4 21 19.5H3zM12 10v4.5M12 17.2h.01"/>',
+  running: '<circle cx="15.5" cy="4.6" r="1.9"/><path d="M5 11.2l3.4-3 4.3.4 3 3.6 3.3 1.1M12.7 8.6 10.4 14l3.6 2.6-1.2 4.9M10.4 14l-2.2 3.3-4.2.6"/>',
+  pulso: '<path d="M3 12.5h4l2.2-5 3.6 10 2.4-6.2 1.3 1.2H21"/>',
 };
 
 export const existeIcono = (nombre: string) => nombre in TRAZOS;
