@@ -1,4 +1,5 @@
 // Punto de entrada: abre la base de datos, inicia cada módulo y pinta la app.
+import './core/compat';
 import { render } from 'preact';
 import { App } from './app';
 import { pedirPersistencia } from './core/db';

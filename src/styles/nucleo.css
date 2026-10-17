@@ -176,7 +176,7 @@ input.fecha { min-height: 40px; border: 0; border-radius: 10px; background: var(
 
 /* ---------- Hogar · Progreso ---------- */
 .progreso-cifras { margin-top: 2px; }
-.mapa-calor { padding: 12px 14px 10px; display: grid; gap: 4px; }
+.mapa-calor { padding: 12px 14px 10px; display: grid; gap: 4px; max-width: 460px; }
 .mc-fila { display: grid; grid-template-columns: 52px repeat(7, 1fr); gap: 4px; align-items: center; }
 .mc-cab span { font-size: 11px; font-weight: 700; color: var(--label-2); text-align: center; }
 .mc-sem { font-size: 11px; color: var(--label-2); font-variant-numeric: tabular-nums; }
@@ -194,3 +194,7 @@ input.fecha { min-height: 40px; border: 0; border-radius: 10px; background: var(
 .bc-valor { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 .grupo.pendientes .grupo-tit .ico { color: #d97a00; }
 .widget-racha { font-size: 14px; font-weight: 600; color: var(--ok); }
+
+/* iPad mini 2 (Safari 12): sin aspect-ratio ni color-mix, el mapa usa alto fijo y transparencia. */
+@supports not (aspect-ratio: 1) { .mc-dia { height: 18px; } }
+@supports not (color: color-mix(in srgb, red 50%, red)) { .mc-dia:not(.cumplido):not(.vacio):not(.futuro) { background: rgba(var(--accent-rgb), var(--f, 0)); box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.2); } }

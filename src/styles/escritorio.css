@@ -4,7 +4,7 @@
    ========================================================================================== */
 
 .escritorio {
-  --lateral: clamp(204px, 17vw, 248px);
+  --lateral: max(204px, min(17vw, 248px));
   --ancho-max: 1240px;
   --margen-x: max(36px, calc((100vw - var(--lateral) - var(--ancho-max)) / 2));
 }
@@ -20,7 +20,7 @@
 }
 .escritorio main.vista button, .escritorio main.vista .chip, .escritorio main.vista summary { -webkit-user-select: none; user-select: none; }
 .escritorio main.vista.completa { margin-left: 0; --margen-x: max(24px, calc((100vw - 600px) / 2)); }
-.escritorio .pagina { max-width: 860px; margin-inline: auto; }
+.escritorio .pagina { max-width: 860px; margin-left: auto; margin-right: auto; }
 .escritorio .pagina.ancha { max-width: none; }
 
 /* Barras superiores: la de secciones la sustituye la lateral; la de detalle se ajusta al margen. */

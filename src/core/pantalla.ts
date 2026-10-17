@@ -9,6 +9,9 @@ const consulta = typeof window !== 'undefined' && window.matchMedia ? window.mat
 
 export const escritorio = signal(!!consulta?.matches);
 
-consulta?.addEventListener('change', (e) => {
+const alCambiar = (e: { matches: boolean }) => {
   escritorio.value = e.matches;
-});
+};
+// Safari < 14 (iPad mini 2) solo tiene addListener.
+if (consulta?.addEventListener) consulta.addEventListener('change', alCambiar);
+else consulta?.addListener?.(alCambiar);

@@ -11,7 +11,8 @@ import { Campo, Lista, Numero, Selector, Texto, fmt } from '../../../ui/form';
 import { Barras } from '../../../ui/Graficos';
 import { Icono } from '../../../ui/Icono';
 import { cargaSesion, formatoRitmo, resumenCarga, ritmoMedio } from '../calculos';
-import { datos, eliminarRegistro, guardarRegistro, listarRegistros } from '../estado';
+import { datos, eliminarRegistro, guardarRegistro, listarRegistros, plan } from '../estado';
+import { cumplimiento, evolucion, nivelChequeo } from '../seguimiento';
 import { MOLESTIAS, TIPOS, esCarrera, nombreTipo, type RegistroRun, type SesionPlan, type TipoSesion } from '../tipos';
 import { copiarTexto, kmTxt } from './comunes';
 
@@ -135,7 +136,74 @@ function textoResumen(regs: RegistroRun[], hoy: Date): string {
     lineas.push(`- ${partes.filter(Boolean).join(' · ')}${dolor ? ` · molestias: ${dolor}` : ''}${cargaSesion(x) ? ` · carga ${cargaSesion(x)}` : ''}`);
     if (x.notas) lineas.push(`  ${x.notas}`);
   }
+  const cumple = cumplimiento(plan.value?.plan?.semanas || [], regs, datos.value.hechas, hoy).slice(-2);
+  if (cumple.length) {
+    lineas.push('', 'Plan frente a lo hecho:');
+    for (const c of cumple) lineas.push(`- Semana del ${fechaTxt(c.lunes)}: ${c.hechas}/${c.planificadas} sesiones · ${c.minHechos}/${c.minPlan} min · ${kmTxt(c.kmHechos)}/${kmTxt(c.kmPlan)} km`);
+  }
+  const semaforos = Object.entries(datos.value.chequeos || {})
+    .filter(([f]) => f >= desde)
+    .sort(([a], [b]) => (a < b ? -1 : 1));
+  if (semaforos.length) {
+    lineas.push('', 'Semáforo antes de entrenar:');
+    for (const [f, c] of semaforos) lineas.push(`- ${fechaTxt(f)}: ${nivelChequeo(c)} · molestia ${c.molestia}/10${c.peor ? ' · peor al levantarse' : ''}${c.alarma ? ' · SEÑAL DE ALARMA' : ''}`);
+  }
   return lineas.join('\n');
+}
+
+/** Plan frente a lo hecho, semana a semana, y evolución de molestias y sueño. */
+function Seguimiento({ regs, hoy }: { regs: RegistroRun[]; hoy: Date }) {
+  const cumple = cumplimiento(plan.value?.plan?.semanas || [], regs, datos.value.hechas, hoy);
+  const evo = evolucion(regs, datos.value.chequeos || {}, hoy);
+  const hayEvo = evo.some((e) => e.molestia != null || e.sueno != null);
+  return (
+    <>
+      {cumple.length > 0 && (
+        <>
+          <div class="tit-lista">Plan frente a lo hecho</div>
+          <div class="lista cumplimiento">
+            {cumple.map((c) => {
+              const pct = c.planificadas ? c.hechas / c.planificadas : 0;
+              return (
+                <div class="cu-fila">
+                  <div class="cu-sem">
+                    <b>{fechaTxt(c.lunes)}</b>
+                    <small>{c.fase}</small>
+                  </div>
+                  <div class="cu-datos">
+                    <span class={pct >= 0.8 ? 'bien' : pct >= 0.5 ? 'medio' : 'mal'}>
+                      {c.hechas}/{c.planificadas} sesiones
+                    </span>
+                    <span>
+                      {c.minHechos}/{c.minPlan} min
+                    </span>
+                    <span>
+                      {kmTxt(c.kmHechos)}/{kmTxt(c.kmPlan)} km
+                    </span>
+                  </div>
+                  <span class="cu-barra">
+                    <span style={{ width: `${Math.min(100, pct * 100)}%` }} />
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <p class="pie">Sesiones marcadas como hechas en el plan; minutos y km, de lo que has registrado.</p>
+        </>
+      )}
+      {hayEvo && (
+        <>
+          <div class="tit-lista">Evolución · últimas 8 semanas</div>
+          <div class="lista bloque-grafico">
+            <Barras titulo="Molestia máxima por semana (0-10)" datos={evo.map((e, i) => ({ etiqueta: i === evo.length - 1 ? 'últ. 7 d' : fechaCorta(parse(e.desde)), valor: e.molestia ?? 0 }))} cadaEtiqueta={2} />
+            <p class="ayuda">Molestia máxima de cada semana (registros y semáforo). Lo que buscamos: que baje o se quede en 0-2.</p>
+            <Barras titulo="Sueño medio por semana (h)" datos={evo.map((e, i) => ({ etiqueta: i === evo.length - 1 ? 'últ. 7 d' : fechaCorta(parse(e.desde)), valor: e.sueno ?? 0 }))} cadaEtiqueta={2} />
+            <p class="ayuda">Horas de sueño de media en las noches que registraste. Menos de 7 h seguidas pesan en la recuperación.</p>
+          </div>
+        </>
+      )}
+    </>
+  );
 }
 
 export function RegistroRunning() {
@@ -227,6 +295,7 @@ export function RegistroRunning() {
           <div>
             <div class="tit-lista">Sesiones registradas ({regs.length})</div>
             {regs.length ? <TablaRegistros regs={regs} /> : <div class="vacio">Aún no hay sesiones registradas. Pulsa «Registrar sesión» después de entrenar.</div>}
+            <Seguimiento regs={regs} hoy={hoy} />
           </div>
         </div>
       </>
@@ -242,6 +311,7 @@ export function RegistroRunning() {
         </button>
       </div>
       {resumen}
+      <Seguimiento regs={regs} hoy={hoy} />
 
       <div class="tit-lista">Sesiones</div>
       {regs.length ? (

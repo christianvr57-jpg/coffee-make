@@ -4,7 +4,7 @@ Segundo cerebro personal en forma de app web instalable (PWA): un núcleo común
 
 Módulos actuales:
 
-- **Hogar**: rutina de la casa (coladas, tareas diarias, semanales y periódicas repartidas por el mes).
+- **Hogar**: rutina de la casa (coladas, tareas diarias, semanales y periódicas repartidas por el mes), lo que se quedó pendiente de días anteriores y progreso (racha, mapa de 12 semanas, categorías y lo que más se escapa).
 - **Cocina**: menú familiar (2 adultos y un niño de 1 año) en 8 semanas de rotación con dieta mediterránea, 112 recetas con adaptación para el niño, gramos por persona según las kcal diarias de cada adulto (composición de alimentos de USDA FoodData Central, `datos/nutricion.ts`), lista de la compra con cantidades, batch cooking del domingo y equilibrio semanal comprobado (AESAN y AEP, con fuentes en `src/modulos/cocina/datos/guia.ts`).
 - **Running**: entrenador de 10K. Plan semanal del entrenador, registro de sesiones (esfuerzo, sueño, molestias, carga de 4 semanas), zonas de ritmo (VDOT de Daniels) y de FC (Friel), auditoría inicial y guía (semáforo de molestias, sesiones clave, fuerza y nutrición). El plan del entrenador está en `src/modulos/running/datos/plan.json` (forma `PlanEntrenador`, en `src/modulos/running/tipos.ts`) y llega al móvil con cada versión; también se puede pegar a mano un plan más reciente.
 - **Café**: biblioteca de cafés con reposo y existencias, registro de preparaciones con temporizador guiado por fases, equipo y aguas, TDS/extracción con control chart, "repetir cambiando una variable", cata con rueda de sabores y diagnóstico de extracción, recetas (de referencia con su fuente y propias) que guían el temporizador paso a paso, un recomendador que aprende de tus registros, una guía (extracción, agua, variedades y procesos) y análisis con gráficos, mejores recetas por café y comparador.
@@ -80,6 +80,15 @@ npm run build      # compila en dist/
 4. Haz copias de seguridad desde **Más → Ajustes → Copia de seguridad** (JSON completo o CSV para Excel).
 
 Cuando se publica una versión nueva, la app lo avisa en Inicio («Hay una versión nueva») o la aplica sola la próxima vez que la abras tras cerrarla.
+
+## iPad antiguo (iPad mini 2, iOS 12)
+
+La app se compila para funcionar también en Safari 12, el último del iPad mini 2 (pensado como pantalla en la nevera):
+
+- `vite.config.ts` traduce el JavaScript a lo que entiende Safari 12 (`build.target: ['es2019', 'safari12']`).
+- `src/core/compat.ts` (lo primero que se carga) rellena lo que le falta: `matchAll`, `addEventListener` en `matchMedia`, `scrollTo` con opciones, `AudioContext`, `queueMicrotask`, y detecta si falta `gap` en flexbox.
+- `tools/compat-css.ts` añade al compilar respaldos de CSS: `color-mix()` → `rgba()` y `dvh` → `vh` en bloques `@supports not (…)`, variables `--x-rgb`, `inset` desglosado, `-webkit-sticky` y márgenes `.sin-gap` en lugar de `gap` en flexbox (pruebas en `tests/compat.test.ts`).
+- Las consultas de contenedor no existen en Safari 12: en el iPad todo se ve a una columna, que es lo cómodo a ese tamaño.
 
 ## En el ordenador
 

@@ -95,3 +95,43 @@
 .run-semaforo.rojo { background: color-mix(in srgb, #ff3b30 12%, transparent); }
 .run-evidencia { display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: var(--accent); }
 .run-calculo { font-weight: 600; }
+
+/* Semáforo de hoy */
+.run-semaforo-hoy { display: grid; gap: 10px; padding: 14px 16px; margin-bottom: 14px; border-radius: var(--radio); background: var(--card); box-shadow: var(--sombra); border-left: 5px solid var(--label-3); }
+.run-semaforo-hoy.verde { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 8%, var(--card)); }
+.run-semaforo-hoy.ambar { border-left-color: #ff9f0a; background: color-mix(in srgb, #ff9f0a 10%, var(--card)); }
+.run-semaforo-hoy.rojo { border-left-color: #ff3b30; background: color-mix(in srgb, #ff3b30 9%, var(--card)); }
+.run-semaforo-hoy.form { border-left-color: var(--accent); }
+.run-semaforo-hoy p { font-size: 15.5px; line-height: 1.45; }
+.rsh-cab { display: flex; align-items: center; gap: 12px; }
+.rsh-cab > div { flex: 1; display: grid; gap: 2px; }
+.rsh-cab b { font-size: 18px; }
+.rsh-luz { width: 22px; height: 22px; border-radius: 50%; flex: none; background: var(--label-3); }
+.rsh-luz.verde { background: var(--ok); }
+.rsh-luz.ambar { background: #ff9f0a; }
+.rsh-luz.rojo { background: #ff3b30; }
+.rsh-alerta { display: flex; gap: 6px; align-items: flex-start; font-weight: 600; color: #b26400; }
+.rsh-pregunta { display: grid; gap: 8px; font-size: 15px; }
+.rsh-escala { display: grid; grid-template-columns: repeat(11, 1fr); gap: 4px; }
+.rsh-escala button { min-height: 40px; border-radius: 10px; background: var(--fill); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--label); }
+.rsh-escala button[aria-checked='true'].verde { background: var(--ok); color: #fff; }
+.rsh-escala button[aria-checked='true'].ambar { background: #ff9f0a; color: #fff; }
+.rsh-escala button[aria-checked='true'].rojo { background: #ff3b30; color: #fff; }
+.rsh-si-no { display: flex; align-items: center; gap: 12px; font-size: 15px; line-height: 1.35; }
+.rsh-si-no > span { flex: 1; }
+.rsh-si-no small { display: block; font-size: 12.5px; color: var(--label-2); }
+.run-semaforo-hoy .acciones-fila { margin: 4px 0 0; }
+
+/* Plan frente a lo hecho */
+.cumplimiento { padding: 4px 0; }
+.cu-fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 10px 16px; border-bottom: 0.5px solid var(--sep); }
+.cu-fila:last-child { border-bottom: 0; }
+.cu-sem { display: grid; gap: 1px; }
+.cu-sem b { font-size: 15px; }
+.cu-sem small { font-size: 12.5px; color: var(--label-2); }
+.cu-datos { display: grid; justify-items: end; gap: 1px; font-size: 13px; color: var(--label-2); font-variant-numeric: tabular-nums; }
+.cu-datos .bien { color: var(--ok); font-weight: 700; font-size: 14.5px; }
+.cu-datos .medio { color: #b26400; font-weight: 700; font-size: 14.5px; }
+.cu-datos .mal { color: var(--peligro); font-weight: 700; font-size: 14.5px; }
+.cu-barra { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--fill); overflow: hidden; }
+.cu-barra span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }

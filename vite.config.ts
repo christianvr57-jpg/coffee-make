@@ -2,12 +2,14 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { compatSafari12 } from './tools/compat-css';
 
 // Rutas relativas: la app funciona igual en local y bajo /coffee-make/ en GitHub Pages.
 export default defineConfig({
   base: './',
   define: { __VERSION__: JSON.stringify(process.env.npm_package_version || '2.0.0') },
   plugins: [
+    compatSafari12(),
     preact(),
     VitePWA({
       registerType: 'prompt',
@@ -38,6 +40,7 @@ export default defineConfig({
       },
     }),
   ],
-  build: { target: 'es2022', sourcemap: true },
+  // Safari 12: el iPad mini 2 de la nevera (iOS 12). El código se traduce a lo que entiende y el CSS lleva respaldos.
+  build: { target: ['es2019', 'safari12'], cssTarget: ['safari12'], sourcemap: true },
   test: { environment: 'node', include: ['tests/**/*.test.ts'] },
 });

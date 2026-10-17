@@ -74,7 +74,8 @@ export interface LecturaNube {
 
 /** Lee el archivo de la nube. Con `etag`, si no ha cambiado GitHub responde 304 (y no gasta cupo). */
 export async function leerNube(cfg: ConfigNube, etag?: string, archivo = ARCHIVO_NUBE): Promise<LecturaNube> {
-  const r = await peticion(cfg, `/contents/${archivo}`, { headers: etag ? { 'If-None-Match': etag } : {} });
+  // El parámetro t evita la caché en navegadores que ignoran cache: 'no-store' (Safari 12 del iPad mini 2).
+  const r = await peticion(cfg, `/contents/${archivo}?t=${Date.now()}`, { headers: etag ? { 'If-None-Match': etag } : {} });
   if (r.status === 304) return { sha: null, datos: {}, sinCambios: true };
   if (r.status === 404) {
     // ¿Falta el archivo (primera vez) o el repositorio entero?
@@ -87,7 +88,7 @@ export async function leerNube(cfg: ConfigNube, etag?: string, archivo = ARCHIVO
   let texto = j.content && j.encoding === 'base64' ? deBase64(j.content) : '';
   if (!texto && (j.size || 0) > 0) {
     // Más de 1 MB: la API no incluye el contenido y hay que pedirlo «en bruto».
-    const raw = await peticion(cfg, `/contents/${archivo}`, { headers: { Accept: 'application/vnd.github.raw+json' } });
+    const raw = await peticion(cfg, `/contents/${archivo}?t=${Date.now()}`, { headers: { Accept: 'application/vnd.github.raw+json' } });
     if (!raw.ok) throw new ErrorNube(mensajeError(raw.status), raw.status);
     texto = await raw.text();
   }

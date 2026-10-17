@@ -8,6 +8,7 @@
 import { signal } from '@preact/signals';
 import { borrar, db, escribirAjuste, guardar, leerAjuste, vivos } from '../../core/db';
 import type { DatosZonas, PlanEntrenador, RegistroRun } from './tipos';
+import type { Chequeo } from './seguimiento';
 import { PLAN_APP, elegirPlan, validarPlan } from './validar';
 
 export interface DatosRunning {
@@ -15,9 +16,11 @@ export interface DatosRunning {
   zonas: Partial<DatosZonas>;
   /** id de sesión del plan → true o id del registro asociado. */
   hechas: Record<string, true | string>;
+  /** Semáforo de cada día (fecha → cómo estabas antes de entrenar). */
+  chequeos: Record<string, Chequeo>;
 }
 
-const DATOS_INICIALES: DatosRunning = { respuestas: {}, zonas: {}, hechas: {} };
+const DATOS_INICIALES: DatosRunning = { respuestas: {}, zonas: {}, hechas: {}, chequeos: {} };
 
 export const plan = signal<PlanEntrenador | null>(PLAN_APP);
 /** Si el plan en uso es uno pegado en el dispositivo (no el de la app). */
@@ -91,6 +94,15 @@ export const restablecerZonas = () => guardarDatos({ ...datos.value, zonas: {} }
 
 export const sesionHecha = (id: string) => Boolean(datos.value.hechas[id]);
 
+/** Guarda (o borra, con null) el semáforo de un día. Se quedan solo los de los últimos 90 días. */
+export function guardarChequeo(fecha: string, c: Chequeo | null) {
+  const limite = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+  const chequeos: Record<string, Chequeo> = {};
+  for (const [f, x] of Object.entries(datos.value.chequeos || {})) if (f >= limite && f !== fecha) chequeos[f] = x;
+  if (c) chequeos[fecha] = c;
+  return guardarDatos({ ...datos.value, chequeos });
+}
+
 export function marcarSesion(id: string, valor: true | string | null) {
   const hechas = { ...datos.value.hechas };
   if (valor) hechas[id] = valor;
@@ -133,6 +145,7 @@ export async function importarLegadoRunning(obj: { respuestas?: Record<string, s
     respuestas: { ...datos.value.respuestas, ...(obj.respuestas || {}) },
     zonas: { ...datos.value.zonas, ...(obj.zonas || {}) },
     hechas: { ...datos.value.hechas, ...hechas },
+    chequeos: datos.value.chequeos || {},
   });
   return n + Object.keys(obj.respuestas || {}).length;
 }

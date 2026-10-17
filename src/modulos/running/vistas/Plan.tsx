@@ -17,6 +17,7 @@ import { datos, marcarSesion, plan, sesionHecha } from '../estado';
 import { nombreTipo, type PlanEntrenador, type SemanaPlan, type SesionPlan } from '../tipos';
 import { DetalleSesion, Plegable, metaSesion, zonasActuales } from './comunes';
 import { abrirRegistro } from './Registro';
+import { SemaforoHoy } from './Semaforo';
 
 const semanaVista = signal<number | null>(null);
 
@@ -509,8 +510,11 @@ export function PlanRunning() {
     );
   }
   const sem = semanas[idx];
+  const hoySesiones = semanas.flatMap((s) => s.dias).find((d) => d.fecha === diaActual.value)?.sesiones || [];
+  const entrenaHoy = hoySesiones.some((s) => s.tipo !== 'descanso') || !!datos.value.chequeos?.[diaActual.value];
   return (
     <>
+      {entrenaHoy && <SemaforoHoy />}
       {sem ? (
         escritorio.value ? (
           <SemanaEscritorio sem={sem} idx={idx} total={semanas.length} />
