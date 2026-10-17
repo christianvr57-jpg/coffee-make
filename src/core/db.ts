@@ -6,6 +6,7 @@ import { ulid } from './ids';
 import type { Agua, Cafe, Equipo, Foto, Preparacion, Receta } from '../modulos/cafe/modelo';
 import type { ArticuloCompra, CambioPlato } from '../modulos/cocina/tipos';
 import type { RegistroRun } from '../modulos/running/tipos';
+import type { NotaDia, TurnoDia } from '../modulos/calendario/tipos';
 
 /** Campos comunes de cualquier registro sincronizable. */
 export interface Registro {
@@ -58,6 +59,8 @@ export class BaseDatos extends Dexie {
   cocina_cambios!: EntityTable<CambioPlato, 'id'>;
   cocina_compra!: EntityTable<ArticuloCompra, 'id'>;
   running_registros!: EntityTable<RegistroRun, 'id'>;
+  agenda_turnos!: EntityTable<TurnoDia, 'id'>;
+  agenda_notas!: EntityTable<NotaDia, 'id'>;
   fotos!: EntityTable<Foto, 'id'>;
 
   constructor() {
@@ -79,16 +82,18 @@ export class BaseDatos extends Dexie {
     this.version(3).stores({ cocina_cambios: '&id, fecha', cocina_compra: '&id, lunes' });
     // v4: módulo Running (sesiones registradas).
     this.version(4).stores({ running_registros: '&id, fecha' });
+    // v5: módulo Calendario (turnos por día y notas o recordatorios).
+    this.version(5).stores({ agenda_turnos: '&id', agenda_notas: '&id, fecha' });
   }
 }
 
 export const db = new BaseDatos();
 
 /** Tablas que forman la copia de seguridad (todas menos la cola de cambios). */
-export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'cocina_cambios', 'cocina_compra', 'running_registros', 'fotos'] as const;
+export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'cocina_cambios', 'cocina_compra', 'running_registros', 'agenda_turnos', 'agenda_notas', 'fotos'] as const;
 export type TablaDatos = (typeof TABLAS_DATOS)[number];
 
-type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas' | 'cocina_cambios' | 'cocina_compra' | 'running_registros';
+type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas' | 'cocina_cambios' | 'cocina_compra' | 'running_registros' | 'agenda_turnos' | 'agenda_notas';
 
 /** Avisos de «hay cambios locales» (los usa la sincronización para subirlos al poco). */
 export const alCambiarDatos = new Set<() => void>();

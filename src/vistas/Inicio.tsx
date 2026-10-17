@@ -25,7 +25,8 @@ function AgendaSemana() {
   const hoy = diaActual.value;
   const lunes = addDays(lunesDe(parse(hoy)), 7 * desfaseAgenda.value);
   const dias = Array.from({ length: 7 }, (_, i) => iso(addDays(lunes, i)));
-  const mods = visibles.value.filter((m) => m.agendaDia);
+  // El calendario (turnos y notas) va arriba: es lo primero que se mira.
+  const mods = visibles.value.filter((m) => m.agendaDia).sort((a, b) => Number(b.id === 'calendario') - Number(a.id === 'calendario'));
   useFlechas(() => desfaseAgenda.value--, () => desfaseAgenda.value++);
   const titulo = desfaseAgenda.value === 0 ? 'Tu semana' : desfaseAgenda.value === 1 ? 'La semana que viene' : desfaseAgenda.value === -1 ? 'La semana pasada' : `Semana del ${fechaCorta(lunes)}`;
   return (

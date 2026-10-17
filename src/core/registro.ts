@@ -8,8 +8,9 @@ import { moduloHogar } from '../modulos/hogar';
 import { moduloCafe } from '../modulos/cafe';
 import { moduloCocina } from '../modulos/cocina';
 import { moduloRunning } from '../modulos/running';
+import { moduloCalendario } from '../modulos/calendario';
 
-export const MODULOS: ModuloApp[] = [moduloHogar, moduloCocina, moduloRunning, moduloCafe];
+export const MODULOS: ModuloApp[] = [moduloHogar, moduloCocina, moduloRunning, moduloCalendario, moduloCafe];
 
 /** Desactivados de serie (se activan en Ajustes → Módulos). */
 const OCULTOS_INICIALES = ['cafe'];

@@ -11,6 +11,7 @@ import './styles/nucleo.css';
 import './styles/cafe.css';
 import './styles/cocina.css';
 import './styles/running.css';
+import './styles/calendario.css';
 import './styles/escritorio.css';
 
 async function arrancar() {

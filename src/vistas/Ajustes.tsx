@@ -17,6 +17,7 @@ const DESCRIPCION_MODULO: Record<string, string> = {
   hogar: 'Rutina de la casa, coladas y tareas',
   cocina: 'Menú semanal, compra y recetas',
   running: 'Plan del entrenador, registro y zonas',
+  calendario: 'Turnos de tu pareja y notas de cada día',
   cafe: 'Diario de cafés, recetas, cata y análisis',
 };
 

@@ -1,0 +1,116 @@
+/* ---------- Módulo Calendario ---------- */
+.tema-calendario { --accent: #0f8b8d; }
+@media (prefers-color-scheme: dark) { .tema-calendario { --accent: #3cc6c8; } }
+
+/* Turnos: M mañana, T tarde, N noche, L libre */
+.t-M { --tc: #e39b00; }
+.t-T { --tc: #2a7fd8; }
+.t-N { --tc: #5b4bc4; }
+.t-L { --tc: #2fae5e; }
+@media (prefers-color-scheme: dark) { .t-M { --tc: #ffbf3d; } .t-T { --tc: #5cb0ff; } .t-N { --tc: #9d8cff; } .t-L { --tc: #4bd889; } }
+.turno-chip {
+  display: inline-grid; place-items: center; flex: none; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 7px;
+  font-size: 12.5px; font-weight: 800; line-height: 1; color: #fff; background: var(--tc);
+}
+.turno-chip.grande { min-width: 30px; height: 30px; font-size: 16px; border-radius: 9px; }
+
+/* Notas: cita, recordar, plan, otro */
+.n-cita { --nc: #e5372f; }
+.n-recordar { --nc: #d97a00; }
+.n-plan { --nc: #a35fd6; }
+.n-otro { --nc: #6f7ba3; }
+@media (prefers-color-scheme: dark) { .n-cita { --nc: #ff6961; } .n-recordar { --nc: #ffab3d; } .n-plan { --nc: #c98aff; } .n-otro { --nc: #9aa6cc; } }
+.nota-ico { display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 8px; color: var(--nc); background: color-mix(in srgb, var(--nc) 15%, transparent); }
+
+/* Cabecera del mes */
+.cal-cab { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; flex-wrap: wrap; }
+.cal-cab h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; min-width: 150px; text-align: center; }
+.cal-cab h2 span { font-weight: 500; color: var(--label-2); }
+.cal-pintar { margin-left: auto; }
+.cal-pintar.activo { background: var(--accent); color: #fff; }
+.cal-pincel { display: grid; gap: 8px; margin-bottom: 12px; padding: 12px 14px; border-radius: var(--radio); background: color-mix(in srgb, var(--accent) 10%, var(--card)); font-size: 14.5px; }
+
+/* Rejilla del mes */
+.cal-mes { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; border-radius: var(--radio); overflow: hidden; background: var(--sep); box-shadow: var(--sombra); }
+.cal-sem { padding: 8px 0; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: var(--label-2); background: var(--card-2); }
+.cal-dia {
+  position: relative; display: flex; flex-direction: column; align-items: stretch; min-width: 0; min-height: 76px; padding: 6px 5px 6px;
+  background: var(--card); text-align: left; color: var(--label);
+}
+.cal-dia.fuera { background: var(--card-2); }
+.cal-dia.fuera .cd-num { color: var(--label-3); }
+.cal-dia.pasado .cd-notas { opacity: 0.6; }
+.cd-num { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cal-dia.hoy { background: color-mix(in srgb, var(--accent) 7%, var(--card)); }
+.cal-dia.hoy .cd-num { background: var(--accent); color: #fff; }
+.cal-dia .turno-chip { position: absolute; top: 6px; right: 5px; }
+.cd-notas { display: grid; gap: 2px; margin-top: 4px; min-width: 0; }
+.cd-nota { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; padding: 1px 4px 1px 5px; border-left: 3px solid var(--nc); border-radius: 3px; font-size: 11.5px; line-height: 1.3; overflow: hidden; overflow-wrap: break-word; background: color-mix(in srgb, var(--nc) 10%, transparent); }
+.cd-nota.hecha { text-decoration: line-through; opacity: 0.55; }
+.cd-mas { font-size: 11px; color: var(--label-2); padding-left: 4px; }
+.cal-mes.pintando .cal-dia { cursor: crosshair; }
+@media (hover: hover) and (pointer: fine) { .cal-dia:hover { background: color-mix(in srgb, var(--accent) 5%, var(--card)); } }
+.cal-dia:active { background: color-mix(in srgb, var(--accent) 12%, var(--card)); }
+.escritorio .cal-dia { min-height: 104px; padding: 8px 8px; }
+.escritorio .cd-nota { font-size: 12.5px; }
+
+/* Selector de turno (hoja del día y turnos rápidos) */
+.turnos-sel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.turnos-sel button { display: grid; justify-items: center; gap: 2px; min-height: 64px; padding: 8px 2px; border-radius: 14px; background: var(--card); box-shadow: var(--sombra); border: 2px solid transparent; color: var(--label); }
+.turnos-sel button b { font-size: 22px; font-weight: 800; color: var(--tc, var(--label-2)); }
+.turnos-sel button span { font-size: 12.5px; color: var(--label-2); }
+.turnos-sel button[aria-pressed='true'] { border-color: var(--tc, var(--label-2)); background: color-mix(in srgb, var(--tc, var(--label-2)) 12%, var(--card)); }
+.turnos-sel.compacto button { min-height: 52px; }
+.turnos-sel.compacto button b { font-size: 18px; }
+
+/* Notas del día */
+.notas-dia { padding: 2px 0; }
+.nota-fila { display: flex; align-items: center; gap: 10px; padding: 8px 6px 8px 14px; border-bottom: 0.5px solid var(--sep); }
+.nota-fila:last-child { border-bottom: 0; }
+.nota-texto { flex: 1; min-width: 0; display: grid; gap: 1px; text-align: left; color: var(--label); padding: 4px 0; }
+.nota-texto span { font-size: 16px; line-height: 1.3; }
+.nota-texto small { font-size: 12.5px; color: var(--label-2); }
+.nota-fila.hecha .nota-texto span { text-decoration: line-through; color: var(--label-3); }
+.nota-quitar { width: 40px; height: 40px; display: grid; place-items: center; color: var(--label-3); flex: none; }
+.nueva-nota { display: grid; gap: 10px; padding: 12px 14px; margin-top: 10px; }
+.nueva-nota .chip { --c: var(--nc); }
+.nueva-nota .chip .ico { color: var(--nc); }
+.nn-fila { display: flex; gap: 8px; align-items: center; }
+.nn-fila input { flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: var(--fill); font-size: 16px; color: var(--label); outline: none; }
+.nueva-nota .enlace-boton { justify-self: start; }
+
+/* Próximos y lista */
+.nota-prox.hecha .item-tit { text-decoration: line-through; color: var(--label-3); }
+.leyenda-turnos { gap: 8px; }
+.leyenda-turnos p { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.leyenda-turnos .enlace-boton { justify-self: start; text-align: left; }
+.notas-grupo .ng-cab { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; }
+.notas-grupo .ng-cab span { flex: 1; }
+.notas-pasadas { margin-top: 24px; }
+.notas-pasadas summary { cursor: pointer; padding: 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label-2); }
+.patron-muestra { display: flex; flex-wrap: wrap; gap: 6px; }
+.patron-muestra span { display: grid; justify-items: center; gap: 2px; }
+.patron-muestra small { font-size: 11px; color: var(--label-2); }
+
+/* Inicio */
+.widget-turnos { display: grid; gap: 6px; font-size: 15px; }
+.widget-turnos span { display: flex; align-items: center; gap: 8px; }
+.widget-notas { display: grid; gap: 4px; padding-top: 10px; border-top: 0.5px solid var(--sep); }
+.widget-notas button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 4px 0; text-align: left; color: var(--label); }
+.widget-notas button span { flex: 1; min-width: 0; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.widget-notas button small { font-size: 13px; color: var(--label-2); flex: none; }
+.ag-calendario { display: grid; align-content: start; gap: 5px; width: 100%; min-height: 40px; padding: 0; text-align: left; color: var(--label); }
+.ag-turno { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--label-2); }
+.ag-nota { display: block; padding: 4px 6px; border-left: 3px solid var(--nc); border-radius: 6px; font-size: 12.5px; line-height: 1.3; background: color-mix(in srgb, var(--nc) 10%, transparent); }
+.ag-nota.hecha { text-decoration: line-through; opacity: 0.55; }
+.ag-calendario .ag-nada { font-size: 16px; text-align: center; }
+
+/* Móvil: celdas estrechas → número y turno más pequeños; las notas, como barritas de color. */
+@media (max-width: 599px) {
+  .cal-dia { min-height: 62px; padding: 4px 3px; }
+  .cd-num { width: 22px; height: 22px; font-size: 13px; }
+  .cal-dia .turno-chip { top: 4px; right: 3px; min-width: 16px; height: 16px; padding: 0 3px; font-size: 10px; border-radius: 5px; }
+  .cd-nota { display: block; height: 5px; padding: 0; border: 0; border-radius: 3px; font-size: 0; background: var(--nc); }
+  .cd-mas { font-size: 10px; padding-left: 1px; }
+  .cal-cab h2 { min-width: 0; font-size: 20px; }
+}
