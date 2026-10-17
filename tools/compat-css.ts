@@ -155,7 +155,10 @@ function gapsFlex(css: string): string {
     let extra: string;
     if (envuelve) extra = `${pref(' > *')} { margin-right: ${col}; margin-bottom: ${fila}; }`;
     else if (columna) extra = `${pref(' > * + *')} { margin-top: ${fila}; }`;
-    else extra = `${pref(' > * + *')} { margin-left: ${col}; }`;
+    // Fila: separación entre elementos y, si el único elemento es un icono junto a un texto suelto
+    // («<Icono/> Guardar»), margen a su derecha (el texto no es un elemento y no lo pilla «* + *»).
+    else extra = `${pref(' > * + *')} { margin-left: ${col}; }
+${pref(' > .ico:only-child')} { margin-right: ${col}; }`;
     return `${regla}\n${extra}`;
   });
 }

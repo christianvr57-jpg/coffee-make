@@ -26,7 +26,7 @@ export function Lateral({ path, modulo }: { path: string; modulo?: ModuloApp }) 
           <span class="lat-ico neutro">
             <Icono n="inicio" t={17} />
           </span>
-          Inicio
+          <span class="lat-txt">Inicio</span>
         </a>
         <div class="lat-tit">Módulos</div>
         {visibles.value.map((m) => {
@@ -37,7 +37,7 @@ export function Lateral({ path, modulo }: { path: string; modulo?: ModuloApp }) 
                 <span class="lat-ico">
                   <Icono n={m.icono} t={17} />
                 </span>
-                {m.nombre}
+                <span class="lat-txt">{m.nombre}</span>
               </a>
               {abierto && (
                 <div class="lat-secciones">
@@ -57,7 +57,9 @@ export function Lateral({ path, modulo }: { path: string; modulo?: ModuloApp }) 
           <span class="lat-ico neutro">
             <Icono n="ajustes" t={17} />
           </span>
-          Ajustes y datos
+          <span class="lat-txt">
+            Ajustes<span class="lat-largo"> y datos</span>
+          </span>
         </a>
         <IndicadorNube />
         <p class="lat-version">Versión {__VERSION__}</p>
@@ -76,6 +78,13 @@ export function CabeceraSeccion({ modulo, seccion }: { modulo: ModuloApp; seccio
           {modulo.nombre}
         </div>
         <h1>{seccion.nombre}</h1>
+        <nav class="segmentado ce-pestanas" aria-label="Secciones">
+          {modulo.secciones.map((s) => (
+            <button type="button" aria-pressed={s.id === seccion.id} onClick={() => ir(s.ruta, true)}>
+              {s.nombre}
+            </button>
+          ))}
+        </nav>
       </div>
     </header>
   );

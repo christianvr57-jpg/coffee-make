@@ -34,6 +34,7 @@ describe('respaldos de CSS para Safari 12', () => {
   it('genera márgenes .sin-gap para flex con gap (fila, columna y con salto)', () => {
     const css = compatCss('.fila { display: flex; gap: 10px; } .col { display: flex; flex-direction: column; gap: 4px; } .chips { display: flex; flex-wrap: wrap; gap: 8px 6px; } .rejilla { display: grid; gap: 4px; }');
     expect(css).toContain('.sin-gap .fila > * + * { margin-left: 10px; }');
+    expect(css).toContain('.sin-gap .fila > .ico:only-child { margin-right: 10px; }');
     expect(css).toContain('.sin-gap .col > * + * { margin-top: 4px; }');
     expect(css).toContain('.sin-gap .chips > * { margin-right: 6px; margin-bottom: 8px; }');
     expect(css).not.toContain('.sin-gap .rejilla');

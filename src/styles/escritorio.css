@@ -14,7 +14,6 @@
   margin-left: var(--lateral);
   min-height: 100vh;
   padding: 26px var(--margen-x) 72px;
-  container: vista / inline-size;
   -webkit-user-select: text;
   user-select: text;
 }
@@ -107,21 +106,21 @@ kbd { font: 600 11.5px/1 -apple-system, 'Segoe UI', system-ui, sans-serif; paddi
    .columnas       → 2 columnas iguales
    .columnas.dcha  → principal ancha + lateral estrecha
    .paneles        → bloques repartidos en columnas tipo revista (cada hijo es un bloque)          */
-@container vista (min-width: 840px) {
+@media (min-width: 1000px) {
   .columnas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; align-items: start; }
   .columnas.dcha { grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr); }
   .columnas.izq { grid-template-columns: minmax(300px, 1fr) minmax(0, 1.65fr); }
   .columnas > * > .tit-lista:first-child, .columnas > * > :first-child { margin-top: 0; }
   .columnas > .col-pegada { position: sticky; top: 18px; }
   .paneles { columns: 2; column-gap: 28px; }
-  .paneles > * { break-inside: avoid; padding-bottom: 22px; }
+  .paneles > * { -webkit-column-break-inside: avoid; page-break-inside: avoid; break-inside: avoid; padding-bottom: 22px; }
   .paneles > * > .tit-lista:first-child, .paneles > * > :first-child { margin-top: 0; }
   .rejilla-tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
   .rejilla-tarjetas.lista { background: none; box-shadow: none; border-radius: 0; overflow: visible; }
   .rejilla-tarjetas.lista > .item { border-radius: 16px; background: var(--card); box-shadow: var(--sombra); }
   .rejilla-tarjetas.lista > .item::after { display: none; }
 }
-@container vista (min-width: 1150px) {
+@media (min-width: 1500px) {
   .paneles.tres { columns: 3; }
 }
 
@@ -277,7 +276,7 @@ kbd { font: 600 11.5px/1 -apple-system, 'Segoe UI', system-ui, sans-serif; paddi
 .boton-principal.auto, .boton-secundario.auto { width: auto; min-height: 42px; padding: 0 18px; font-size: 15.5px; border-radius: 12px; flex: none; }
 .escritorio .sub-cabecera .sub { max-width: 720px; }
 .escritorio .col-pegada > .tit-lista:first-child { margin-top: 0; }
-@container vista (min-width: 840px) {
+@media (min-width: 1000px) {
   .rejilla-pares { display: grid; grid-template-columns: 1fr 1fr; }
   .rejilla-pares > .run-par { border-bottom: 0.5px solid var(--sep); }
   .rejilla-pares > .run-par:nth-child(odd) { border-right: 0.5px solid var(--sep); }
@@ -294,7 +293,7 @@ kbd { font: 600 11.5px/1 -apple-system, 'Segoe UI', system-ui, sans-serif; paddi
 a.boton-fila { text-decoration: none; }
 
 /* ---------- Hogar ---------- */
-@container vista (min-width: 840px) {
+@media (min-width: 1000px) {
   .hogar-hoy > div > .grupo:first-child .grupo-tit { margin-top: 4px; }
   .hogar-hoy .colada { margin-top: 14px; }
   .semana-hogar { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; align-items: start; }
@@ -304,14 +303,14 @@ a.boton-fila { text-decoration: none; }
 /* ---------- Cocina ---------- */
 .escritorio .pagina.ancha-receta { max-width: 1120px; }
 .escritorio .pagina.ancha-receta .titulo-guia { font-size: 30px; }
-@container vista (min-width: 840px) {
+@media (min-width: 1000px) {
   .compra-paneles { margin-top: 22px; }
 }
 .escritorio .ancha-receta .columnas { margin-top: 18px; }
 .escritorio .aviso-instalar { margin-bottom: 8px; }
 
-/* ---------- Ventanas de ordenador estrechas (contenido de menos de 900 px) ---------- */
-@container vista (max-width: 900px) {
+/* ---------- Ventanas de ordenador estrechas e iPad apaisado (1000-1179 px) ---------- */
+@media (min-width: 1000px) and (max-width: 1179px) {
   .ag-rejilla { grid-template-columns: 46px repeat(7, minmax(0, 1fr)); }
   .ag-modulo { justify-content: center; padding: 12px 4px; }
   .ag-modulo span { display: none; }
@@ -327,3 +326,26 @@ a.boton-fila { text-decoration: none; }
   .rc-cuerpo { padding: 8px 28px 8px 8px; }
   .rc-cuerpo b { font-size: 13px; }
 }
+
+/* ---------- Barra lateral estrecha (iPad apaisado y ventanas de 1000-1179 px) ----------
+   Solo iconos con su nombre debajo: deja casi todo el ancho al contenido. Las secciones del
+   módulo pasan a pestañas bajo el título. */
+.ce-pestanas { display: none; }
+@media (min-width: 1000px) and (max-width: 1179px) {
+  .escritorio { --lateral: 84px; --margen-x: 22px; }
+  .lateral { padding: 12px 8px; gap: 8px; }
+  .lat-marca { justify-content: center; padding: 2px 0 4px; }
+  .lat-marca span, .lat-buscar span, .lat-buscar kbd, .lat-tit, .lat-secciones, .lat-version, .lat-largo, .indicador-nube span { display: none; }
+  .lat-buscar { justify-content: center; padding: 0; min-height: 44px; }
+  .lat-nav { gap: 6px; margin-top: 6px; }
+  .lat-item { flex-direction: column; justify-content: center; gap: 4px; min-height: 66px; padding: 8px 2px; font-size: 11.5px; font-weight: 600; text-align: center; line-height: 1.15; }
+  .lat-item .lat-ico { width: 36px; height: 36px; border-radius: 11px; }
+  .lat-item .lat-ico svg { width: 20px; height: 20px; }
+  .sin-gap .lat-item > * + * { margin-left: 0; margin-top: 4px; }
+  .indicador-nube { justify-content: center; padding: 8px 0; }
+  .indicador-nube .ico { width: 20px; height: 20px; }
+  .cab-escritorio { display: block; margin-bottom: 16px; }
+  .ce-pestanas { display: flex; margin-top: 12px; max-width: 720px; }
+  .ce-pestanas button { min-height: 42px; font-size: 15px; }
+}
+@media (hover: none) { .lat-buscar kbd, .inicio-atajos { display: none; } }

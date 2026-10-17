@@ -138,7 +138,7 @@ export function Inicio() {
 
       {esc && (
         <p class="pie inicio-pie">
-          Lo que apuntas se guarda en este navegador. Para ver aquí lo del iPhone, exporta allí una copia (Ajustes → Exportar copia) y arrástrala a esta ventana. Atajos: <kbd>←</kbd> <kbd>→</kbd> cambian de semana, <kbd>/</kbd> busca y <kbd>Esc</kbd> cierra ventanas.
+          Lo que apuntas se guarda en este navegador. Para ver aquí lo del iPhone, exporta allí una copia (Ajustes → Exportar copia) y arrástrala a esta ventana. <span class="inicio-atajos">Atajos: <kbd>←</kbd> <kbd>→</kbd> cambian de semana, <kbd>/</kbd> busca y <kbd>Esc</kbd> cierra ventanas.</span>
         </p>
       )}
     </div>
