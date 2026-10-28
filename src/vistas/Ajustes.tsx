@@ -18,6 +18,7 @@ const DESCRIPCION_MODULO: Record<string, string> = {
   cocina: 'Menú semanal, compra y recetas',
   running: 'Plan del entrenador, registro y zonas',
   calendario: 'Turnos de tu pareja y notas de cada día',
+  gym: 'Entrenos con pesos y repeticiones, rutinas y récords',
   cafe: 'Diario de cafés, recetas, cata y análisis',
 };
 

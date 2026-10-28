@@ -1,0 +1,119 @@
+/* ---------- Módulo Gym ---------- */
+.tema-gym { --accent: #c2357f; }
+@media (prefers-color-scheme: dark) { .tema-gym { --accent: #ff6fb5; } }
+
+/* Insignias de grupo muscular */
+.gym-g { --c: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: -0.02em; text-transform: uppercase; }
+.g-pecho { --c: #d4472f; } .g-espalda { --c: #2a7fd8; } .g-hombro { --c: #e39b00; } .g-biceps { --c: #a35fd6; } .g-triceps { --c: #7b5cd6; }
+.g-antebrazo { --c: #8e6b4a; } .g-cuadriceps { --c: #2fae5e; } .g-isquios { --c: #14a38b; } .g-gluteo { --c: #ee5f86; } .g-aductores { --c: #c96fb0; }
+.g-gemelo { --c: #1aa6c4; } .g-core { --c: #6f7ba3; } .g-cuerpo { --c: #c2357f; } .g-cardio { --c: #e5372f; }
+
+/* Entrenar */
+.gym-encurso { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 18px; border-radius: var(--radio); background: var(--accent); color: #fff; text-align: left; box-shadow: var(--sombra); }
+.gym-encurso > div { flex: 1; display: grid; gap: 2px; }
+.gym-encurso small { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+.gym-encurso b { font-size: 21px; }
+.gym-encurso span { font-size: 14px; opacity: 0.9; }
+.ge-pulso { width: 12px; height: 12px; border-radius: 50%; background: #fff; flex: none; animation: latido 1.3s ease infinite; }
+.gym-semana { margin-top: 14px; }
+.gym-tit { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gym-tit .enlace-boton { min-height: 32px; text-transform: none; letter-spacing: 0; font-size: 14px; }
+.gym-tit .cuenta { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.rutina-fila { display: flex; align-items: stretch; border-bottom: 0.5px solid var(--sep); }
+.rutina-fila:last-child { border-bottom: 0; }
+.rf-cuerpo { flex: 1; min-width: 0; display: grid; gap: 2px; padding: 12px 14px 12px 16px; text-align: left; color: var(--label); }
+.rf-cuerpo b { font-size: 16.5px; }
+.rf-cuerpo small { font-size: 13px; color: var(--label-2); }
+.rf-ejs { font-size: 12.5px; color: var(--label-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rf-empezar { flex: none; width: 58px; display: grid; place-items: center; color: var(--accent); border-left: 0.5px solid var(--sep); }
+.rf-empezar:active, .rf-cuerpo:active { background: var(--fill); }
+
+/* Editor de rutinas */
+.rutina-ej { display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 16px; border-bottom: 0.5px solid var(--sep); }
+.re-nombre { flex: 1; min-width: 0; display: grid; gap: 6px; }
+.re-nombre b { font-size: 15.5px; }
+.re-ajustes { display: flex; gap: 12px; }
+.re-ajustes label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--label-2); }
+.re-ajustes input { width: 64px; min-height: 36px; padding: 0 8px; border: 0; border-radius: 9px; background: var(--fill); font-size: 15px; font-weight: 600; text-align: center; color: var(--label); }
+.re-botones { display: flex; gap: 2px; }
+.re-botones button { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: var(--label-2); }
+.re-botones button:first-child .ico { transform: rotate(90deg); }
+.re-botones button:nth-child(2) .ico { transform: rotate(90deg); }
+
+/* Entreno en curso */
+.gym-sesion { padding-bottom: 90px; }
+.gym-nombre { display: flex; gap: 8px; align-items: center; margin: 6px 0 14px; }
+.gym-nombre input[type='text'] { flex: 1; min-width: 0; min-height: 46px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--card); box-shadow: var(--sombra); font-size: 19px; font-weight: 700; color: var(--label); }
+.gym-ej { margin-bottom: 14px; border-radius: var(--radio); background: var(--card); box-shadow: var(--sombra); overflow: hidden; }
+.ge-cab { display: flex; align-items: center; gap: 8px; padding: 12px 8px 6px 16px; }
+.ge-nombre { flex: 1; min-width: 0; display: grid; gap: 2px; color: inherit; text-decoration: none; }
+.ge-nombre b { font-size: 17px; color: var(--accent); }
+.ge-nombre small { font-size: 12.5px; color: var(--label-2); }
+.ge-cab .btn-icono { width: 38px; height: 38px; background: transparent; }
+.ge-nota { margin: 0 16px 6px; padding: 8px 10px; border-radius: 10px; background: var(--fill); font-size: 14px; }
+.ge-sugerencia { margin: 0 16px 6px; font-size: 13.5px; color: var(--ok); font-weight: 600; }
+.gs-tabla { display: grid; }
+.gs-fila { display: grid; grid-template-columns: 44px minmax(0, 1fr) 82px 70px 50px; align-items: center; gap: 6px; padding: 4px 8px 4px 10px; transition: background 0.2s; }
+.gs-cab { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--label-2); padding-top: 2px; padding-bottom: 2px; }
+.gs-cab span:nth-child(n + 3) { text-align: center; }
+.gs-num { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--fill); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--label); }
+.gs-fila.tipo-calentamiento .gs-num { color: #d99a00; }
+.gs-fila.tipo-fallo .gs-num { color: var(--peligro); }
+.gs-fila.tipo-drop .gs-num { color: #7b5cd6; }
+.gs-prev { font-size: 13px; color: var(--label-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.gs-fila .numero { justify-content: center; }
+.gs-fila .numero input { width: 100%; min-width: 0; min-height: 40px; font-size: 17px; }
+.gs-fila .numero .unidad { display: none; }
+.gs-check { width: 44px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--fill); color: var(--label-3); justify-self: end; }
+.gs-check.marcado { background: var(--ok); color: #fff; }
+.gs-fila.hecha { background: color-mix(in srgb, var(--ok) 10%, transparent); }
+.gs-fila.hecha .numero input { background: transparent; }
+.ge-anadir { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 46px; margin-top: 4px; border-top: 0.5px solid var(--sep); color: var(--accent); font-weight: 600; font-size: 15px; }
+
+/* Descanso */
+.gym-descanso {
+  position: fixed; left: 12px; right: 12px; bottom: calc(var(--abajo) + var(--alto-tabs) + 10px); z-index: 45;
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 18px; overflow: hidden;
+  background: color-mix(in srgb, var(--card) 92%, transparent); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.gym-descanso > div { flex: 1; display: grid; justify-items: center; position: relative; }
+.gym-descanso small { font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label-2); }
+.gym-descanso b { font-size: 26px; font-variant-numeric: tabular-nums; color: var(--accent); line-height: 1.1; }
+.gym-descanso button { position: relative; min-width: 50px; height: 44px; border-radius: 12px; background: var(--fill); font-weight: 700; color: var(--label); display: grid; place-items: center; }
+.gd-barra { position: absolute; left: 0; top: 0; bottom: 0; background: color-mix(in srgb, var(--accent) 12%, transparent); transition: width 0.25s linear; }
+.gym-descanso.listo { background: var(--ok); }
+.gym-descanso.listo small, .gym-descanso.listo b { color: #fff; }
+.escritorio .gym-descanso { left: calc(var(--lateral) + 50% - var(--lateral) / 2 - 220px); right: auto; width: 440px; bottom: 22px; }
+
+/* Resumen */
+.gym-resumen { display: grid; gap: 12px; margin: 4px 0 16px; padding: 16px; border-radius: var(--radio); background: color-mix(in srgb, var(--ok) 10%, var(--card)); box-shadow: var(--sombra); }
+.gr-cab { display: flex; align-items: center; gap: 12px; }
+.gr-cab .ico { color: var(--ok); }
+.gr-cab > div { display: grid; }
+.gr-cab b { font-size: 19px; }
+.gr-cab small { color: var(--label-2); font-size: 14px; }
+.gr-records { display: grid; gap: 4px; padding: 10px 12px; border-radius: 12px; background: var(--card); }
+.gr-records p { font-size: 15px; }
+
+/* Catálogo y ficha */
+.gym-buscador { flex: 1; margin: 0; }
+.gym-filtro-equipo { margin: 10px 0 12px; }
+.gym-lista-ej { margin-top: 10px; }
+.gym-ficha-cab { display: flex; align-items: center; gap: 14px; margin: 8px 0 12px; }
+.gym-ficha-cab .titulo-guia { margin: 0; }
+.gym-ejs-linea { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--label-3); }
+.ag-item.hecho-gym { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+
+/* Progreso: series por músculo con la franja 10-20 */
+.gym-objetivo { position: relative; height: 10px; }
+.gym-objetivo span { position: relative; z-index: 1; background: color-mix(in srgb, var(--accent) 70%, transparent); }
+.gym-objetivo span.ok { background: var(--ok); }
+.gym-objetivo i { position: absolute; top: -2px; bottom: -2px; border-radius: 4px; background: color-mix(in srgb, var(--ok) 18%, transparent); border: 1px dashed color-mix(in srgb, var(--ok) 50%, transparent); }
+.gym-bc { grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 40px; }
+
+@media (max-width: 420px) {
+  .gs-fila { grid-template-columns: 38px minmax(0, 1fr) 72px 60px 46px; gap: 4px; padding-left: 8px; }
+  .gs-prev { font-size: 12px; }
+}
+.gym-nombre input.fecha { flex: none; width: 140px; min-height: 46px; }

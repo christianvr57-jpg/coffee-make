@@ -114,3 +114,45 @@ export function Dispersion({ puntos, alto = 170, titulo, etiquetaX, invertirX = 
     </svg>
   );
 }
+
+/** Línea de valores con eje Y automático (p. ej. 1RM estimado por sesión). */
+export function LineaValores({ puntos, alto = 160, titulo, unidad = '' }: { puntos: { etiqueta: string; valor: number }[]; alto?: number; titulo: string; unidad?: string }) {
+  const izq = 34;
+  const abajo = 22;
+  const vals = puntos.map((p) => p.valor);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals);
+  const rango = max - min || Math.max(1, max * 0.1);
+  const lo = Math.max(0, min - rango * 0.15);
+  const hi = max + rango * 0.15;
+  const n = puntos.length;
+  const x = (i: number) => izq + 6 + (n <= 1 ? (ANCHO - izq - 12) / 2 : (i / (n - 1)) * (ANCHO - izq - 12));
+  const y = (v: number) => alto - abajo - ((v - lo) / (hi - lo)) * (alto - abajo - 12);
+  const linea = puntos.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.valor).toFixed(1)}`).join(' ');
+  const cada = Math.max(1, Math.ceil(n / 5));
+  const fmtV = (v: number) => String(Math.round(v)).replace('.', ',');
+  return (
+    <svg class="grafico" viewBox={`0 0 ${ANCHO} ${alto}`} role="img" aria-label={titulo}>
+      {[lo, (lo + hi) / 2, hi].map((v) => (
+        <>
+          <line class="gr-rejilla" x1={izq} x2={ANCHO} y1={y(v)} y2={y(v)} />
+          <text class="gr-eje" x={izq - 4} y={y(v) + 3.5} text-anchor="end">
+            {fmtV(v)}
+            {unidad}
+          </text>
+        </>
+      ))}
+      {n > 1 && <path class="gr-linea" d={linea} />}
+      {puntos.map((p, i) => (
+        <>
+          <circle class={`gr-punto${i === n - 1 ? ' reciente' : ''}`} cx={x(i)} cy={y(p.valor)} r={3.4} />
+          {i % cada === 0 && (
+            <text class="gr-eje" x={x(i)} y={alto - 6} text-anchor="middle">
+              {p.etiqueta}
+            </text>
+          )}
+        </>
+      ))}
+    </svg>
+  );
+}

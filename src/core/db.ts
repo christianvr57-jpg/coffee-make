@@ -7,6 +7,7 @@ import type { Agua, Cafe, Equipo, Foto, Preparacion, Receta } from '../modulos/c
 import type { ArticuloCompra, CambioPlato } from '../modulos/cocina/tipos';
 import type { RegistroRun } from '../modulos/running/tipos';
 import type { NotaDia, TurnoDia } from '../modulos/calendario/tipos';
+import type { EjercicioPropio, RutinaGym, SesionGym } from '../modulos/gym/tipos';
 
 /** Campos comunes de cualquier registro sincronizable. */
 export interface Registro {
@@ -61,6 +62,9 @@ export class BaseDatos extends Dexie {
   running_registros!: EntityTable<RegistroRun, 'id'>;
   agenda_turnos!: EntityTable<TurnoDia, 'id'>;
   agenda_notas!: EntityTable<NotaDia, 'id'>;
+  gym_sesiones!: EntityTable<SesionGym, 'id'>;
+  gym_rutinas!: EntityTable<RutinaGym, 'id'>;
+  gym_ejercicios!: EntityTable<EjercicioPropio, 'id'>;
   fotos!: EntityTable<Foto, 'id'>;
 
   constructor() {
@@ -84,16 +88,18 @@ export class BaseDatos extends Dexie {
     this.version(4).stores({ running_registros: '&id, fecha' });
     // v5: módulo Calendario (turnos por día y notas o recordatorios).
     this.version(5).stores({ agenda_turnos: '&id', agenda_notas: '&id, fecha' });
+    // v6: módulo Gym (entrenos, rutinas y ejercicios propios).
+    this.version(6).stores({ gym_sesiones: '&id, fecha', gym_rutinas: '&id', gym_ejercicios: '&id' });
   }
 }
 
 export const db = new BaseDatos();
 
 /** Tablas que forman la copia de seguridad (todas menos la cola de cambios). */
-export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'cocina_cambios', 'cocina_compra', 'running_registros', 'agenda_turnos', 'agenda_notas', 'fotos'] as const;
+export const TABLAS_DATOS = ['ajustes', 'hogar_hechas', 'hogar_tareas', 'cafe_equipo', 'cafe_aguas', 'cafe_cafes', 'cafe_preparaciones', 'cafe_recetas', 'cocina_cambios', 'cocina_compra', 'running_registros', 'agenda_turnos', 'agenda_notas', 'gym_sesiones', 'gym_rutinas', 'gym_ejercicios', 'fotos'] as const;
 export type TablaDatos = (typeof TABLAS_DATOS)[number];
 
-type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas' | 'cocina_cambios' | 'cocina_compra' | 'running_registros' | 'agenda_turnos' | 'agenda_notas';
+type TablaRegistros = 'hogar_hechas' | 'hogar_tareas' | 'cafe_equipo' | 'cafe_aguas' | 'cafe_cafes' | 'cafe_preparaciones' | 'cafe_recetas' | 'cocina_cambios' | 'cocina_compra' | 'running_registros' | 'agenda_turnos' | 'agenda_notas' | 'gym_sesiones' | 'gym_rutinas' | 'gym_ejercicios';
 
 /** Avisos de «hay cambios locales» (los usa la sincronización para subirlos al poco). */
 export const alCambiarDatos = new Set<() => void>();
